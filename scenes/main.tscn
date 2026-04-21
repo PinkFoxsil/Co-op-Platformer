@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://1d0m8hyr6cvh"]
+
+[ext_resource type="Texture2D" uid="uid://cg6a5ke7luu3a" path="res://Square.png" id="1_0wfyh"]
+[ext_resource type="Script" uid="uid://cyhmgoide88xe" path="res://Player.cs" id="2_sugp2"]
+
+[node name="Node2D" type="Node2D" unique_id=2113155666]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1326908698]
+modulate = Color(1, 0, 0, 1)
+position = Vector2(231, 168)
+texture = ExtResource("1_0wfyh")
+script = ExtResource("2_sugp2")
