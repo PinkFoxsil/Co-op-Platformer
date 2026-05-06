@@ -1,7 +1,23 @@
 [gd_scene format=3 uid="uid://1d0m8hyr6cvh"]
 
 [ext_resource type="PackedScene" uid="uid://dd3565bcxw6ar" path="res://src/scenes/controllable_character.tscn" id="1_kkvs4"]
+[ext_resource type="Texture2D" uid="uid://cg6a5ke7luu3a" path="res://src/images/Square.png" id="2_rr2wm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_32aa5"]
+size = Vector2(64.18451, 64)
 
 [node name="Node2D" type="Node2D" unique_id=2113155666]
 
 [node name="ControllableCharacter" parent="." unique_id=1425957284 instance=ExtResource("1_kkvs4")]
+position = Vector2(663, 378)
+
+[node name="Floor" type="StaticBody2D" parent="." unique_id=676893420]
+position = Vector2(659, 483)
+scale = Vector2(29, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=604144608]
+shape = SubResource("RectangleShape2D_32aa5")
+
+[node name="Sprite2D" type="Sprite2D" parent="Floor" unique_id=5386107]
+position = Vector2(-1.1831522e-05, 1.9073486e-06)
+texture = ExtResource("2_rr2wm")

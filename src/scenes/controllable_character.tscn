@@ -1,13 +1,17 @@
 [gd_scene format=3 uid="uid://dd3565bcxw6ar"]
 
 [ext_resource type="Texture2D" uid="uid://cg6a5ke7luu3a" path="res://src/images/Square.png" id="1_cv7mj"]
+[ext_resource type="Script" uid="uid://yq5wiefavp15" path="res://src/scenes/ControllableCharacter.cs" id="1_ut82q"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ut82q"]
+size = Vector2(64, 64)
 
 [node name="ControllableCharacter" type="CharacterBody2D" unique_id=1425957284]
+script = ExtResource("1_ut82q")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1918824570]
 shape = SubResource("RectangleShape2D_ut82q")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=840279822]
+modulate = Color(2.117753e-06, 0.5749738, 0.5752016, 1)
 texture = ExtResource("1_cv7mj")
