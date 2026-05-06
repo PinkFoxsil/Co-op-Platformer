@@ -8,7 +8,6 @@ public partial class MovementComponent : Component
     [Export] public float deceleration = 1200f;
 
     [Export] public float jumpForce = 320f;
-    [Export] public float gravity = 950f;
     [Export] public float fallMultiplier = 1.6f;
 
     [Export] public float coyoteTime = 0.1f;

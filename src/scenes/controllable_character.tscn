@@ -1,17 +1,32 @@
 [gd_scene format=3 uid="uid://dd3565bcxw6ar"]
 
 [ext_resource type="Texture2D" uid="uid://cg6a5ke7luu3a" path="res://src/images/Square.png" id="1_cv7mj"]
-[ext_resource type="Script" uid="uid://yq5wiefavp15" path="res://src/scenes/ControllableCharacter.cs" id="1_ut82q"]
+[ext_resource type="Script" uid="uid://7ksihb8qc0wy" path="res://src/scripts/PlayerEntity.cs" id="1_fsmad"]
+[ext_resource type="Script" uid="uid://drx36csbhoj8k" path="res://src/scripts/MovementComponent.cs" id="3_hsffa"]
+[ext_resource type="Script" uid="uid://cdnna1n035q6m" path="res://src/scripts/InputComponent.cs" id="4_xjkdw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ut82q"]
-size = Vector2(64, 64)
+size = Vector2(32, 64)
 
 [node name="ControllableCharacter" type="CharacterBody2D" unique_id=1425957284]
-script = ExtResource("1_ut82q")
+script = ExtResource("1_fsmad")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1918824570]
 shape = SubResource("RectangleShape2D_ut82q")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=840279822]
 modulate = Color(2.117753e-06, 0.5749738, 0.5752016, 1)
+scale = Vector2(0.5, 1)
 texture = ExtResource("1_cv7mj")
+
+[node name="MovementComponent" type="Node" parent="." unique_id=1271246942]
+script = ExtResource("3_hsffa")
+moveSpeed = 340.0
+acceleration = 4000.0
+deceleration = 2000.0
+jumpForce = 525.0
+coyoteTime = 0.12
+airControl = 0.7
+
+[node name="InputComponent" type="Node" parent="." unique_id=1710401691]
+script = ExtResource("4_xjkdw")

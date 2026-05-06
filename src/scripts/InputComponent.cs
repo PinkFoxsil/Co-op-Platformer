@@ -10,8 +10,8 @@ public partial class InputComponent : Component
 
     public override void PrePhysicsProcess(float dt)
     {
-        moveX = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
-        jumpPressed = Input.IsActionJustPressed("jump");
-        dashPressed = Input.IsActionJustPressed("dash");
+        moveX = Input.GetActionStrength("Right") - Input.GetActionStrength("Left");
+        jumpPressed = Input.IsActionJustPressed("Jump");
+        //dashPressed = Input.IsActionJustPressed("dash");
     }
 }
