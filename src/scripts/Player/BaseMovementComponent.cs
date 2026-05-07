@@ -46,20 +46,18 @@ public partial class BaseMovementComponent : Component
         {
             return;
         }
-
-        bool grounded = entity.IsOnFloor();
         
-        UpdateCoyoteTime(grounded, dt);
+        UpdateCoyoteTime(dt);
         UpdateJumpBuffer(input, dt);
-        ApplyHorizontalMovement(grounded, input, dt);
-        ApplyJump();
+        ApplyHorizontalMovement(input, dt);
+        CheckJump(input);
         ApplyGravity(dt);
-        GroundSnap(grounded);
+        GroundSnap();
     }
 
-    private void UpdateCoyoteTime(bool isGrounded, float dt)
+    private void UpdateCoyoteTime(float dt)
     {
-        if (isGrounded)
+        if (entity.IsOnFloor())
         {
             _coyoteTimer = coyoteTime;
         } 
@@ -81,9 +79,9 @@ public partial class BaseMovementComponent : Component
         }
     }
 
-    private void ApplyHorizontalMovement(bool grounded, InputComponent input, float dt)
+    private void ApplyHorizontalMovement(InputComponent input, float dt)
     {
-        float control = grounded ? groundControl : airControl;
+        float control = entity.IsOnFloor() ? groundControl : airControl;
         float actualAcceleration = acceleration * control;
         float targetSpeed = input.inputX * moveSpeed;
 
@@ -103,29 +101,46 @@ public partial class BaseMovementComponent : Component
         }
     }
 
-    private void ApplyJump()
+    private void CheckJump(InputComponent input)
     {
-        if (_coyoteTimer > 0 && _jumpBufferTimer > 0)
+        if (input.jumpPressed && canJump())
         {
-            entity.Velocity = new Vector2(
-                entity.Velocity.X,
-                -jumpForce
-            );
-
-            _coyoteTimer = 0;
-            _jumpBufferTimer = 0;
+            Jump();
         }
     }
 
-    private void ApplyGravity(float dt)
+    private void Jump()
+    {
+        ApplyJumpForce();
+
+        _coyoteTimer = 0;
+        _jumpBufferTimer = 0;
+    }
+
+    private void ApplyJumpForce()
+    {
+        entity.Velocity = new Vector2(
+            entity.Velocity.X,
+            -jumpForce
+        );
+    }
+
+    private bool canJump()
+    {
+        return entity.IsOnFloor() || (_coyoteTimer > 0 && _jumpBufferTimer > 0);
+    }
+
+    private void ApplyGravity(float dt) // This function is lying and does more than one thing
     {
         Vector2 gravity = entity.GetGravity();
 
+        // Make the player fall faster
         if (entity.Velocity.Y > 0)
         {
             gravity *= fallMultiplier;
         }
 
+        // Adjust gravity at the peak of the player's jump
         if (Mathf.Abs(entity.Velocity.Y) < jumpHangTimeThreshold)
         {
             gravity *= jumpHangGravityMultiplier;
@@ -137,9 +152,9 @@ public partial class BaseMovementComponent : Component
         entity.Velocity = new Vector2(entity.Velocity.X, Mathf.Min(entity.Velocity.Y, maxFallSpeed));
     }
 
-    private void GroundSnap(bool grounded)
+    private void GroundSnap()
     {
-        if (grounded && entity.Velocity.Y > 0)
+        if (entity.IsOnFloor() && entity.Velocity.Y > 0)
         {
             entity.Velocity = new Vector2(entity.Velocity.X, 0);
         }
