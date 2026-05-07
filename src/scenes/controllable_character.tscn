@@ -21,12 +21,12 @@ texture = ExtResource("1_cv7mj")
 
 [node name="MovementComponent" type="Node" parent="." unique_id=1271246942]
 script = ExtResource("3_hsffa")
-moveSpeed = 340.0
-acceleration = 4000.0
-deceleration = 2000.0
-jumpForce = 525.0
-coyoteTime = 0.12
-airControl = 0.7
+moveSpeed = 260.0
+deceleration = 1000.0
+jumpForce = 500.0
+fallMultiplier = 1.4
+coyoteTime = 0.125
+airControl = 0.6
 
 [node name="InputComponent" type="Node" parent="." unique_id=1710401691]
 script = ExtResource("4_xjkdw")

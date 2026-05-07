@@ -3,17 +3,21 @@ using System;
 
 public partial class MovementComponent : Component
 {
-    [Export] public float moveSpeed = 140f;
-    [Export] public float acceleration = 900f;
-    [Export] public float deceleration = 1200f;
+    [Export] public float moveSpeed = 300f;
+    [Export] public float acceleration = 2000f;
+    [Export] public float deceleration = 2000f;
 
-    [Export] public float jumpForce = 320f;
+    [Export] public float jumpForce = 400f;
+    [Export] public float gravityScale = 1.4f;
     [Export] public float fallMultiplier = 1.6f;
+    [Export] public float maxFallSpeed = 1000f;
 
-    [Export] public float coyoteTime = 0.1f;
+    [Export] public float coyoteTime = 0.12f;
     [Export] public float jumpBuffer = 0.1f;
+    [Export] public float jumpHangTimeThreshold = 5f;
+    [Export] public float jumpHangGravityMultiplier = 0.5f;
 
-    [Export] public float airControl = 0.5f;
+    [Export] public float airControl = 0.7f;
     [Export] public float groundControl = 1f;
     
     private float _coyoteTimer;
@@ -77,7 +81,7 @@ public partial class MovementComponent : Component
         else
         {
             entity.Velocity = new Vector2(
-                Mathf.MoveToward(entity.Velocity.X, 0, deceleration * dt),
+                Mathf.MoveToward(entity.Velocity.X, 0, deceleration * dt * control),
                 entity.Velocity.Y
             );
         }
@@ -91,6 +95,7 @@ public partial class MovementComponent : Component
                 entity.Velocity.X,
                 -jumpForce
             );
+
             _coyoteTimer = 0;
             _jumpBufferTimer = 0;
         }
@@ -105,7 +110,15 @@ public partial class MovementComponent : Component
             gravity *= fallMultiplier;
         }
 
-        entity.Velocity += gravity * dt;
+        if (Mathf.Abs(entity.Velocity.Y) < jumpHangTimeThreshold)
+        {
+            gravity *= jumpHangGravityMultiplier;
+        }
+
+        entity.Velocity += gravity * gravityScale * dt;
+
+        // Cap max fall speed
+        entity.Velocity = new Vector2(entity.Velocity.X, Mathf.Min(entity.Velocity.Y, maxFallSpeed));
     }
 
     private void GroundSnap(bool grounded)
