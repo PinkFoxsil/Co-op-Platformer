@@ -25,7 +25,7 @@ public partial class MovementComponent : Component
 
     public override void PhysicsProcess(float dt)
     {
-        var input = entity.GetComponent<InputComponent>();
+        InputComponent input = entity.GetComponent<InputComponent>();
         if (input == null)
         {
             return;

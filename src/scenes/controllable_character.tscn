@@ -8,6 +8,12 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ut82q"]
 size = Vector2(32, 64)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fsmad"]
+size = Vector2(120, 80)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hsffa"]
+size = Vector2(82, 117)
+
 [node name="ControllableCharacter" type="CharacterBody2D" unique_id=1425957284]
 script = ExtResource("1_fsmad")
 
@@ -30,3 +36,23 @@ airControl = 0.6
 
 [node name="InputComponent" type="Node" parent="." unique_id=1710401691]
 script = ExtResource("4_xjkdw")
+
+[node name="AttackComponent" type="Node" parent="." unique_id=1115333624]
+
+[node name="Right" type="Area2D" parent="AttackComponent" unique_id=2000297250]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackComponent/Right" unique_id=996297961]
+position = Vector2(50, 0)
+shape = SubResource("RectangleShape2D_fsmad")
+
+[node name="Left" type="Area2D" parent="AttackComponent" unique_id=1154539293]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackComponent/Left" unique_id=1459135782]
+position = Vector2(-50, 0)
+shape = SubResource("RectangleShape2D_fsmad")
+
+[node name="Up" type="Area2D" parent="AttackComponent" unique_id=2004279719]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackComponent/Up" unique_id=556193660]
+position = Vector2(0, -66.5)
+shape = SubResource("RectangleShape2D_hsffa")
