@@ -1,23 +1,39 @@
 using Godot;
 using System;
 
-public partial class MovementComponent : Component
+public partial class BaseMovementComponent : Component
 {
-    [Export] public float moveSpeed = 300f;
+    [ExportGroup("Movement")]
+    /// <summary>
+    /// How fast the player moves horizontally.
+    /// </summary>
+    [Export] public float moveSpeed = 260f;
+    /// <summary>
+    /// How fast the player reaches max horizontal speed in milliseconds when moving.
+    /// </summary>
     [Export] public float acceleration = 2000f;
-    [Export] public float deceleration = 2000f;
+    /// <summary>
+    /// How fast the player stands still in milliseconds.
+    /// </summary>
+    [Export] public float deceleration = 3000f;
 
-    [Export] public float jumpForce = 400f;
+    [ExportGroup("Jumping")]
+    [Export] public float jumpForce = 500f;
+
+    [Export] public float coyoteTime = 0.125f;
+    [Export] public float jumpBuffer = 0.1f;
+
+    [ExportSubgroup("Gravity")]
     [Export] public float gravityScale = 1.4f;
-    [Export] public float fallMultiplier = 1.6f;
+    [Export] public float fallMultiplier = 1.4f;
     [Export] public float maxFallSpeed = 1000f;
 
-    [Export] public float coyoteTime = 0.12f;
-    [Export] public float jumpBuffer = 0.1f;
+    [ExportSubgroup("Jump Hang")]
     [Export] public float jumpHangTimeThreshold = 5f;
     [Export] public float jumpHangGravityMultiplier = 0.5f;
 
-    [Export] public float airControl = 0.7f;
+    [ExportGroup("Control")]
+    [Export] public float airControl = 0.6f;
     [Export] public float groundControl = 1f;
     
     private float _coyoteTimer;
@@ -69,7 +85,7 @@ public partial class MovementComponent : Component
     {
         float control = grounded ? groundControl : airControl;
         float actualAcceleration = acceleration * control;
-        float targetSpeed = input.moveX * moveSpeed;
+        float targetSpeed = input.inputX * moveSpeed;
 
         if (Mathf.Abs(targetSpeed) > 0.01f)
         {
