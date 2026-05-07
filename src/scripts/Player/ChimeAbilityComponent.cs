@@ -1,5 +1,14 @@
 using Godot;
 using System;
+using System.Collections.Generic;
+
+enum NoteDirection
+{
+    Up,
+    Down,
+    Left,
+    Right
+}
 
 public partial class ChimeAbilityComponent : Component
 {
@@ -23,11 +32,11 @@ public partial class ChimeAbilityComponent : Component
     private bool _requiresGroundReset;
 
     private List<Chimeling> _chimelingPool = new();
-    private int _chimelingIndex = 0
+    private int _chimelingIndex = 0;
 
     private InputComponent _input;
 
-    public override void Ready()
+    public override void _Ready()
     {
         _input = entity.GetComponent<InputComponent>();
 
@@ -46,6 +55,11 @@ public partial class ChimeAbilityComponent : Component
 
             _chimelingPool.Add(chimeling);
         }
+    }
+
+    private void UpdateChimelingPool()
+    {
+        
     }
 
     public void UnlockNewChimeling()
@@ -116,9 +130,9 @@ public partial class ChimeAbilityComponent : Component
 
         _holdTimer = maxHoldTime;
 
-        if (_chimelingIndex < _chimelingPool.count) {
+        if (_chimelingIndex < _chimelingPool.Count) {
             Chimeling chimeling = _chimelingPool[_chimelingIndex];
-            _chimelingIndex++
+            _chimelingIndex++;
             chimeling.Activate();
 
             chimeling.GlobalPosition = entity.GlobalPosition;
@@ -170,22 +184,23 @@ public partial class ChimeAbilityComponent : Component
 
     private void FireSoundwave()
     {
-        for(int i = 0, _chimelingIndex, i++) 
+        for (int i = 0; i < _chimelingPool.Count; i++)
         {
-            chimeling.EmitSoundwave();
+            Chimeling chimeling = _chimelingPool[i];
 
+            chimeling.EmitSoundwave();
             chimeling.BeginReturn(entity.GlobalPosition);
         }
-        _chimelingIndex = 0
     }
 
     private void RecallChimelings()
     {
-        for(int i = 0, _chimelingIndex, i++) 
+        for (int i = 0; i < _chimelingPool.Count; i++)
         {
+            Chimeling chimeling = _chimelingPool[i];
+
             chimeling.BeginReturn(entity.GlobalPosition);
         }
-        _chimelingIndex = 0
     }
 
 }
