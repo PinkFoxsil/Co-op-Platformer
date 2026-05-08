@@ -40,10 +40,10 @@ public partial class ChimeAbilityComponent : Component
     {
         _input = entity.GetComponent<InputComponent>();
 
-       UpdateChimeLingPoolSize();
+       UpdateChimelingPoolSize();
     }
 
-    private void UpdateChimeLingPoolSize()
+    private void UpdateChimelingPoolSize()
     {
         while (_chimelingPool.Count < maxChimelings)
         {
@@ -57,15 +57,10 @@ public partial class ChimeAbilityComponent : Component
         }
     }
 
-    private void UpdateChimelingPool()
-    {
-        
-    }
-
     public void UnlockNewChimeling()
     {
         maxChimelings++;
-        UpdateChimelingPool();
+        UpdateChimelingPoolSize();
     }
 
     public override void PrePhysicsProcess(float dt)

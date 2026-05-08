@@ -77,18 +77,18 @@ public partial class AttackComponent : Component
             {
                 if (input.mouseRelativePosition.X > 0)
                 {
-                    attackRight();
+                    AttackRight();
                 }
                 else
                 {
-                    attackLeft();
+                    AttackLeft();
                 }
             }
             else
             {
                 if (input.mouseRelativePosition.Y < 0)
                 {
-                    attackUp();
+                    AttackUp();
                 }
                 else
                 {
@@ -98,19 +98,19 @@ public partial class AttackComponent : Component
         }
     }
 
-    private void attackLeft()
+    private void AttackLeft()
     {
         _leftAttackHitbox.GetNode<CollisionShape2D>("Hitbox").Disabled = false;
         _leftHitboxTimer = attackDuration;
     }
 
-    private void attackRight()
+    private void AttackRight()
     {
         _rightAttackHitbox.GetNode<CollisionShape2D>("Hitbox").Disabled = false;
         _rightHitboxTimer = attackDuration;
     }
 
-    private void attackUp()
+    private void AttackUp()
     {
         _upAttackHitbox.GetNode<CollisionShape2D>("Hitbox").Disabled = false;
         _upHitboxTimer = attackDuration;

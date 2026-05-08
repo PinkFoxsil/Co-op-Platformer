@@ -5,6 +5,7 @@ public partial class InputComponent : Component
 {
     
     public float inputX;
+    public int lastInputX;
 
     public Vector2 mouseWorldPosition;
     public Vector2 mouseRelativePosition;
@@ -27,6 +28,11 @@ public partial class InputComponent : Component
     public override void PrePhysicsProcess(float dt)
     {
         inputX = Input.GetActionStrength("Right") - Input.GetActionStrength("Left");
+
+        if (inputX != 0)
+        {
+            lastInputX = Mathf.Sign(inputX);
+        }
         
         mouseWorldPosition = entity.GetGlobalMousePosition();
         mouseRelativePosition = mouseWorldPosition - entity.Position;

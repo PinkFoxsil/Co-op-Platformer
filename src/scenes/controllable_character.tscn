@@ -29,6 +29,8 @@ texture = ExtResource("1_cv7mj")
 
 [node name="BaseMovementComponent" type="Node" parent="." unique_id=1271246942]
 script = ExtResource("3_xjkdw")
+jumpForce = 700.0
+gravityScale = 0.5
 
 [node name="InputComponent" type="Node" parent="." unique_id=1710401691]
 script = ExtResource("4_rwegb")
