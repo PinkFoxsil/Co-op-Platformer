@@ -4,16 +4,19 @@ using System;
 public partial class BaseMovementComponent : Component
 {
     [ExportGroup("Movement")]
+
     /// <summary>
     /// How fast the player moves horizontally.
     /// </summary>
     [Export] public float moveSpeed = 260f;
+
     /// <summary>
-    /// How fast the player reaches max horizontal speed in milliseconds when moving.
+    /// How quickly the  player to reach max horizontal speed.
     /// </summary>
     [Export] public float acceleration = 2000f;
+
     /// <summary>
-    /// How fast the player stands still in milliseconds.
+    /// How quickly the player comes to a stop.
     /// </summary>
     [Export] public float deceleration = 3000f;
 

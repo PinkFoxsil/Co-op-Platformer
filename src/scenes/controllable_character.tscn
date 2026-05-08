@@ -34,6 +34,7 @@ script = ExtResource("3_xjkdw")
 script = ExtResource("4_rwegb")
 
 [node name="AttackComponent" type="Node2D" parent="." unique_id=1678474725]
+visible = false
 script = ExtResource("5_hsffa")
 attackCooldown = 0.4
 attackDuration = 0.2
