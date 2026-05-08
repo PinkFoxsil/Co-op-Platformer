@@ -1,6 +1,6 @@
 using Godot;
 using System;
 
-public partial class PlayerEntity : Entity
+public partial class PlayerEntity : Character
 {
 }

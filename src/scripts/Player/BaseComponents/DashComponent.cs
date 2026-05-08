@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class DashComponent : Component
+public partial class DashComponent : Component<CharacterBody2D>
 {
 	[ExportCategory("Dash")]
  	[Export] public float dashSpeed = 1000f;
@@ -22,18 +22,27 @@ public partial class DashComponent : Component
 
 	private bool _requiresGroundReset;
 	
+	private CharacterBody2D _character;
+    private InputComponent _input;
+
+    public override void Init(Entity<CharacterBody2D> entity)
+    {
+        base.Init(entity);
+        _character = entity.node;
+        _input = entity.GetComponent<InputComponent>();
+    }
+
 	public override void PhysicsProcess(float dt)
 	{
-		InputComponent input = entity.GetComponent<InputComponent>();
-		if (input == null) 
+		if (_input == null) 
 		{
 			return;
 		}
 		
 		UpdateCooldowns(dt);
-		CheckDashTriggered(input);
+		CheckDashTriggered(_input);
 		HandleGroundReset();
-		UpdateDash(dt, input);
+		UpdateDash(dt, _input);
 		UpdateRecovery(dt);
 	}
 
@@ -92,7 +101,7 @@ public partial class DashComponent : Component
 
 	private void HandleGroundReset()
     {
-        if (_requiresGroundReset && entity.IsOnFloor())
+        if (_requiresGroundReset && _character.IsOnFloor())
         {
             _requiresGroundReset = false;
         }
@@ -128,7 +137,7 @@ public partial class DashComponent : Component
 			directionX = 1;
 		}
 
-		entity.Velocity = new Vector2(directionX * dashSpeed, 0);
+		_character.Velocity = new Vector2(directionX * dashSpeed, 0);
 	}
 
 	private void UpdateRecovery(float dt)

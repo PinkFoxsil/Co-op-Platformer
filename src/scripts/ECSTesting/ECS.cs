@@ -28,7 +28,7 @@ class ECS
         return archetype.componentIdSet.Contains(componentId);
     }
 
-    public ComponentId AddComponent(EntityId entityId, Component component)
+    public ComponentId AddComponent(EntityId entityId, ComponentId component)
     {
         return 0;
     }

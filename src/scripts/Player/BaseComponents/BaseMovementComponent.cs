@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class BaseMovementComponent : Component
+public partial class BaseMovementComponent : Component<CharacterBody2D>
 {
     [ExportCategory("Movement")]
     [Export] public float moveSpeed = 260f;
@@ -30,25 +30,35 @@ public partial class BaseMovementComponent : Component
     private float _coyoteTimer;
     private float _jumpBufferTimer;
 
+    private CharacterBody2D _character;
+    private InputComponent _input;
+
+    public override void Init(Entity<CharacterBody2D> entity)
+    {
+        base.Init(entity);
+        _character = entity.node;
+        _input = entity.GetComponent<InputComponent>();
+    }
+
     public override void PhysicsProcess(float dt)
     {
-        InputComponent input = entity.GetComponent<InputComponent>();
-        if (input == null)
+        if (_input == null)
         {
+            GD.Print("Early return from no input");
             return;
         }
         
         UpdateCoyoteTime(dt);
-        UpdateJumpBuffer(input, dt);
-        ApplyHorizontalMovement(input, dt);
-        CheckJump(input);
+        UpdateJumpBuffer(dt);
+        ApplyHorizontalMovement(dt);
+        CheckJump();
         ApplyGravity(dt);
         GroundSnap();
     }
 
     private void UpdateCoyoteTime(float dt)
     {
-        if (entity.IsOnFloor())
+        if (_character.IsOnFloor())
         {
             _coyoteTimer = coyoteTime;
         } 
@@ -58,9 +68,9 @@ public partial class BaseMovementComponent : Component
         }
     }
 
-    private void UpdateJumpBuffer(InputComponent input, float dt)
+    private void UpdateJumpBuffer(float dt)
     {
-        if (input.jumpPressed)
+        if (_input.jumpPressed)
         {
             _jumpBufferTimer = jumpBuffer;
         }
@@ -70,31 +80,32 @@ public partial class BaseMovementComponent : Component
         }
     }
 
-    private void ApplyHorizontalMovement(InputComponent input, float dt)
+    private void ApplyHorizontalMovement(float dt)
     {
-        float control = entity.IsOnFloor() ? groundControl : airControl;
+        
+        float control = _character.IsOnFloor() ? groundControl : airControl;
         float actualAcceleration = acceleration * control;
-        float targetSpeed = input.inputX * moveSpeed;
+        float targetSpeed = _input.inputX * moveSpeed;
 
         if (Mathf.Abs(targetSpeed) > 0.01f)
         {
-            entity.Velocity = new Vector2(
-                Mathf.MoveToward(entity.Velocity.X, targetSpeed, actualAcceleration * dt),
-                entity.Velocity.Y
+            _character.Velocity = new Vector2(
+                Mathf.MoveToward(_character.Velocity.X, targetSpeed, actualAcceleration * dt),
+                _character.Velocity.Y
             );
         }
         else
         {
-            entity.Velocity = new Vector2(
-                Mathf.MoveToward(entity.Velocity.X, 0, deceleration * dt * control),
-                entity.Velocity.Y
+            _character.Velocity = new Vector2(
+                Mathf.MoveToward(_character.Velocity.X, 0, deceleration * dt * control),
+                _character.Velocity.Y
             );
         }
     }
 
-    private void CheckJump(InputComponent input)
+    private void CheckJump()
     {
-        if (input.jumpPressed && CanJump())
+        if (_input.jumpPressed && CanJump())
         {
             Jump();
         }
@@ -110,44 +121,44 @@ public partial class BaseMovementComponent : Component
 
     private void ApplyJumpForce()
     {
-        entity.Velocity = new Vector2(
-            entity.Velocity.X,
+        _character.Velocity = new Vector2(
+            _character.Velocity.X,
             -jumpForce
         );
     }
 
     private bool CanJump()
     {
-        return entity.IsOnFloor() || (_coyoteTimer > 0 && _jumpBufferTimer > 0);
+        return _character.IsOnFloor() || (_coyoteTimer > 0 && _jumpBufferTimer > 0);
     }
 
     private void ApplyGravity(float dt) // This function is lying and does more than one thing
     {
-        Vector2 gravity = entity.GetGravity();
+        Vector2 gravity = _character.GetGravity();
 
         // Make the player fall faster
-        if (entity.Velocity.Y > 0)
+        if (_character.Velocity.Y > 0)
         {
             gravity *= fallMultiplier;
         }
 
         // Adjust gravity at the peak of the player's jump
-        if (Mathf.Abs(entity.Velocity.Y) < jumpHangTimeThreshold)
+        if (Mathf.Abs(_character.Velocity.Y) < jumpHangTimeThreshold)
         {
             gravity *= jumpHangGravityMultiplier;
         }
 
-        entity.Velocity += gravity * gravityScale * dt;
+        _character.Velocity += gravity * gravityScale * dt;
 
         // Cap max fall speed
-        entity.Velocity = new Vector2(entity.Velocity.X, Mathf.Min(entity.Velocity.Y, maxFallSpeed));
+        _character.Velocity = new Vector2(_character.Velocity.X, Mathf.Min(_character.Velocity.Y, maxFallSpeed));
     }
 
     private void GroundSnap()
     {
-        if (entity.IsOnFloor() && entity.Velocity.Y > 0)
+        if (_character.IsOnFloor() && _character.Velocity.Y > 0)
         {
-            entity.Velocity = new Vector2(entity.Velocity.X, 0);
+            _character.Velocity = new Vector2(_character.Velocity.X, 0);
         }
     }
 }

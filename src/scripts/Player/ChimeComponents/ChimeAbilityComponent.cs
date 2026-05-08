@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public partial class ChimeAbilityComponent : Component
+public partial class ChimeAbilityComponent : Component<CharacterBody2D>
 {
     [Export] public PackedScene chimelingScene;
 
@@ -26,13 +26,16 @@ public partial class ChimeAbilityComponent : Component
     private List<Chimeling> _chimelingPool = new();
     private int _chimelingIndex = 0;
 
+    private CharacterBody2D _character;
     private InputComponent _input;
 
-    public override void _Ready()
+    public override void Init(Entity<CharacterBody2D> entity)
     {
+        base.Init(entity);
+        _character = entity.node;
         _input = entity.GetComponent<InputComponent>();
 
-       UpdateChimelingPoolSize();
+        UpdateChimelingPoolSize();
     }
 
     private void UpdateChimelingPoolSize()
@@ -41,7 +44,7 @@ public partial class ChimeAbilityComponent : Component
         {
             Chimeling chimeling = chimelingScene.Instantiate<Chimeling>();
 
-            this.AddChild(chimeling);
+            _character.AddChild(chimeling);
 
             chimeling.Deactivate();
 
@@ -68,7 +71,7 @@ public partial class ChimeAbilityComponent : Component
 
     private void HandleGroundReset()
     {
-        if (_requiresGroundReset && entity.IsOnFloor())
+        if (_requiresGroundReset && _character.IsOnFloor())
         {
             _requiresGroundReset = false;
         }
@@ -94,7 +97,7 @@ public partial class ChimeAbilityComponent : Component
         {
             _holdTimer -= dt;
 
-            entity.Velocity = Vector2.Zero;
+            _character.Velocity = Vector2.Zero;
 
             if (_holdTimer <= 0)
             {
@@ -122,7 +125,7 @@ public partial class ChimeAbilityComponent : Component
             _chimelingIndex++;
             chimeling.Activate();
 
-            chimeling.GlobalPosition = entity.GlobalPosition;
+            chimeling.GlobalPosition = _character.GlobalPosition;
             CardinalDirection dir = GetQuadrant(_input.mouseDirection);
 
             chimeling.MoveTo(_input.mouseWorldPosition, chimelingSpeed);
@@ -176,7 +179,7 @@ public partial class ChimeAbilityComponent : Component
             Chimeling chimeling = _chimelingPool[i];
 
             chimeling.EmitSoundwave();
-            chimeling.BeginReturn(entity.GlobalPosition);
+            chimeling.BeginReturn(_character.GlobalPosition);
         }
     }
 
@@ -186,7 +189,7 @@ public partial class ChimeAbilityComponent : Component
         {
             Chimeling chimeling = _chimelingPool[i];
 
-            chimeling.BeginReturn(entity.GlobalPosition);
+            chimeling.BeginReturn(_character.GlobalPosition);
         }
     }
 

@@ -2,50 +2,66 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public abstract partial class Entity : CharacterBody2D
+public class Entity<T> where T : Node
 {
-	protected List<Component> components = new();
+	private readonly T _node;
 
-	public override void _Ready()
-  	{
-		foreach(Node child in GetChildren())
+	public T node => _node;
+
+	private readonly List<Component<T>> _components = new();
+
+	public Entity(T entity)
+	{
+		_node = entity;
+	}
+
+	public void RegisterChildren()
+	{
+		foreach (Node child in _node.GetChildren())
 		{
-			if (child is Component c) {
+			if (child is Component<T> c)
+			{
 				AddComponent(c);
 			}
 		}
 	}
 
-	public void AddComponent(Component component)
+	public void AddComponent(Component<T> component)
 	{
-		components.Add(component);
+		_components.Add(component);
 		component.Init(this);
 	}
 
-	public T GetComponent<T>() where T : Component
+	public U GetComponent<U>() where U : Component<T>
 	{
-			foreach (var c in components)
-					if (c is T t) return t;
-			return null;
+		foreach (var c in _components)
+		{
+			if (c is U u)
+				return u;
+		}
+
+		return null;
 	}
 
-	public override void _PhysicsProcess(double delta)
+	public void PrePhysicsProcess(float dt)
 	{
-		float dt = (float) delta;
-		
-		foreach(var c in components)
+		foreach (var c in _components)
 		{
 			c.PrePhysicsProcess(dt);
 		}
+	}
 
-		foreach(var c in components)
+	public void PhysicsProcess(float dt)
+	{
+		foreach (var c in _components)
 		{
 			c.PhysicsProcess(dt);
 		}
+	}
 
-		MoveAndSlide();
-
-		foreach(var c in components)
+	public void PostPhysicsProcess(float dt)
+	{
+		foreach (var c in _components)
 		{
 			c.PostPhysicsProcess(dt);
 		}

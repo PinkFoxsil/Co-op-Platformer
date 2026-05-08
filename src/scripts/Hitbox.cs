@@ -6,7 +6,7 @@ public partial class Hitbox : Area2D
 {
     private float lifetimeDuration;
 
-    public override void _Ready()
+    public void __init__()
     {
         
     }

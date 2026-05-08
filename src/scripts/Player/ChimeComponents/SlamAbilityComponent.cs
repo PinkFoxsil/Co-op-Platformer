@@ -2,67 +2,69 @@ using Godot;
 
 public partial class SlamAbilityComponent : AttackComponent
 {
-    [Export] public float slamForce = 800f;
-    [Export] public int damage = 1;
+	[Export] public float slamForce = 800f;
+	[Export] public int damage = 1;
 
-    private bool _isSlamming;
-    private Area2D _airAttackHitbox;
+	private bool _isSlamming;
+	private Area2D _airAttackHitbox;
 
-    public override void _Ready()
-    {
-        base._Ready();
-        
-        _airAttackHitbox = entity.GetNode<Node2D>("Hitboxes").GetNode<Area2D>("Air");
-    }
+	private CharacterBody2D _character;
 
-    public override bool CanAttack()
-    {
-        if (_isSlamming)
-        {
-            return false;
-        }
-        
-        return base.CanAttack();
-    }
+	public override void Init(Entity<CharacterBody2D> entity)
+	{
+		base.Init(entity);
+		_character = entity.node;
+		_airAttackHitbox = _character.GetNode<Node2D>("Hitboxes").GetNode<Area2D>("Air");
+	}
 
-    public override CardinalDirection DetermineAttackDirection(InputComponent input)
-    {
-        Vector2 mouse = input.mouseRelativePosition;
+	public override bool CanAttack()
+	{
+		if (_isSlamming)
+		{
+			return false;
+		}
+		
+		return base.CanAttack();
+	}
 
-        // Doesn't allow down attacks while on the ground.
-        if (entity.IsOnFloor())
-        {
-            if (mouse.Y > 0 || Mathf.Abs(mouse.X) > -mouse.Y)
-            {
-                return mouse.X > 0 ?
-                    CardinalDirection.RIGHT :
-                    CardinalDirection.LEFT;
-            }
-            else
-            {
-                return CardinalDirection.UP;
-            }
-        }
-        else
-        {
-            if (Mathf.Abs(mouse.X) > Mathf.Abs(mouse.Y))
-            {
-                return mouse.X > 0 ?
-                    CardinalDirection.RIGHT :
-                    CardinalDirection.LEFT;
-            }
-            else
-            {
-                return mouse.Y > 0 ?
-                    CardinalDirection.DOWN :
-                    CardinalDirection.UP;
-            }
-        }
-    }
+	public override CardinalDirection DetermineAttackDirection(InputComponent input)
+	{
+		Vector2 mouse = input.mouseRelativePosition;
 
-    public override void AttackDown()
-    {
-        _isSlamming = true;
-        entity.Velocity = new Vector2(entity.Velocity.X, slamForce);
-    }
+		// Doesn't allow down attacks while on the ground.
+		if (_character.IsOnFloor())
+		{
+			if (mouse.Y > 0 || Mathf.Abs(mouse.X) > -mouse.Y)
+			{
+				return mouse.X > 0 ?
+					CardinalDirection.RIGHT :
+					CardinalDirection.LEFT;
+			}
+			else
+			{
+				return CardinalDirection.UP;
+			}
+		}
+		else
+		{
+			if (Mathf.Abs(mouse.X) > Mathf.Abs(mouse.Y))
+			{
+				return mouse.X > 0 ?
+					CardinalDirection.RIGHT :
+					CardinalDirection.LEFT;
+			}
+			else
+			{
+				return mouse.Y > 0 ?
+					CardinalDirection.DOWN :
+					CardinalDirection.UP;
+			}
+		}
+	}
+
+	public override void AttackDown()
+	{
+		_isSlamming = true;
+		_character.Velocity = new Vector2(_character.Velocity.X, slamForce);
+	}
 }
