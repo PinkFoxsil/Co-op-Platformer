@@ -22,7 +22,7 @@ public partial class AttackComponent : Component
     public override void _Ready()
     {
         Node2D hitboxes = entity.GetNode<Node2D>("Hitboxes");
-        
+
         _leftAttackHitbox = hitboxes.GetNode<Area2D>("Left");
         _rightAttackHitbox = hitboxes.GetNode<Area2D>("Right");
         _upAttackHitbox = hitboxes.GetNode<Area2D>("Up");
