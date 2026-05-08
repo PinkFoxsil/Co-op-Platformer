@@ -6,7 +6,7 @@ public abstract partial class Component : Node
 {
 	public Entity entity { get; private set; }
 
-	public void Init(Entity entity)
+	public virtual void Init(Entity entity)
 	{
 			this.entity = entity;
 			GD.Print(this.entity);

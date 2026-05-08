@@ -3,27 +3,27 @@ using System;
 
 public partial class Chimeling : Entity
 {
-    public void Activate()
-    {
-    }
+	public void Activate()
+	{
+	}
 
-    public void Deactivate()
-    {
-        
-    }
+	public void Deactivate()
+	{
+		
+	}
 
-    public void MoveTo(Vector2 targetPosition, float speed)
-    {
-        
-    }
+	public void MoveTo(Vector2 targetPosition, float speed)
+	{
+		
+	}
 
-    public void EmitSoundwave()
-    {
-        
-    }
+	public void EmitSoundwave()
+	{
+		
+	}
 
-    public void BeginReturn(Vector2 returnPosition)
-    {
-        
-    }
+	public void BeginReturn(Vector2 returnPosition)
+	{
+		
+	}
 }

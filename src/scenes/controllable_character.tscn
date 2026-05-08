@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://c8cdp1o7c2ve2" path="res://src/scripts/Player/BaseComponents/InputComponent.cs" id="3_xjkdw"]
 [ext_resource type="Script" uid="uid://bbhbikl0kig7" path="res://src/scripts/Player/BaseComponents/BaseMovementComponent.cs" id="4_rwegb"]
 [ext_resource type="Script" uid="uid://b4n8ir6rxcgfg" path="res://src/scripts/Player/BaseComponents/DashComponent.cs" id="5_fog2k"]
-[ext_resource type="Script" uid="uid://dyjhjq84wb2ug" path="res://src/scripts/Player/BaseComponents/AttackComponent.cs" id="6_xjkdw"]
+[ext_resource type="Script" uid="uid://buli3ujpqilph" path="res://src/scripts/Player/BaseComponents/AttackComponent.cs" id="6_xjkdw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ut82q"]
 size = Vector2(32, 64)
