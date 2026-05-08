@@ -21,15 +21,11 @@ public partial class AttackComponent : Component
 
     public override void _Ready()
     {
-        _attackCooldownTimer = 0f;
+        Node2D hitboxes = entity.GetNode<Node2D>("Hitboxes");
         
-        _leftHitboxTimer = 0f;
-        _rightHitboxTimer = 0f;
-        _upHitboxTimer = 0f;
-
-        _leftAttackHitbox = GetNode<Area2D>("Left");
-        _rightAttackHitbox = GetNode<Area2D>("Right");
-        _upAttackHitbox = GetNode<Area2D>("Up");
+        _leftAttackHitbox = hitboxes.GetNode<Area2D>("Left");
+        _rightAttackHitbox = hitboxes.GetNode<Area2D>("Right");
+        _upAttackHitbox = hitboxes.GetNode<Area2D>("Up");
     }
 
     public override void PhysicsProcess(float dt)
@@ -69,32 +65,53 @@ public partial class AttackComponent : Component
             return;
         }
 
-        if (input.attack1Pressed && _attackCooldownTimer <= 0f)
+        if (input.attack1Pressed && CanAttack())
         {
-            _attackCooldownTimer = attackCooldown;
+            Attack(input);
+        }
+    }
+
+    public virtual bool CanAttack()
+    {
+        return _attackCooldownTimer <= 0f;
+    }
+
+    private void Attack(InputComponent input)
+    {
+        _attackCooldownTimer = attackCooldown;
             
-            if (Mathf.Abs(input.mouseRelativePosition.X) > Mathf.Abs(input.mouseRelativePosition.Y))
-            {
-                if (input.mouseRelativePosition.X > 0)
-                {
-                    AttackRight();
-                }
-                else
-                {
-                    AttackLeft();
-                }
-            }
-            else
-            {
-                if (input.mouseRelativePosition.Y < 0)
-                {
-                    AttackUp();
-                }
-                else
-                {
-                    // attackDown();
-                }
-            }
+        switch (DetermineAttackDirection(input))
+        {
+            case CardinalDirection.LEFT:
+                AttackLeft();
+                break;
+            case CardinalDirection.RIGHT:
+                AttackRight();
+                break;
+            case CardinalDirection.UP:
+                AttackUp();
+                break;
+            case CardinalDirection.DOWN:
+                AttackDown();
+                break;
+        }
+    }
+
+    public virtual CardinalDirection DetermineAttackDirection(InputComponent input)
+    {
+        Vector2 mouse = input.mouseRelativePosition;
+
+        if (Mathf.Abs(mouse.X) > Mathf.Abs(mouse.Y))
+        {
+            return mouse.X > 0 ?
+                CardinalDirection.RIGHT :
+                CardinalDirection.LEFT;
+        }
+        else
+        {
+            return mouse.Y > 0 ?
+                CardinalDirection.DOWN :
+                CardinalDirection.UP;
         }
     }
 
@@ -114,5 +131,10 @@ public partial class AttackComponent : Component
     {
         _upAttackHitbox.GetNode<CollisionShape2D>("Hitbox").Disabled = false;
         _upHitboxTimer = attackDuration;
+    }
+
+    public virtual void AttackDown()
+    {
+        
     }
 }

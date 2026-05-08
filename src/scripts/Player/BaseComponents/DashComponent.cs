@@ -49,7 +49,7 @@ public partial class DashComponent : Component
 		{
 			return;
 		}
-			
+		
 		_currentDashCharges++;
 		if (_currentDashCharges < maxDashes)
 		{
@@ -57,17 +57,9 @@ public partial class DashComponent : Component
 		}
 	}
 
-    private void HandleGroundReset()
-    {
-        if (_requiresGroundReset && entity.IsOnFloor())
-        {
-            _requiresGroundReset = false;
-        }
-    }
-
 	private void CheckDashTriggered(InputComponent input)
 	{
-		if (!input.ability1Pressed || input.lastInputX == 0)
+		if (!input.ability1Pressed)
 		{
 			return;
 		}
@@ -98,6 +90,14 @@ public partial class DashComponent : Component
 		return _currentDashCharges > 0 && !_dashing && !_recovering;
 	}
 
+	private void HandleGroundReset()
+    {
+        if (_requiresGroundReset && entity.IsOnFloor())
+        {
+            _requiresGroundReset = false;
+        }
+    }
+
 	private void UpdateDash(float dt, InputComponent input)
 	{
 		if (!_dashing)
@@ -121,9 +121,14 @@ public partial class DashComponent : Component
 		_dashRecoveryTimer = recoveryTime;
 	}
 
-	private void ApplyDashForce(int direction)
+	private void ApplyDashForce(int directionX)
 	{
-		entity.Velocity = new Vector2(direction * dashSpeed, 0);
+		if (directionX == 0)
+		{
+			directionX = 1;
+		}
+
+		entity.Velocity = new Vector2(directionX * dashSpeed, 0);
 	}
 
 	private void UpdateRecovery(float dt)

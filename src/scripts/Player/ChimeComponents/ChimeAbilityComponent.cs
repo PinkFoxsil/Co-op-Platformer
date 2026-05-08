@@ -2,14 +2,6 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-enum NoteDirection
-{
-    Up,
-    Down,
-    Left,
-    Right
-}
-
 public partial class ChimeAbilityComponent : Component
 {
     [Export] public PackedScene chimelingScene;
@@ -131,24 +123,24 @@ public partial class ChimeAbilityComponent : Component
             chimeling.Activate();
 
             chimeling.GlobalPosition = entity.GlobalPosition;
-            NoteDirection dir = GetQuadrant(_input.mouseDirection);
+            CardinalDirection dir = GetQuadrant(_input.mouseDirection);
 
             chimeling.MoveTo(_input.mouseWorldPosition, chimelingSpeed);
         }
     }
 
-    private NoteDirection GetQuadrant(Vector2 dir)
+    private CardinalDirection GetQuadrant(Vector2 dir)
     {
         if (Mathf.Abs(dir.X) > Mathf.Abs(dir.Y))
         {
             return dir.X > 0
-                ? NoteDirection.Right
-                : NoteDirection.Left;
+                ? CardinalDirection.RIGHT
+                : CardinalDirection.LEFT;
         }
 
         return dir.Y > 0
-            ? NoteDirection.Down
-            : NoteDirection.Up;
+            ? CardinalDirection.DOWN
+            : CardinalDirection.UP;
     }
 
     private void EndHold()
