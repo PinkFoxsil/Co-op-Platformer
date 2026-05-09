@@ -22,15 +22,15 @@ enum AttackState
 
 public partial class Player : CharacterBody2D
 {
-    private Entity<CharacterBody2D> _entity;
+    private Entity<Player> _entity;
 
-    public Entity<CharacterBody2D> entity => _entity;
+    public Entity<Player> entity => _entity;
 
 	private CharacterState _currentState { get; set; }
 
 	public override void _Ready()
 	{
-		_entity = new Entity<CharacterBody2D>(this);
+		_entity = new Entity<Player>(this);
 		_entity.RegisterChildren();
 
 		_currentState = CharacterState.Idle;

@@ -110,8 +110,7 @@ public static class DirectionUtility
             return CompassDirection.CENTER;
         }
 
-        dir = dir.Normalized();
-        float angle = Mathf.RadToDeg(Mathf.Atan2(dir.Y, dir.X));
+        float angle = Mathf.RadToDeg(dir.Angle());
         angle = (angle + 360) % 360;
 
         if (angle >= 337.5f || angle < 22.5f)

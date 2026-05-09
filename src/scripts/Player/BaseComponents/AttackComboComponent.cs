@@ -17,7 +17,7 @@ public partial class AttackComboComponent : Component<Player>
 
 		Node2D hitboxes = entity.node.GetNode<Node2D>("Hitboxes");
 
-		_attackComboHitbox = hitboxes.GetNode<Hitbox>("LeftHitbox");
+		_attackComboHitbox = hitboxes.GetNode<Hitbox>("RightHitbox");
 		
 	}
 
@@ -46,6 +46,7 @@ public partial class AttackComboComponent : Component<Player>
 	{
 		_attackCooldownTimer = attackCooldown;
 		CardinalDirection dir = DirectionUtility.GetCardinalDirection(input.mouseRelativePosition);
+
 		if (dir != CardinalDirection.DOWN)
         {
 			RotateHitbox(dir);
@@ -56,7 +57,7 @@ public partial class AttackComboComponent : Component<Player>
 
 	private void RotateHitbox(CardinalDirection dir)
     {
-        Vector2 vector = DirectionUtility.ToVector(dir);
-		_attackComboHitbox.Rotation = vector.Angle();
+        Vector2 toVector = DirectionUtility.ToVector(dir);
+		_attackComboHitbox.Rotation = toVector.Angle();
     }
 }

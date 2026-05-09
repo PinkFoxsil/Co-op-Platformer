@@ -43,26 +43,6 @@ position = Vector2(50, 0)
 shape = SubResource("RectangleShape2D_fsmad")
 disabled = true
 
-[node name="LeftHitbox" type="Area2D" parent="Hitboxes" unique_id=1154539293]
-monitoring = false
-monitorable = false
-script = ExtResource("3_rwegb")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitboxes/LeftHitbox" unique_id=1459135782]
-position = Vector2(-50, 0)
-shape = SubResource("RectangleShape2D_fsmad")
-disabled = true
-
-[node name="UpHitbox" type="Area2D" parent="Hitboxes" unique_id=2004279719]
-monitoring = false
-monitorable = false
-script = ExtResource("3_rwegb")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitboxes/UpHitbox" unique_id=556193660]
-position = Vector2(0, -66.5)
-shape = SubResource("RectangleShape2D_hsffa")
-disabled = true
-
 [node name="AirDownHitbox" type="Area2D" parent="Hitboxes" unique_id=1039402662]
 monitoring = false
 monitorable = false

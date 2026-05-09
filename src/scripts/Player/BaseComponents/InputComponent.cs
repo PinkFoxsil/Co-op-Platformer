@@ -38,13 +38,10 @@ public partial class InputComponent : Component<Player>
 
 	public override void PrePhysicsProcess(float dt)
 	{
-		GD.Print("Processing input");
 		if (!enabled)
 		{
 			return;
 		}
-
-		GD.Print("Processing input");
 
 		inputX = Input.GetActionStrength("Right") - Input.GetActionStrength("Left");
 
