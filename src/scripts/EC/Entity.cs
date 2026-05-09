@@ -2,15 +2,15 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public class Entity<T> where T : Node
+public class Entity
 {
-	private readonly T _node;
+	private readonly Node _node;
 
-	public T node => _node;
+	public Node node => _node;
 
-	private readonly List<Component<T>> _components = new();
+	private readonly List<Component> _components = new();
 
-	public Entity(T entity)
+	public Entity(Node entity)
 	{
 		_node = entity;
 	}
@@ -19,25 +19,25 @@ public class Entity<T> where T : Node
 	{
 		foreach (Node child in _node.GetChildren())
 		{
-			if (child is Component<T> c)
+			if (child is Component c)
 			{
 				AddComponent(c);
 			}
 		}
 	}
 
-	public void AddComponent(Component<T> component)
+	public void AddComponent(Component component)
 	{
 		_components.Add(component);
 		component.Init(this);
 	}
 
-	public U GetComponent<U>() where U : Component<T>
+	public Component GetComponent(Type type)
 	{
 		foreach (var c in _components)
 		{
-			if (c is U u)
-				return u;
+			if (type.IsInstanceOfType(c))
+				return c;
 		}
 
 		return null;

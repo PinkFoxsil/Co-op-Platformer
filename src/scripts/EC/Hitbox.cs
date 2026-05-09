@@ -6,9 +6,9 @@ public partial class Hitbox : Area2D
 	[Export] public bool startsActive = false;
 	[Export] public bool staysActive = false;
 
-    private Entity<Area2D> _entity;
+	private Entity _entity;
 	
-    public Entity<Area2D> entity => _entity;
+	public Entity entity => _entity;
 
 	private CollisionShape2D _collisionShape;
 	private float _lifetimeTimer;
@@ -16,7 +16,7 @@ public partial class Hitbox : Area2D
 
 	public override void _Ready()
 	{
-		_entity = new Entity<Area2D>(this);
+		_entity = new Entity(this);
 		_entity.RegisterChildren();
 		_collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
 
@@ -70,7 +70,6 @@ public partial class Hitbox : Area2D
 
 	public void Activate()
 	{
-		
 		
 		_collisionShape.SetDeferred(
 			"disabled",

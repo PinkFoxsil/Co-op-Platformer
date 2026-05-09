@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class GroundSlamComponent : Component<Player>
+public partial class GroundSlamComponent : Component
 {
 	[Export] public float attackCooldown = 1f;
 	[Export] public float attackDuration = 0.5f;
@@ -12,12 +12,14 @@ public partial class GroundSlamComponent : Component<Player>
 	private Hitbox _groundSlamHitbox;
 	
 	private Player _character;
+	private InputComponent _input;
 	
-	public override void Init(Entity<Player> entity)
+	public override void Init(Entity entity)
 	{
 		base.Init(entity);
 		
-		_character = entity.node;
+		_character = (Player) entity.node;
+		_input = (InputComponent) entity.GetComponent(typeof(InputComponent));
 
 		Node2D hitboxes = entity.node.GetNode<Node2D>("Hitboxes");
 		_groundSlamHitbox = hitboxes.GetNode<Hitbox>("GroundHitbox");
@@ -28,15 +30,14 @@ public partial class GroundSlamComponent : Component<Player>
 	{
 		_attackCooldownTimer -= dt;
 
-		InputComponent input = entity.GetComponent<InputComponent>();
-		if (input == null)
+		if (_input == null)
 		{
 			return;
 		}
 
-		if (input.attack1Pressed && CanAttack())
+		if (_input.attack1Pressed && CanAttack())
 		{
-			Attack(input);
+			Attack();
 		}
 	}
 
@@ -45,10 +46,10 @@ public partial class GroundSlamComponent : Component<Player>
 		return _attackCooldownTimer <= 0f;
 	}
 
-	private void Attack(InputComponent input)
+	private void Attack()
 	{
 		_attackCooldownTimer = attackCooldown;
-		CardinalDirection dir = DirectionUtility.GetCardinalDirection(input.mouseRelativePosition);
+		CardinalDirection dir = DirectionUtility.GetCardinalDirection(_input.mouseRelativePosition);
 
 		if (dir == CardinalDirection.DOWN && _character.IsOnFloor())
 		{

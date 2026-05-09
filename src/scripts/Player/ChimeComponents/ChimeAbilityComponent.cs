@@ -2,8 +2,8 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public partial class ChimeAbilityComponent : Component<Player>
-{
+public partial class ChimeAbilityComponent : Component
+{	
 	[Export] public PackedScene chimelingScene;
 
 	[Export] public int maxChimelings = 2;
@@ -29,11 +29,11 @@ public partial class ChimeAbilityComponent : Component<Player>
 	private Player _character;
 	private InputComponent _input;
 
-	public override void Init(Entity<Player> entity)
+	public override void Init(Entity entity)
 	{
 		base.Init(entity);
-		_character = entity.node;
-		_input = entity.GetComponent<InputComponent>();
+		_character = (Player) entity.node;
+		_input = (InputComponent) entity.GetComponent(typeof(InputComponent));
 
 		UpdateChimelingPoolSize();
 	}

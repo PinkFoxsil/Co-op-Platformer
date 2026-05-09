@@ -1,12 +1,11 @@
 using Godot;
 using System;
-using System.Collections.Generic;
 
-public abstract partial class Component<T> : Node where T : Node
+public abstract partial class Component: Node
 {
-	public Entity<T> entity { get; private set; }
+	public Entity entity { get; private set; }
 
-	public virtual void Init(Entity<T> entity)
+	public virtual void Init(Entity entity)
 	{
 			this.entity = entity;
 	}
