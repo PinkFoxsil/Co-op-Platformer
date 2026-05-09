@@ -16,8 +16,11 @@ size = Vector2(32, 64)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fsmad"]
 size = Vector2(120, 80)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_56prs"]
+size = Vector2(14, 58)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hsffa"]
-size = Vector2(82, 117)
+size = Vector2(78, 117)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xjkdw"]
 size = Vector2(146, 48)
@@ -44,6 +47,16 @@ script = ExtResource("3_rwegb")
 position = Vector2(50, 0)
 shape = SubResource("RectangleShape2D_fsmad")
 disabled = true
+
+[node name="PlayerHitbox" type="Area2D" parent="Hitboxes" unique_id=223027676]
+modulate = Color(18.892157, 0, 0, 1)
+monitoring = false
+monitorable = false
+script = ExtResource("3_rwegb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitboxes/PlayerHitbox" unique_id=1782273122]
+shape = SubResource("RectangleShape2D_56prs")
+debug_color = Color(1, 0, 0, 0.41960785)
 
 [node name="AirDownHitbox" type="Area2D" parent="Hitboxes" unique_id=1039402662]
 monitoring = false

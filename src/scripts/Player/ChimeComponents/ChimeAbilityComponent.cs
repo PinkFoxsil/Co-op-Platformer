@@ -192,5 +192,4 @@ public partial class ChimeAbilityComponent : Component<Player>
 			chimeling.BeginReturn(_character.GlobalPosition);
 		}
 	}
-
 }
