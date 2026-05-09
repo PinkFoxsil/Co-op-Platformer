@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class AttackComboComponent : Component<Player>
+public partial class GroundSlamComponent : Component<Player>
 {
 	[Export] public float attackCooldown = 1f;
 	[Export] public float attackDuration = 0.5f;
@@ -9,15 +9,18 @@ public partial class AttackComboComponent : Component<Player>
 
 	private float _attackCooldownTimer;
 
-	private Hitbox _attackComboHitbox;
+	private Hitbox _groundSlamHitbox;
+	
+	private Player _character;
 	
 	public override void Init(Entity<Player> entity)
 	{
 		base.Init(entity);
+		
+		_character = entity.node;
 
 		Node2D hitboxes = entity.node.GetNode<Node2D>("Hitboxes");
-
-		_attackComboHitbox = hitboxes.GetNode<Hitbox>("AttackComboHitbox");
+		_groundSlamHitbox = hitboxes.GetNode<Hitbox>("GroundHitbox");
 		
 	}
 
@@ -47,17 +50,10 @@ public partial class AttackComboComponent : Component<Player>
 		_attackCooldownTimer = attackCooldown;
 		CardinalDirection dir = DirectionUtility.GetCardinalDirection(input.mouseRelativePosition);
 
-		if (dir != CardinalDirection.DOWN)
+		if (dir == CardinalDirection.DOWN && _character.IsOnFloor())
 		{
-			RotateHitbox(dir);
-			_attackComboHitbox.Activate(attackDuration);
+			_groundSlamHitbox.Activate(attackDuration);
 
 		}
-	}
-
-	private void RotateHitbox(CardinalDirection dir)
-	{
-		Vector2 toVector = DirectionUtility.ToVector(dir);
-		_attackComboHitbox.Rotation = toVector.Angle();
 	}
 }

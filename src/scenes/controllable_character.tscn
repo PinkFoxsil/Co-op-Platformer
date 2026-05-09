@@ -7,6 +7,8 @@
 [ext_resource type="Script" uid="uid://bbhbikl0kig7" path="res://src/scripts/Player/BaseComponents/BaseMovementComponent.cs" id="4_rwegb"]
 [ext_resource type="Script" uid="uid://b4n8ir6rxcgfg" path="res://src/scripts/Player/BaseComponents/DashComponent.cs" id="5_fog2k"]
 [ext_resource type="Script" uid="uid://bg5d8tvqch1a1" path="res://src/scripts/Player/BaseComponents/AttackComboComponent.cs" id="7_rwegb"]
+[ext_resource type="Script" uid="uid://dktlhs3k30ce4" path="res://src/scripts/Player/ChimeComponents/PlungeComponent.cs" id="8_fog2k"]
+[ext_resource type="Script" uid="uid://coua8m2g7yp0l" path="res://src/scripts/Player/ChimeComponents/GroundSlamComponent.cs" id="9_56prs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ut82q"]
 size = Vector2(32, 64)
@@ -33,12 +35,12 @@ texture = ExtResource("1_cv7mj")
 
 [node name="Hitboxes" type="Node2D" parent="." unique_id=44870706]
 
-[node name="RightHitbox" type="Area2D" parent="Hitboxes" unique_id=2000297250]
+[node name="AttackComboHitbox" type="Area2D" parent="Hitboxes" unique_id=2000297250]
 monitoring = false
 monitorable = false
 script = ExtResource("3_rwegb")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitboxes/RightHitbox" unique_id=996297961]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitboxes/AttackComboHitbox" unique_id=996297961]
 position = Vector2(50, 0)
 shape = SubResource("RectangleShape2D_fsmad")
 disabled = true
@@ -47,6 +49,7 @@ disabled = true
 monitoring = false
 monitorable = false
 script = ExtResource("3_rwegb")
+staysActive = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitboxes/AirDownHitbox" unique_id=1568513328]
 position = Vector2(0, 65.5)
@@ -72,5 +75,11 @@ script = ExtResource("4_rwegb")
 [node name="DashComponent" type="Node" parent="." unique_id=282637028]
 script = ExtResource("5_fog2k")
 
-[node name="SlamAbilityComponent" type="Node" parent="." unique_id=2089433268]
+[node name="AttackComboComponent" type="Node" parent="." unique_id=2089433268]
 script = ExtResource("7_rwegb")
+
+[node name="PlungeComponent" type="Node" parent="." unique_id=1341418642]
+script = ExtResource("8_fog2k")
+
+[node name="GroundSlamComponent" type="Node" parent="." unique_id=1182941634]
+script = ExtResource("9_56prs")

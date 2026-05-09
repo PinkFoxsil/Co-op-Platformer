@@ -26,15 +26,15 @@ public partial class InputComponent : Component<Player>
 	public bool attack2Held;
 	public bool attack2Released;
 
-    private Player _character;
+	private Player _character;
 
-    public override void Init(Entity<Player> entity)
-    {
+	public override void Init(Entity<Player> entity)
+	{
 		enabled = true; // Remove this in production and enable after loading scene
 
-        base.Init(entity);
-        _character = entity.node;
-    }
+		base.Init(entity);
+		_character = entity.node;
+	}
 
 	public override void PrePhysicsProcess(float dt)
 	{

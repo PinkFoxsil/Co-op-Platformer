@@ -4,193 +4,193 @@ using System.Collections.Generic;
 
 public partial class ChimeAbilityComponent : Component<Player>
 {
-    [Export] public PackedScene chimelingScene;
+	[Export] public PackedScene chimelingScene;
 
 	[Export] public int maxChimelings = 2;
 
-    [Export] public float maxHoldTime = 3f;
+	[Export] public float maxHoldTime = 3f;
 
-    [Export] public float holdCooldown = 5f;
-    [Export] public float tapCooldown = 1.5f;
+	[Export] public float holdCooldown = 5f;
+	[Export] public float tapCooldown = 1.5f;
 
-    [Export] public float chimelingSpeed = 600f;
+	[Export] public float chimelingSpeed = 600f;
 
-    private float _holdTimer;
+	private float _holdTimer;
 
-    private float _holdCooldownTimer;
-    private float _tapCooldownTimer;
+	private float _holdCooldownTimer;
+	private float _tapCooldownTimer;
 
-    private bool _abilityActive;
-    private bool _requiresGroundReset;
+	private bool _abilityActive;
+	private bool _requiresGroundReset;
 
-    private List<Chimeling> _chimelingPool = new();
-    private int _chimelingIndex = 0;
+	private List<Chimeling> _chimelingPool = new();
+	private int _chimelingIndex = 0;
 
-    private Player _character;
-    private InputComponent _input;
+	private Player _character;
+	private InputComponent _input;
 
-    public override void Init(Entity<Player> entity)
-    {
-        base.Init(entity);
-        _character = entity.node;
-        _input = entity.GetComponent<InputComponent>();
+	public override void Init(Entity<Player> entity)
+	{
+		base.Init(entity);
+		_character = entity.node;
+		_input = entity.GetComponent<InputComponent>();
 
-        UpdateChimelingPoolSize();
-    }
+		UpdateChimelingPoolSize();
+	}
 
-    private void UpdateChimelingPoolSize()
-    {
-        while (_chimelingPool.Count < maxChimelings)
-        {
-            Chimeling chimeling = chimelingScene.Instantiate<Chimeling>();
+	private void UpdateChimelingPoolSize()
+	{
+		while (_chimelingPool.Count < maxChimelings)
+		{
+			Chimeling chimeling = chimelingScene.Instantiate<Chimeling>();
 
-            _character.AddChild(chimeling);
+			_character.AddChild(chimeling);
 
-            chimeling.Deactivate();
+			chimeling.Deactivate();
 
-            _chimelingPool.Add(chimeling);
-        }
-    }
+			_chimelingPool.Add(chimeling);
+		}
+	}
 
-    public void UnlockNewChimeling()
-    {
-        maxChimelings++;
-        UpdateChimelingPoolSize();
-    }
+	public void UnlockNewChimeling()
+	{
+		maxChimelings++;
+		UpdateChimelingPoolSize();
+	}
 
-    public override void PrePhysicsProcess(float dt)
-    {
-        _holdCooldownTimer -= dt;
-        _tapCooldownTimer -= dt;
+	public override void PrePhysicsProcess(float dt)
+	{
+		_holdCooldownTimer -= dt;
+		_tapCooldownTimer -= dt;
 
-        HandleGroundReset();
-        HandleHoldState(dt);
-        HandleTap();
+		HandleGroundReset();
+		HandleHoldState(dt);
+		HandleTap();
 
-    }
+	}
 
-    private void HandleGroundReset()
-    {
-        if (_requiresGroundReset && _character.IsOnFloor())
-        {
-            _requiresGroundReset = false;
-        }
-    }
+	private void HandleGroundReset()
+	{
+		if (_requiresGroundReset && _character.IsOnFloor())
+		{
+			_requiresGroundReset = false;
+		}
+	}
 
-    private void HandleHoldState(float dt)
-    {
+	private void HandleHoldState(float dt)
+	{
 
-        // Begin holding
-        if (_input.attack2Held && !_abilityActive)
-        {
-            if (_holdCooldownTimer > 0)
-                return;
+		// Begin holding
+		if (_input.attack2Held && !_abilityActive)
+		{
+			if (_holdCooldownTimer > 0)
+				return;
 
-            if (_requiresGroundReset)
-                return;
+			if (_requiresGroundReset)
+				return;
 
-            BeginHold();
-        }
+			BeginHold();
+		}
 
-        // Update holding
-        if (_abilityActive)
-        {
-            _holdTimer -= dt;
+		// Update holding
+		if (_abilityActive)
+		{
+			_holdTimer -= dt;
 
-            _character.Velocity = Vector2.Zero;
+			_character.Velocity = Vector2.Zero;
 
-            if (_holdTimer <= 0)
-            {
-                EndHold();
-                return;
-            }
+			if (_holdTimer <= 0)
+			{
+				EndHold();
+				return;
+			}
 
-            // Manual release
-            if (!_input.attack2Released)
-            {
-                EndHold();
-                return;
-            }
-        }
-    }
+			// Manual release
+			if (!_input.attack2Released)
+			{
+				EndHold();
+				return;
+			}
+		}
+	}
 
-    private void BeginHold()
-    {
-        _abilityActive = true;
+	private void BeginHold()
+	{
+		_abilityActive = true;
 
-        _holdTimer = maxHoldTime;
+		_holdTimer = maxHoldTime;
 
-        if (_chimelingIndex < _chimelingPool.Count) {
-            Chimeling chimeling = _chimelingPool[_chimelingIndex];
-            _chimelingIndex++;
-            chimeling.Activate();
+		if (_chimelingIndex < _chimelingPool.Count) {
+			Chimeling chimeling = _chimelingPool[_chimelingIndex];
+			_chimelingIndex++;
+			chimeling.Activate();
 
-            chimeling.GlobalPosition = _character.GlobalPosition;
-            CardinalDirection dir = GetQuadrant(_input.mouseDirection);
+			chimeling.GlobalPosition = _character.GlobalPosition;
+			CardinalDirection dir = GetQuadrant(_input.mouseDirection);
 
-            chimeling.MoveTo(_input.mouseWorldPosition, chimelingSpeed);
-        }
-    }
+			chimeling.MoveTo(_input.mouseWorldPosition, chimelingSpeed);
+		}
+	}
 
-    private CardinalDirection GetQuadrant(Vector2 dir)
-    {
-        if (Mathf.Abs(dir.X) > Mathf.Abs(dir.Y))
-        {
-            return dir.X > 0
-                ? CardinalDirection.RIGHT
-                : CardinalDirection.LEFT;
-        }
+	private CardinalDirection GetQuadrant(Vector2 dir)
+	{
+		if (Mathf.Abs(dir.X) > Mathf.Abs(dir.Y))
+		{
+			return dir.X > 0
+				? CardinalDirection.RIGHT
+				: CardinalDirection.LEFT;
+		}
 
-        return dir.Y > 0
-            ? CardinalDirection.DOWN
-            : CardinalDirection.UP;
-    }
+		return dir.Y > 0
+			? CardinalDirection.DOWN
+			: CardinalDirection.UP;
+	}
 
-    private void EndHold()
-    {
-        _abilityActive = false;
+	private void EndHold()
+	{
+		_abilityActive = false;
 
-        _holdCooldownTimer = holdCooldown;
+		_holdCooldownTimer = holdCooldown;
 
-        _requiresGroundReset = true;
+		_requiresGroundReset = true;
 
-    }
+	}
 
-    private void HandleTap()
-    {
-        if (!_input.attack2Pressed)
-            return;
+	private void HandleTap()
+	{
+		if (!_input.attack2Pressed)
+			return;
 
-        if (_tapCooldownTimer > 0)
-            return;
+		if (_tapCooldownTimer > 0)
+			return;
 
-        if (_chimelingIndex <= 0)
-            return;
+		if (_chimelingIndex <= 0)
+			return;
 
-        FireSoundwave();
+		FireSoundwave();
 
-        _tapCooldownTimer = tapCooldown;
-    }
+		_tapCooldownTimer = tapCooldown;
+	}
 
-    private void FireSoundwave()
-    {
-        for (int i = 0; i < _chimelingPool.Count; i++)
-        {
-            Chimeling chimeling = _chimelingPool[i];
+	private void FireSoundwave()
+	{
+		for (int i = 0; i < _chimelingPool.Count; i++)
+		{
+			Chimeling chimeling = _chimelingPool[i];
 
-            chimeling.EmitSoundwave();
-            chimeling.BeginReturn(_character.GlobalPosition);
-        }
-    }
+			chimeling.EmitSoundwave();
+			chimeling.BeginReturn(_character.GlobalPosition);
+		}
+	}
 
-    private void RecallChimelings()
-    {
-        for (int i = 0; i < _chimelingPool.Count; i++)
-        {
-            Chimeling chimeling = _chimelingPool[i];
+	private void RecallChimelings()
+	{
+		for (int i = 0; i < _chimelingPool.Count; i++)
+		{
+			Chimeling chimeling = _chimelingPool[i];
 
-            chimeling.BeginReturn(_character.GlobalPosition);
-        }
-    }
+			chimeling.BeginReturn(_character.GlobalPosition);
+		}
+	}
 
 }

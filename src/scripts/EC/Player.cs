@@ -3,28 +3,28 @@ using System;
 
 enum CharacterState
 {
-    Idle,
-    Running,
-    Jumping,
-    Falling,
-    Dashing,
-    Attacking,
-    Stunned
+	Idle,
+	Running,
+	Jumping,
+	Falling,
+	Dashing,
+	Attacking,
+	Stunned
 }
 
 enum AttackState
 {
-    LeftAttack,
-    RightAttack,
-    UpAttack,
-    DownAttack
+	LeftAttack,
+	RightAttack,
+	UpAttack,
+	DownAttack
 }
 
 public partial class Player : CharacterBody2D
 {
-    private Entity<Player> _entity;
+	private Entity<Player> _entity;
 
-    public Entity<Player> entity => _entity;
+	public Entity<Player> entity => _entity;
 
 	private CharacterState _currentState { get; set; }
 
