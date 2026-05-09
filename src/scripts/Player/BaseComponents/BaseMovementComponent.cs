@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class BaseMovementComponent : Component<Player>
+public partial class BaseMovementComponent : Component
 {
     [ExportCategory("Movement")]
     [Export] public float moveSpeed = 260f;
@@ -33,18 +33,17 @@ public partial class BaseMovementComponent : Component<Player>
     private Player _character;
     private InputComponent _input;
 
-    public override void Init(Entity<Player> entity)
+    public override void Init(Entity entity)
     {
         base.Init(entity);
-        _character = entity.node;
-        _input = entity.GetComponent<InputComponent>();
+        _character = (Player) entity.node;
+        _input = (InputComponent) entity.GetComponent(typeof(InputComponent));
     }
 
     public override void PhysicsProcess(float dt)
     {
         if (_input == null)
         {
-            GD.Print("Early return from no input");
             return;
         }
         

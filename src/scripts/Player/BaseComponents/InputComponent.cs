@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class InputComponent : Component<Player>
+public partial class InputComponent : Component
 {
 	public bool enabled;
 
@@ -28,12 +28,12 @@ public partial class InputComponent : Component<Player>
 
 	private Player _character;
 
-	public override void Init(Entity<Player> entity)
+	public override void Init(Entity entity)
 	{
 		enabled = true; // Remove this in production and enable after loading scene
 
 		base.Init(entity);
-		_character = entity.node;
+		_character = (Player) entity.node;
 	}
 
 	public override void PrePhysicsProcess(float dt)

@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class AttackComboComponent : Component<Player>
+public partial class AttackComboComponent : Component
 {
 	[Export] public float attackCooldown = 1f;
 	[Export] public float attackDuration = 0.5f;
@@ -10,13 +10,16 @@ public partial class AttackComboComponent : Component<Player>
 	private float _attackCooldownTimer;
 
 	private Hitbox _attackComboHitbox;
+
+	private InputComponent _input; 
 	
-	public override void Init(Entity<Player> entity)
+	public override void Init(Entity entity)
 	{
 		base.Init(entity);
 
-		Node2D hitboxes = entity.node.GetNode<Node2D>("Hitboxes");
+		_input = (InputComponent) entity.GetComponent(typeof(InputComponent));
 
+		Node2D hitboxes = entity.node.GetNode<Node2D>("Hitboxes");
 		_attackComboHitbox = hitboxes.GetNode<Hitbox>("AttackComboHitbox");
 		
 	}
@@ -25,15 +28,14 @@ public partial class AttackComboComponent : Component<Player>
 	{
 		_attackCooldownTimer -= dt;
 
-		InputComponent input = entity.GetComponent<InputComponent>();
-		if (input == null)
+		if (_input == null)
 		{
 			return;
 		}
 
-		if (input.attack1Pressed && CanAttack())
+		if (_input.attack1Pressed && CanAttack())
 		{
-			Attack(input);
+			Attack();
 		}
 	}
 
@@ -42,10 +44,10 @@ public partial class AttackComboComponent : Component<Player>
 		return _attackCooldownTimer <= 0f;
 	}
 
-	private void Attack(InputComponent input)
+	private void Attack()
 	{
 		_attackCooldownTimer = attackCooldown;
-		CardinalDirection dir = DirectionUtility.GetCardinalDirection(input.mouseRelativePosition);
+		CardinalDirection dir = DirectionUtility.GetCardinalDirection(_input.mouseRelativePosition);
 
 		if (dir != CardinalDirection.DOWN)
 		{

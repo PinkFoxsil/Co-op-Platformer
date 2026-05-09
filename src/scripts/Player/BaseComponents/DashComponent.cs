@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class DashComponent : Component<Player>
+public partial class DashComponent : Component
 {
 	[ExportCategory("Dash")]
  	[Export] public float dashSpeed = 1000f;
@@ -25,11 +25,11 @@ public partial class DashComponent : Component<Player>
 	private Player _character;
     private InputComponent _input;
 
-    public override void Init(Entity<Player> entity)
+    public override void Init(Entity entity)
     {
         base.Init(entity);
-        _character = entity.node;
-        _input = entity.GetComponent<InputComponent>();
+        _character = (Player) entity.node;
+        _input = (InputComponent) entity.GetComponent(typeof(InputComponent));
     }
 
 	public override void PhysicsProcess(float dt)
@@ -40,9 +40,9 @@ public partial class DashComponent : Component<Player>
 		}
 		
 		UpdateCooldowns(dt);
-		CheckDashTriggered(_input);
+		CheckDashTriggered();
 		HandleGroundReset();
-		UpdateDash(dt, _input);
+		UpdateDash(dt);
 		UpdateRecovery(dt);
 	}
 
@@ -66,9 +66,9 @@ public partial class DashComponent : Component<Player>
 		}
 	}
 
-	private void CheckDashTriggered(InputComponent input)
+	private void CheckDashTriggered()
 	{
-		if (!input.ability1Pressed)
+		if (!_input.ability1Pressed)
 		{
 			return;
 		}
@@ -107,14 +107,14 @@ public partial class DashComponent : Component<Player>
         }
     }
 
-	private void UpdateDash(float dt, InputComponent input)
+	private void UpdateDash(float dt)
 	{
 		if (!_dashing)
 		{
 			return;
 		}
 		
-		ApplyDashForce(input.lastInputX);
+		ApplyDashForce(_input.lastInputX);
 
 		_dashTimer -= dt;
 		if (_dashTimer <= 0)
