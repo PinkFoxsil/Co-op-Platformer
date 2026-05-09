@@ -1,8 +1,10 @@
 using Godot;
 using System;
 
-public partial class InputSingleton
+public partial class InputSingleton : Node
 {
+	private static InputSingleton SINGLETON;
+
 	public bool enabled;
 
 	public float inputX;
@@ -24,12 +26,23 @@ public partial class InputSingleton
 	public bool attack2Held;
 	public bool attack2Released;
 
-	public InputSingleton()
+	private InputSingleton()
 	{
 		enabled = true;
 	}
 
-	public override void PrePhysicsProcess(float dt)
+	public static InputSingleton of()
+	{
+		if (SINGLETON != null)
+		{
+			return SINGLETON;
+		}
+
+		SINGLETON = new InputSingleton();
+		return SINGLETON;
+	}
+
+	public void PrePhysicsProcess(float dt)
 	{
 		if (!enabled)
 		{

@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class AttackComboComponent : Component
+public partial class AttackComboComponent
 {
 	[Export] public float attackCooldown = 1f;
 	[Export] public float attackDuration = 0.5f;
@@ -11,20 +11,16 @@ public partial class AttackComboComponent : Component
 
 	private Hitbox _attackComboHitbox;
 
-	private InputComponent _input; 
+	private InputSingleton _input; 
 	
-	public override void Init(Entity entity)
+	public AttackComboComponent(Hitbox attackComboHitbox)
 	{
-		base.Init(entity);
-
-		_input = (InputComponent) entity.GetComponent(typeof(InputComponent));
-
-		Node2D hitboxes = entity.node.GetNode<Node2D>("Hitboxes");
-		_attackComboHitbox = hitboxes.GetNode<Hitbox>("AttackComboHitbox");
+		_input = InputSingleton.of();
+		_attackComboHitbox = attackComboHitbox;
 		
 	}
 
-	public override void PhysicsProcess(float dt)
+	public void PhysicsProcess(float dt)
 	{
 		_attackCooldownTimer -= dt;
 

@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class GroundSlamComponent : Component
+public partial class GroundSlamComponent
 {
 	[Export] public float attackCooldown = 1f;
 	[Export] public float attackDuration = 0.5f;
@@ -12,18 +12,15 @@ public partial class GroundSlamComponent : Component
 	private Hitbox _groundSlamHitbox;
 	
 	private Player _character;
-	private InputComponent _input;
+	private InputSingleton _input;
 	
-	public override void Init(Entity entity)
+	public GroundSlamComponent(CharacterBody2D character, Hitbox groundSlamHitbox)
 	{
-		base.Init(entity);
-		
-		_character = (Player) entity.node;
-		_input = (InputComponent) entity.GetComponent(typeof(InputComponent));
+		_character = (Player) character;
+		_input = InputSingleton.of();
 
-		Node2D hitboxes = entity.node.GetNode<Node2D>("Hitboxes");
-		_groundSlamHitbox = hitboxes.GetNode<Hitbox>("GroundHitbox");
-		
+		Node2D hitboxes = character;
+		_groundSlamHitbox = groundSlamHitbox;
 	}
 
 	public override void PhysicsProcess(float dt)

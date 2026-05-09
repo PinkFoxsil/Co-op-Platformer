@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class DashComponent : Component
+public partial class DashComponent
 {
 	[ExportCategory("Dash")]
  	[Export] public float dashSpeed = 1000f;
@@ -22,23 +22,17 @@ public partial class DashComponent : Component
 
 	private bool _requiresGroundReset;
 	
-	private Player _character;
-    private InputComponent _input;
+	private CharacterBody2D _character;
+	private InputSingleton _input;
 
-    public override void Init(Entity entity)
-    {
-        base.Init(entity);
-        _character = (Player) entity.node;
-        _input = (InputComponent) entity.GetComponent(typeof(InputComponent));
-    }
-
-	public override void PhysicsProcess(float dt)
+    public DashComponent(CharacterBody2D character)
 	{
-		if (_input == null) 
-		{
-			return;
-		}
-		
+		_character = character;
+		_input = InputSingleton.of();
+	}
+
+	public void PhysicsProcess(float dt)
+	{
 		UpdateCooldowns(dt);
 		CheckDashTriggered();
 		HandleGroundReset();

@@ -1,46 +1,23 @@
 using Godot;
 using System;
 
-public partial class BaseMovementComponent : Component
+public partial class BaseMovementComponent
 {
-    [ExportCategory("Movement")]
-    [Export] public float moveSpeed = 260f;
-    [Export] public float acceleration = 2000f;
-    [Export] public float deceleration = 3000f;
-
-    [ExportCategory("Jumping")]
-    [Export] public float jumpForce = 500f;
-
-    [Export] public float coyoteTime = 0.125f;
-    [Export] public float jumpBuffer = 0.1f;
-
-    [ExportGroup("Gravity")]
-    [Export] public float gravityScale = 1.4f;
-    [Export] public float fallMultiplier = 1.4f;
-    [Export] public float maxFallSpeed = 1000f;
-
-    [ExportGroup("Jump Hang")]
-    [Export] public float jumpHangTimeThreshold = 5f;
-    [Export] public float jumpHangGravityMultiplier = 0.5f;
-
-    [ExportCategory("Control")]
-    [Export] public float airControl = 0.6f;
-    [Export] public float groundControl = 1f;
+    
     
     private float _coyoteTimer;
     private float _jumpBufferTimer;
 
-    private Player _character;
-    private InputComponent _input;
+    private CharacterBody2D _character;
+    private InputSingleton _input;
 
-    public override void Init(Entity entity)
+    public BaseMovementComponent(CharacterBody2D character)
     {
-        base.Init(entity);
-        _character = (Player) entity.node;
-        _input = (InputComponent) entity.GetComponent(typeof(InputComponent));
+        _character = character;
+        _input = InputSingleton.of();
     }
 
-    public override void PhysicsProcess(float dt)
+    public void PhysicsProcess(float dt)
     {
         if (_input == null)
         {
