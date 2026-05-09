@@ -22,18 +22,17 @@ enum AttackState
 
 public partial class Player : CharacterBody2D
 {
-	private Entity _entity;
-
-	public Entity entity => _entity;
+	private AttackComboComponent _attackComboComponent;
+	private BaseMovementComponent _movementComponent;
+	private HealthComponent _healthComponent;
 
 	private CharacterState _currentState { get; set; }
 
 	public override void _Ready()
 	{
-		_entity = new Entity(this);
-		_entity.RegisterChildren();
-
 		_currentState = CharacterState.Idle;
+		mouseDirection = mouseRelativePosition.Normalized();
+		mouseRelativePosition = mouseWorldPosition - _character.Position;
 	}
 
 	public override void _PhysicsProcess(double delta)

@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class InputComponent : Component
+public partial class InputSingleton
 {
 	public bool enabled;
 
@@ -9,8 +9,6 @@ public partial class InputComponent : Component
 	public int lastInputX;
 
 	public Vector2 mouseWorldPosition;
-	public Vector2 mouseRelativePosition;
-	public Vector2 mouseDirection;
 	
 	public bool jumpPressed;
 
@@ -26,14 +24,9 @@ public partial class InputComponent : Component
 	public bool attack2Held;
 	public bool attack2Released;
 
-	private Player _character;
-
-	public override void Init(Entity entity)
+	public InputSingleton()
 	{
-		enabled = true; // Remove this in production and enable after loading scene
-
-		base.Init(entity);
-		_character = (Player) entity.node;
+		enabled = true;
 	}
 
 	public override void PrePhysicsProcess(float dt)
@@ -49,10 +42,7 @@ public partial class InputComponent : Component
 		{
 			lastInputX = Mathf.Sign(inputX);
 		}
-		
-		mouseWorldPosition = _character.GetGlobalMousePosition();
-		mouseRelativePosition = mouseWorldPosition - _character.Position;
-		mouseDirection = mouseRelativePosition.Normalized();
+		mouseWorldPosition = GetViewport().GetMousePosition();
 
 		jumpPressed = Input.IsActionJustPressed("Jump");
 
