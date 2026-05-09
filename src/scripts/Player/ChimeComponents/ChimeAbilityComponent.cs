@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public partial class ChimeAbilityComponent : Component<CharacterBody2D>
+public partial class ChimeAbilityComponent : Component<Player>
 {
     [Export] public PackedScene chimelingScene;
 
@@ -26,10 +26,10 @@ public partial class ChimeAbilityComponent : Component<CharacterBody2D>
     private List<Chimeling> _chimelingPool = new();
     private int _chimelingIndex = 0;
 
-    private CharacterBody2D _character;
+    private Player _character;
     private InputComponent _input;
 
-    public override void Init(Entity<CharacterBody2D> entity)
+    public override void Init(Entity<Player> entity)
     {
         base.Init(entity);
         _character = entity.node;

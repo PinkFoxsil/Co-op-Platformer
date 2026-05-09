@@ -6,15 +6,15 @@ public partial class SlamAbilityComponent : AttackComponent
 	[Export] public int damage = 1;
 
 	private bool _isSlamming;
-	private Area2D _airAttackHitbox;
+	private Hitbox _airAttackHitbox;
 
-	private CharacterBody2D _character;
+	private Player _character;
 
-	public override void Init(Entity<CharacterBody2D> entity)
+	public override void Init(Entity<Player> entity)
 	{
 		base.Init(entity);
 		_character = entity.node;
-		_airAttackHitbox = _character.GetNode<Node2D>("Hitboxes").GetNode<Area2D>("Air");
+		_airAttackHitbox = _character.GetNode<Node2D>("Hitboxes").GetNode<Hitbox>("AirDownHitbox");
 	}
 
 	public override bool CanAttack()

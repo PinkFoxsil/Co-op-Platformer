@@ -1,8 +1,10 @@
 using Godot;
 using System;
 
-public partial class InputComponent : Component<CharacterBody2D>
+public partial class InputComponent : Component<Player>
 {
+	public bool enabled;
+
 	public float inputX;
 	public int lastInputX;
 
@@ -24,16 +26,26 @@ public partial class InputComponent : Component<CharacterBody2D>
 	public bool attack2Held;
 	public bool attack2Released;
 
-    private CharacterBody2D _character;
+    private Player _character;
 
-    public override void Init(Entity<CharacterBody2D> entity)
+    public override void Init(Entity<Player> entity)
     {
+		enabled = true; // Remove this in production and enable after loading scene
+
         base.Init(entity);
         _character = entity.node;
     }
 
 	public override void PrePhysicsProcess(float dt)
 	{
+		GD.Print("Processing input");
+		if (!enabled)
+		{
+			return;
+		}
+
+		GD.Print("Processing input");
+
 		inputX = Input.GetActionStrength("Right") - Input.GetActionStrength("Left");
 
 		if (inputX != 0)

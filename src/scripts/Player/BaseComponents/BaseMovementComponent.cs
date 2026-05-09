@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class BaseMovementComponent : Component<CharacterBody2D>
+public partial class BaseMovementComponent : Component<Player>
 {
     [ExportCategory("Movement")]
     [Export] public float moveSpeed = 260f;
@@ -30,10 +30,10 @@ public partial class BaseMovementComponent : Component<CharacterBody2D>
     private float _coyoteTimer;
     private float _jumpBufferTimer;
 
-    private CharacterBody2D _character;
+    private Player _character;
     private InputComponent _input;
 
-    public override void Init(Entity<CharacterBody2D> entity)
+    public override void Init(Entity<Player> entity)
     {
         base.Init(entity);
         _character = entity.node;

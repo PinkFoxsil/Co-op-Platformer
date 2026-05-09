@@ -3,6 +3,9 @@ using System;
 
 public partial class Hitbox : Area2D
 {
+	[Export] public bool startsActive = false;
+	[Export] public bool staysActive = false;
+
     private Entity<Area2D> _entity;
 	
     public Entity<Area2D> entity => _entity;
@@ -16,7 +19,15 @@ public partial class Hitbox : Area2D
 		_entity = new Entity<Area2D>(this);
 		_entity.RegisterChildren();
 		_collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
-		Deactivate()
+
+		if (startsActive)
+		{
+			Activate(0f);
+		}
+		else
+		{
+			Deactivate();
+		}
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -27,12 +38,17 @@ public partial class Hitbox : Area2D
 		}
 
 		float dt = (float) delta;
-		_lifetimeTimer -= dt;
 		
 		_entity.PrePhysicsProcess(dt);
 		_entity.PhysicsProcess(dt);
 		_entity.PostPhysicsProcess(dt);
 
+		if (staysActive)
+		{
+			return;
+		}
+		
+		_lifetimeTimer -= dt;
 		if (_lifetimeTimer <= 0f)
 		{
 			Deactivate();
@@ -41,14 +57,27 @@ public partial class Hitbox : Area2D
 
 	public void Activate(float duration)
 	{
+		if (staysActive)
+		{
+			Activate();
+			return;
+		}
+		
 		_lifetimeTimer = duration;
-		active = true
+		
+		Activate();
+	}
 
+	public void Activate()
+	{
+		
+		
 		_collisionShape.SetDeferred(
 			"disabled",
 			false
 		);
 
+		active = true;
 		Monitoring = true;
 		Monitorable = true;
 	}
@@ -56,13 +85,13 @@ public partial class Hitbox : Area2D
 	public void Deactivate()
 	{
 		_lifetimeTimer = 0f;
-		active = false
-
+		
 		_collisionShape.SetDeferred(
 			"disabled",
 			true
 		);
 
+		active = false;
 		Monitoring = false;
 		Monitorable = false;
 	}

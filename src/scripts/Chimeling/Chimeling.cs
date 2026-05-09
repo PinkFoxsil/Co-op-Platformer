@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Chimeling : Character
+public partial class Chimeling : RigidBody2D
 {
 	public void Activate()
 	{
