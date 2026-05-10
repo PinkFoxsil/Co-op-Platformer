@@ -3,11 +3,11 @@ using System;
 
 public abstract partial class Component : Node
 {
-	public Node ParentNode { get; private set; }
+	public Node parentNode { get; private set; }
 
 	public virtual void Init(Node parentNode)
 	{
-			ParentNode = parentNode;
+		this.parentNode = parentNode;
 	}
 
 	public virtual void PrePhysicsProcess(float dt) { }
