@@ -12,16 +12,15 @@ public partial class PlungeComponent : Component
 	private Player _character;
 	private InputComponent _input;
 	
-	public override void Init(Entity entity)
+	public override void Init(Node parentNode)
 	{
-		base.Init(entity);
+		base.Init(parentNode);
 
-		_character = (Player) entity.node;
-		_input = (InputComponent) entity.GetComponent(typeof(InputComponent));
+		_character = (Player) parentNode;
+		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
 
-		Node2D hitboxes = entity.node.GetNode<Node2D>("Hitboxes");
+		Node2D hitboxes = _character.GetNode<Node2D>("Hitboxes");
 		_plungeHitbox = hitboxes.GetNode<Hitbox>("AirDownHitbox");
-		
 	}
 
 	public override void PhysicsProcess(float dt)

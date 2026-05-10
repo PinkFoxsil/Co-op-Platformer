@@ -14,17 +14,16 @@ public partial class GroundSlamComponent : Component
 	private Player _character;
 	private InputComponent _input;
 	
-	public override void Init(Entity entity)
+	public override void Init(Node parentNode)
 	{
-		base.Init(entity);
-		
-		_character = (Player) entity.node;
-		_input = (InputComponent) entity.GetComponent(typeof(InputComponent));
+		base.Init(parentNode);
 
-		Node2D hitboxes = entity.node.GetNode<Node2D>("Hitboxes");
+		_character = (Player) parentNode;
+		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
+
+		Node2D hitboxes = _character.GetNode<Node2D>("Hitboxes");
 		_groundSlamHitbox = hitboxes.GetNode<Hitbox>("GroundHitbox");
-		
-	}
+    }
 
 	public override void PhysicsProcess(float dt)
 	{

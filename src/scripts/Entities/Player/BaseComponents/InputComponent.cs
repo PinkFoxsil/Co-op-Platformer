@@ -28,12 +28,12 @@ public partial class InputComponent : Component
 
 	private Player _character;
 
-	public override void Init(Entity entity)
+	public override void Init(Node parentNode)
 	{
 		enabled = true; // Remove this in production and enable after loading scene
+		base.Init(parentNode);
 
-		base.Init(entity);
-		_character = (Player) entity.node;
+		_character = (Player) parentNode;
 	}
 
 	public override void PrePhysicsProcess(float dt)

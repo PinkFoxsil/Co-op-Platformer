@@ -25,11 +25,13 @@ public partial class DashComponent : Component
 	private Player _character;
     private InputComponent _input;
 
-    public override void Init(Entity entity)
-    {
-        base.Init(entity);
-        _character = (Player) entity.node;
-        _input = (InputComponent) entity.GetComponent(typeof(InputComponent));
+
+    public override void Init(Node parentNode)
+	{
+		base.Init(parentNode);
+
+		_character = (Player) parentNode;
+		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
     }
 
 	public override void PhysicsProcess(float dt)

@@ -13,15 +13,16 @@ public partial class AttackComboComponent : Component
 
 	private InputComponent _input; 
 	
-	public override void Init(Entity entity)
+	public override void Init(Node parentNode)
 	{
-		base.Init(entity);
+		base.Init(parentNode);
 
-		_input = (InputComponent) entity.GetComponent(typeof(InputComponent));
+		Player _character = (Player) parentNode;
+		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
 
-		Node2D hitboxes = entity.node.GetNode<Node2D>("Hitboxes");
+		Node2D hitboxes = parentNode.GetNode<Node2D>("Hitboxes");
 		_attackComboHitbox = hitboxes.GetNode<Hitbox>("AttackComboHitbox");
-		
+		GD.Print(_attackComboHitbox);
 	}
 
 	public override void PhysicsProcess(float dt)

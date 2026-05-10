@@ -6,9 +6,9 @@ public partial class Hitbox : Area2D
 	[Export] public bool startsActive = false;
 	[Export] public bool staysActive = false;
 
-	private Entity _entity;
+	private ComponentList _componentList;
 	
-	public Entity entity => _entity;
+	public ComponentList ComponentList => _componentList;
 
 	private CollisionShape2D _collisionShape;
 	private float _lifetimeTimer;
@@ -16,8 +16,8 @@ public partial class Hitbox : Area2D
 
 	public override void _Ready()
 	{
-		_entity = new Entity(this);
-		_entity.RegisterChildren();
+		_componentList = new ComponentList(this);
+		_componentList.RegisterChildren();
 		_collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
 
 		if (startsActive)
@@ -39,9 +39,9 @@ public partial class Hitbox : Area2D
 
 		float dt = (float) delta;
 		
-		_entity.PrePhysicsProcess(dt);
-		_entity.PhysicsProcess(dt);
-		_entity.PostPhysicsProcess(dt);
+		_componentList.PrePhysicsProcess(dt);
+		_componentList.PhysicsProcess(dt);
+		_componentList.PostPhysicsProcess(dt);
 
 		if (staysActive)
 		{

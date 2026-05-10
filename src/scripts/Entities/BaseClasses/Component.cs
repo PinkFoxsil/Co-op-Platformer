@@ -1,13 +1,13 @@
 using Godot;
 using System;
 
-public abstract partial class Component: Node
+public abstract partial class Component : Node
 {
-	public Entity entity { get; private set; }
+	public Node ParentNode { get; private set; }
 
-	public virtual void Init(Entity entity)
+	public virtual void Init(Node parentNode)
 	{
-			this.entity = entity;
+			ParentNode = parentNode;
 	}
 
 	public virtual void PrePhysicsProcess(float dt) { }

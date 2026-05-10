@@ -22,16 +22,16 @@ enum AttackState
 
 public partial class Player : CharacterBody2D
 {
-	private Entity _entity;
+	private ComponentList _componentList;
 
-	public Entity entity => _entity;
+	public ComponentList ComponentList => _componentList;
 
 	private CharacterState _currentState { get; set; }
 
 	public override void _Ready()
 	{
-		_entity = new Entity(this);
-		_entity.RegisterChildren();
+		_componentList = new ComponentList(this);
+		_componentList.RegisterChildren();
 
 		_currentState = CharacterState.Idle;
 	}
@@ -40,11 +40,12 @@ public partial class Player : CharacterBody2D
 	{
 		float dt = (float) delta;
 		
-		_entity.PrePhysicsProcess(dt);
-		_entity.PhysicsProcess(dt);
+		// [TBD] Determine ordering of processing
+		_componentList.PrePhysicsProcess(dt);
+		_componentList.PhysicsProcess(dt);
 
 		MoveAndSlide();
 
-		_entity.PostPhysicsProcess(dt);
+		_componentList.PostPhysicsProcess(dt);
 	}
 }

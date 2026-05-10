@@ -2,22 +2,24 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public class Entity
+public class ComponentList
 {
-	private readonly Node _node;
+	private readonly Node _parentNode;
 
-	public Node node => _node;
+	public Node ParentNode => _parentNode;
 
-	private readonly List<Component> _components = new();
+	private readonly List<Component> _components = [];
 
-	public Entity(Node entity)
+	private ComponentList(){}
+
+	public ComponentList(Node parentNode)
 	{
-		_node = entity;
+		_parentNode = parentNode;
 	}
 
 	public void RegisterChildren()
 	{
-		foreach (Node child in _node.GetChildren())
+		foreach (Node child in _parentNode.GetChildren())
 		{
 			if (child is Component c)
 			{
@@ -29,7 +31,7 @@ public class Entity
 	public void AddComponent(Component component)
 	{
 		_components.Add(component);
-		component.Init(this);
+		component.Init(_parentNode);
 	}
 
 	public Component GetComponent(Type type)
