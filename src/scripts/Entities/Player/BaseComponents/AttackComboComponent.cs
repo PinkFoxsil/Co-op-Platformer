@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class GroundSlamComponent : Component
+public partial class AttackComboComponent : Component
 {
 	[Export] public float attackCooldown = 1f;
 	[Export] public float attackDuration = 0.5f;
@@ -9,21 +9,21 @@ public partial class GroundSlamComponent : Component
 
 	private float _attackCooldownTimer;
 
-	private Hitbox _groundSlamHitbox;
-	
-	private Player _character;
-	private InputComponent _input;
+	private Hitbox _attackComboHitbox;
+
+	private InputComponent _input; 
 	
 	public override void Init(Node parentNode)
 	{
 		base.Init(parentNode);
 
-		_character = (Player) parentNode;
+		Player _character = (Player) parentNode;
 		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
 
-		Node2D hitboxes = _character.GetNode<Node2D>("Hitboxes");
-		_groundSlamHitbox = hitboxes.GetNode<Hitbox>("GroundHitbox");
-    }
+		Node2D hitboxes = parentNode.GetNode<Node2D>("Hitboxes");
+		_attackComboHitbox = hitboxes.GetNode<Hitbox>("AttackComboHitbox");
+		GD.Print(_attackComboHitbox);
+	}
 
 	public override void PhysicsProcess(float dt)
 	{
@@ -50,10 +50,17 @@ public partial class GroundSlamComponent : Component
 		_attackCooldownTimer = attackCooldown;
 		CardinalDirection dir = DirectionUtility.GetCardinalDirection(_input.mouseRelativePosition);
 
-		if (dir == CardinalDirection.DOWN && _character.IsOnFloor())
+		if (dir != CardinalDirection.DOWN)
 		{
-			_groundSlamHitbox.Activate(attackDuration);
+			RotateHitbox(dir);
+			_attackComboHitbox.Activate(attackDuration);
 
 		}
+	}
+
+	private void RotateHitbox(CardinalDirection dir)
+	{
+		Vector2 toVector = DirectionUtility.ToVector(dir);
+		_attackComboHitbox.Rotation = toVector.Angle();
 	}
 }

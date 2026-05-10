@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public partial class ChimeAbilityComponent
+public partial class ChimeAbilityComponent : Component
 {	
 	[Export] public PackedScene chimelingScene;
 
@@ -27,12 +27,14 @@ public partial class ChimeAbilityComponent
 	private int _chimelingIndex = 0;
 
 	private Player _character;
-	private InputSingleton _input;
+	private InputComponent _input;
 
-	public ChimeAbilityComponent(Player character)
+	public override void Init(Node parentNode)
 	{
-		_character = character;
-		_input = InputSingleton.of();
+		base.Init(parentNode);
+
+		_character = (Player) parentNode;
+		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
 
 		UpdateChimelingPoolSize();
 	}
@@ -57,7 +59,7 @@ public partial class ChimeAbilityComponent
 		UpdateChimelingPoolSize();
 	}
 
-	public void PrePhysicsProcess(float dt)
+	public override void PrePhysicsProcess(float dt)
 	{
 		_holdCooldownTimer -= dt;
 		_tapCooldownTimer -= dt;
@@ -125,7 +127,7 @@ public partial class ChimeAbilityComponent
 			chimeling.Activate();
 
 			chimeling.GlobalPosition = _character.GlobalPosition;
-			CardinalDirection dir = GetQuadrant(_character.mouseDirection);
+			CardinalDirection dir = GetQuadrant(_input.mouseDirection);
 
 			chimeling.MoveTo(_input.mouseWorldPosition, chimelingSpeed);
 		}
