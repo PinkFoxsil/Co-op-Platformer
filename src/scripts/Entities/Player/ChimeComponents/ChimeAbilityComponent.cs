@@ -193,5 +193,4 @@ public partial class ChimeAbilityComponent : Component
 			chimeling.BeginReturn(_character.GlobalPosition);
 		}
 	}
-
 }
