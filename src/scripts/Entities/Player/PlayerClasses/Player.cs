@@ -1,24 +1,6 @@
 using Godot;
 using System;
-
-enum CharacterState
-{
-	Idle,
-	Running,
-	Jumping,
-	Falling,
-	Dashing,
-	Attacking,
-	Stunned
-}
-
-enum AttackState
-{
-	LeftAttack,
-	RightAttack,
-	UpAttack,
-	DownAttack
-}
+using System.Collections.Generic;
 
 public partial class Player : CharacterBody2D
 {
@@ -26,14 +8,13 @@ public partial class Player : CharacterBody2D
 
 	public ComponentList ComponentList => _componentList;
 
-	private CharacterState _currentState { get; set; }
+	public bool attackLocked {get; private set;}
+	public bool movementLocked {get; private set;}
 
 	public override void _Ready()
 	{
 		_componentList = new ComponentList(this);
 		_componentList.RegisterChildren();
-
-		_currentState = CharacterState.Idle;
 	}
 
 	public override void _PhysicsProcess(double delta)
