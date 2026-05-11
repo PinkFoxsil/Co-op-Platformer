@@ -15,6 +15,8 @@ public partial class ChimeAbilityComponent : Node, IComponent
 
 	[Export] public float chimelingSpeed = 600f;
 
+	public Vector2 chimelingPosition;
+
 	private float _holdTimer;
 
 	private float _holdCooldownTimer;
@@ -27,12 +29,12 @@ public partial class ChimeAbilityComponent : Node, IComponent
 	private int _chimelingIndex = 0;
 
 	private Player _character;
-	private InputComponent _input;
+	private InputSingleton _input;
 
 	public void Init(Node parentNode)
 	{
 		_character = (Player) parentNode;
-		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
+		_input = InputSingleton.Instance;
 
 		UpdateChimelingPoolSize();
 	}
@@ -125,9 +127,8 @@ public partial class ChimeAbilityComponent : Node, IComponent
 			chimeling.Activate();
 
 			chimeling.GlobalPosition = _character.GlobalPosition;
-			CardinalDirection dir = GetQuadrant(_input.mouseDirection);
 
-			chimeling.MoveTo(_input.mouseWorldPosition, chimelingSpeed);
+			chimeling.MoveTo(chimelingPosition, chimelingSpeed);
 		}
 	}
 

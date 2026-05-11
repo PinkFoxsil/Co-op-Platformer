@@ -10,14 +10,10 @@ public partial class Player : CharacterBody2D
 
 	public ComponentList ComponentList => _componentList;
 
-	public PlayerState currentState;
-
 	public override void _Ready()
 	{
 		_componentList = new ComponentList(this);
 		_componentList.RegisterChildren();
-
-		currentState = new PlayerState();
 	}
 
 	public override void _PhysicsProcess(double delta)

@@ -10,22 +10,26 @@ public partial class DashComponent : Node, IComponent
 	[Export] public float dashCooldown = 2f;
 	[Export] public int maxDashes = 2;
 
+	public bool canDash;
+	public bool isDashing;
+	public int dashDirection;
+
 	private int _currentDashCharges;
 	private bool _requiresGroundReset;
 	private bool _justDashed;
 
-	private Timer _dashTimer = new Timer();
-	private Timer _dashRecoveryTimer = new Timer();
-	private Timer _cooldownTimer = new Timer();
+	private Timer _dashTimer = new();
+	private Timer _dashRecoveryTimer = new();
+	private Timer _cooldownTimer = new();
 
 	private Player _character;
-	private InputComponent _input;
+	private InputSingleton _input;
 
 
 	public void Init(Node parentNode)
 	{
 		_character = (Player) parentNode;
-		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
+		_input = InputSingleton.Instance;
 	}
 
 	public void PrePhysicsProcess(float dt)
@@ -57,7 +61,7 @@ public partial class DashComponent : Node, IComponent
 		}
 		
 		float excess = _cooldownTimer.Tick(dt);
-		if (_cooldownTimer.isRunning)
+		if (_cooldownTimer.IsRunning)
 		{
 			return;
 		}
@@ -72,7 +76,7 @@ public partial class DashComponent : Node, IComponent
 	private void UpdateDashDuration(float dt)
 	{
 		float excess = _dashTimer.Tick(dt);
-		if (_dashTimer.isRunning)
+		if (_dashTimer.IsRunning)
 		{
 			StartRecovery(dashRecoveryTime - excess);
 		}
@@ -108,7 +112,7 @@ public partial class DashComponent : Node, IComponent
 
 	private bool CanDash()
 	{
-		return _currentDashCharges > 0 && !_dashTimer.isRunning && !_dashRecoveryTimer.isRunning;
+		return _currentDashCharges > 0 && !_dashTimer.IsRunning && !_dashRecoveryTimer.IsRunning;
 	}
 
 	private void HandleGroundReset()
@@ -121,12 +125,12 @@ public partial class DashComponent : Node, IComponent
 
 	private void UpdateDash(float dt)
 	{
-		if (!_dashTimer.isRunning)
+		if (!_dashTimer.IsRunning)
 		{
 			return;
 		}
 		
-		ApplyDashForce(_input.lastInputX);
+		ApplyDashForce(dashDirection);
 	}
 
 	private void StartRecovery(float recoveryTime)
@@ -138,7 +142,7 @@ public partial class DashComponent : Node, IComponent
 	{
 		if (directionX == 0)
 		{
-			directionX = 1;
+			return;
 		}
 
 		_character.Velocity = new Vector2(directionX * dashSpeed, 0);
@@ -146,7 +150,7 @@ public partial class DashComponent : Node, IComponent
 
 	private void UpdateRecovery(float dt)
 	{
-		if (!_dashRecoveryTimer.isRunning)
+		if (!_dashRecoveryTimer.IsRunning)
 		{
 			return;
 		}

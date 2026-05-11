@@ -3,82 +3,81 @@ using System;
 
 public class Timer
 {
-    public float elapsedTime {get; private set; }
-	public float timeLeft { get; private set; }
-    public bool isInfinite {get; private set;}
+    public float ElapsedTime {get; private set; }
+	public float TimeLeft { get; private set; }
+    public bool IsInfinite {get; private set;}
 
-    public bool hasStarted {get; private set; }
-    public bool hasStopped {get; private set; }
-    public bool isRunning { get; private set; }
-
+    public bool HasStarted {get; private set; }
+    public bool HasStopped {get; private set; }
+    public bool IsRunning { get; private set; }
 
     public void Start()
     { 
         RestartCommonState();
-        isInfinite = true;
+        IsInfinite = true;
     }
 
 	public void Start(float duration)
 	{
         RestartCommonState(duration);
-        isInfinite = false;
+        IsInfinite = false;
 	}
 
     private void RestartCommonState(float duration = 0f)
     {
-        elapsedTime = 0f;
-        timeLeft = duration;
-        isRunning = true;
-        isInfinite = false;
-        hasStarted = true;
-        hasStopped = false;
+        ElapsedTime = 0f;
+        TimeLeft = duration;
+        IsRunning = true;
+        IsInfinite = false;
+        HasStarted = true;
+        HasStopped = false;
     }
-
-	public void Stop()
-	{
-        if (!isRunning)
-        {
-            return;
-        }
-
-        isRunning = false;
-        timeLeft = 0;
-        hasStopped = true;
-	}
 
 	public float Tick(float dt)
 	{
-		if (!isRunning)
+		if (!IsRunning)
 		{
 			return 0f;
 		}
 
-        elapsedTime += dt;
+        ElapsedTime += dt;
 
-        if (isInfinite)
+        if (IsInfinite)
         {
             return 0f;
         }
 
-		timeLeft -= dt;
-        float excess = -timeLeft;
+		TimeLeft -= dt;
+        float excess = -TimeLeft;
 
-		if (timeLeft <= 0)
+		if (TimeLeft <= 0)
 		{
-			timeLeft = 0;
+			TimeLeft = 0;
             Stop();
 		}
 
         return excess;
 	}
 
-    public void AddTime(float addedTime)
-    {
-        if (!isRunning || isInfinite)
+    public void Stop()
+	{
+        if (!IsRunning)
         {
             return;
         }
 
-        timeLeft += addedTime;
+        IsRunning = false;
+        TimeLeft = 0;
+        HasStopped = true;
+	}
+
+    public void AddTime(float addedTime)
+    {
+        if (!IsRunning || IsInfinite)
+        {
+            return;
+        }
+
+        TimeLeft += addedTime;
     }
 }

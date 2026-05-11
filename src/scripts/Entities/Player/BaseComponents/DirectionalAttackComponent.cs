@@ -4,14 +4,19 @@ using System.Collections.Generic;
 
 public partial class DirectionalAttackComponent : Node2D, IComponent
 {
-    [Export] public float attackCooldown = 1f;
-	[Export] public float hitboxDuration = 0.5f;
+    [Export] public float attackCooldown = 0.4f;
+	[Export] public float hitboxDuration = 0.3f;
 	[Export] public int damage = 1;
 
-	private Hitbox _hitbox;
+	public bool canAttack;
+	public bool isAttacking;
+	public CardinalDirection attackDirection;
 
-	private InputComponent _input;
+	private Hitbox _hitbox;
+	public Timer attackTimer;
+
 	private Player _character;
+	private InputSingleton _input;
 
     public Dictionary<CardinalDirection, Action> attacks = new()
     {
@@ -24,9 +29,10 @@ public partial class DirectionalAttackComponent : Node2D, IComponent
 	public void Init(Node parentNode)
 	{
 		_character = (Player) parentNode;
-		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
+		_input = InputSingleton.Instance;
 
 		_hitbox = GetNode<Hitbox>("Hitbox");
+		attackTimer = new Timer();
 
         foreach (KeyValuePair<CardinalDirection, Action> attack in attacks)
         {
@@ -41,13 +47,19 @@ public partial class DirectionalAttackComponent : Node2D, IComponent
     {
         return () =>
         {
-			_character.currentState.stateTag = PlayerStateTag.Attacking;
-            _character.currentState.Start(attackCooldown);
-			
-            RotateHitbox(dir);
+			attackTimer.Start(attackCooldown);
+			isAttacking = true;
+
+			RotateHitbox(dir);
             _hitbox.Activate(hitboxDuration);
         };
     }
+
+	private void RotateHitbox(CardinalDirection dir)
+	{
+		Vector2 toVector = DirectionUtility.ToVector(dir);
+		_hitbox.Rotation = toVector.Angle();
+	}
 
 	public void PhysicsProcess(float dt)
 	{
@@ -55,25 +67,16 @@ public partial class DirectionalAttackComponent : Node2D, IComponent
 		{
 			return;
 		}
-
-		if (_input.attack1Pressed && CanAttack())
+		
+		if (_input.attack1Pressed && canAttack)
 		{
-            CardinalDirection dir = GetAttackDirection();
-			Attack(dir);
+			Attack(attackDirection);
 		}
+
+		UpdateIsAttacking(dt);
 	}
 
-	public virtual bool CanAttack()
-	{
-		return _character.currentState.stateTag == PlayerStateTag.Neutral;
-	}
-
-	private CardinalDirection GetAttackDirection()
-	{
-		return DirectionUtility.GetCardinalDirection(_input.mouseRelativePosition);
-	}
-
-    private void Attack(CardinalDirection dir)
+    public void Attack(CardinalDirection dir)
     {
         if (attacks[dir] == null)
         {
@@ -83,9 +86,12 @@ public partial class DirectionalAttackComponent : Node2D, IComponent
         attacks[dir]();
     }
 
-	private void RotateHitbox(CardinalDirection dir)
+	private void UpdateIsAttacking(float dt)
 	{
-		Vector2 toVector = DirectionUtility.ToVector(dir);
-		_hitbox.Rotation = toVector.Angle();
+		attackTimer.Tick(dt);
+		if (attackTimer.HasStopped)
+		{
+			isAttacking = false;
+		}
 	}
 }

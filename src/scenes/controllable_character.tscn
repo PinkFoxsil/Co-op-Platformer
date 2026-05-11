@@ -3,10 +3,11 @@
 [ext_resource type="Texture2D" uid="uid://cg6a5ke7luu3a" path="res://src/images/Square.png" id="1_cv7mj"]
 [ext_resource type="Script" uid="uid://cj116krv5sl7p" path="res://src/scripts/Entities/Player/PlayerClasses/Player.cs" id="1_fog2k"]
 [ext_resource type="Script" uid="uid://btu33u5xj8wcj" path="res://src/scripts/Entities/BaseClasses/Hitbox.cs" id="3_4mk40"]
-[ext_resource type="Script" uid="uid://bk5064j63clac" path="res://src/scripts/Entities/Player/BaseComponents/InputComponent.cs" id="3_56prs"]
 [ext_resource type="Script" uid="uid://bjp6sxbvm0mem" path="res://src/scripts/Entities/Player/BaseComponents/BaseMovementComponent.cs" id="4_4mk40"]
 [ext_resource type="Script" uid="uid://da6mjm4qic4il" path="res://src/scripts/Entities/Player/BaseComponents/DashComponent.cs" id="5_n4nwn"]
 [ext_resource type="Script" uid="uid://s25x3j7av7uv" path="res://src/scripts/Entities/Player/BaseComponents/DirectionalAttackComponent.cs" id="7_56prs"]
+[ext_resource type="Script" uid="uid://dm03wvdncp8u2" path="res://src/scripts/Entities/Player/ChimeComponents/ChimeControllerComponent.cs" id="7_rwegb"]
+[ext_resource type="Script" uid="uid://baxjapo6nnv85" path="res://src/scripts/Entities/Player/ChimeComponents/GroundSlamComponent.cs" id="8_e2bc7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ut82q"]
 size = Vector2(32, 64)
@@ -31,11 +32,6 @@ modulate = Color(2.117753e-06, 0.5749738, 0.5752016, 1)
 scale = Vector2(0.5, 1)
 texture = ExtResource("1_cv7mj")
 
-[node name="Hitboxes" type="Node2D" parent="." unique_id=44870706]
-
-[node name="InputComponent" type="Node" parent="." unique_id=1710401691]
-script = ExtResource("3_56prs")
-
 [node name="BaseMovementComponent" type="Node" parent="." unique_id=1271246942]
 script = ExtResource("4_4mk40")
 
@@ -56,12 +52,13 @@ shape = SubResource("RectangleShape2D_fsmad")
 disabled = true
 
 [node name="GroundSlamComponent" type="Node2D" parent="." unique_id=1500053669]
-script = ExtResource("7_56prs")
+script = ExtResource("8_e2bc7")
 
 [node name="PlungeHitbox" type="Area2D" parent="GroundSlamComponent" unique_id=1039402662]
 monitoring = false
 monitorable = false
 script = ExtResource("3_4mk40")
+staysActive = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GroundSlamComponent/PlungeHitbox" unique_id=1568513328]
 position = Vector2(0, 65.5)
@@ -77,3 +74,6 @@ script = ExtResource("3_4mk40")
 position = Vector2(0, 16)
 shape = SubResource("RectangleShape2D_xjkdw")
 disabled = true
+
+[node name="ControllerComponent" type="Node" parent="." unique_id=1816177114]
+script = ExtResource("7_rwegb")
