@@ -6,7 +6,7 @@ public class ComponentList
 {
 	private readonly Node _parentNode;
 
-	public Node ParentNode => _parentNode;
+	public Node parentNode => _parentNode;
 
 	private readonly List<Component> _components = [];
 
