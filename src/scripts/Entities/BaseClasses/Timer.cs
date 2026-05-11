@@ -5,9 +5,9 @@ public class Timer
 {
     public float elapsedTime {get; private set; }
 	public float timeLeft { get; private set; }
+
     public bool isRunning { get; private set; }
     public bool isInfinite {get; private set;}
-	public bool justStopped { get; private set; }
 
     public void Start()
     { 
@@ -25,9 +25,8 @@ public class Timer
     {
         elapsedTime = 0f;
         timeLeft = duration;
-        isInfinite = false;
         isRunning = true;
-        justStopped = false;
+        isInfinite = false;
     }
 
 	public void Stop()
@@ -39,31 +38,32 @@ public class Timer
 
         isRunning = false;
         timeLeft = 0;
-
-        justStopped = true;
 	}
 
-	public void Tick(float dt)
+	public float Tick(float dt)
 	{
 		if (!isRunning)
 		{
-			return;
+			return 0f;
 		}
 
         elapsedTime += dt;
 
         if (isInfinite)
         {
-            return;
+            return 0f;
         }
 
 		timeLeft -= dt;
+        float excess = -timeLeft;
 
 		if (timeLeft <= 0)
 		{
 			timeLeft = 0;
             Stop();
 		}
+
+        return excess;
 	}
 
     public void AddTime(float addedTime)
