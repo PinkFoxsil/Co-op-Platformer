@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public partial class ChimeAbilityComponent : Component
+public partial class ChimeAbilityComponent : Node, IComponent
 {	
 	[Export] public PackedScene chimelingScene;
 
@@ -29,10 +29,8 @@ public partial class ChimeAbilityComponent : Component
 	private Player _character;
 	private InputComponent _input;
 
-	public override void Init(Node parentNode)
+	public void Init(Node parentNode)
 	{
-		base.Init(parentNode);
-
 		_character = (Player) parentNode;
 		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
 
@@ -59,7 +57,7 @@ public partial class ChimeAbilityComponent : Component
 		UpdateChimelingPoolSize();
 	}
 
-	public override void PrePhysicsProcess(float dt)
+	public void PrePhysicsProcess(float dt)
 	{
 		_holdCooldownTimer -= dt;
 		_tapCooldownTimer -= dt;

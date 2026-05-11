@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class GroundSlamComponent : Component
+public partial class GroundSlamComponent : Node, IComponent
 {
 	[Export] public float attackCooldown = 1f;
 	[Export] public float attackDuration = 0.5f;
@@ -13,19 +13,22 @@ public partial class GroundSlamComponent : Component
 	
 	private Player _character;
 	private InputComponent _input;
+	private DirectionalAttackComponent _directionalAttack;
 	
-	public override void Init(Node parentNode)
+	public void Init(Node parentNode)
 	{
-		base.Init(parentNode);
 
 		_character = (Player) parentNode;
 		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
+		//_directionalAttack = (DirectionalAttackComponent) _character.ComponentList.GetComponent(typeof(DirectionalAttackComponent));
 
 		Node2D hitboxes = _character.GetNode<Node2D>("Hitboxes");
 		_groundSlamHitbox = hitboxes.GetNode<Hitbox>("GroundHitbox");
-    }
 
-	public override void PhysicsProcess(float dt)
+		//_directionalAttack.attacks[CardinalDirection.DOWN] = Attack;
+	}
+
+	public void PhysicsProcess(float dt)
 	{
 		_attackCooldownTimer -= dt;
 

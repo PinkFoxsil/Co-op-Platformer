@@ -7,8 +7,8 @@ public partial class Player : CharacterBody2D
 
 	public ComponentList ComponentList => _componentList;
 
-	private Timer _attackLockTimer = new();
-	private Timer _movementLockTimer = new();
+	private Timer _attackLockTimer = new Timer();
+	private Timer _movementLockTimer = new Timer();
 
 	public bool attackLocked => _attackLockTimer.isRunning;
 	public bool movementLocked => _movementLockTimer.isRunning;

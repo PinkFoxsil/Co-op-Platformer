@@ -1,51 +1,52 @@
 using Godot;
 using System;
 
-public partial class DashComponent : Component
+public partial class DashComponent : Node, IComponent
 {
 	[ExportCategory("Dash")]
  	[Export] public float dashSpeed = 1000f;
 	[Export] public float dashTime = 0.05f;
 	[Export] public float dashRecoveryTime = 0.15f;
-	
 	[Export] public float dashCooldown = 2f;
 	[Export] public int maxDashes = 2;
 
 	private int _currentDashCharges;
-	private float _cooldownTimer;
-
-	private float _dashRecoveryTimer;
-	private bool _recovering;
-	
-	private float _dashTimer;
-	private bool _dashing;
-
 	private bool _requiresGroundReset;
-	
+	private bool _justDashed;
+
+	private Timer _dashTimer = new Timer();
+	private Timer _dashRecoveryTimer = new Timer();
+	private Timer _cooldownTimer = new Timer();
+
 	private Player _character;
-    private InputComponent _input;
+	private InputComponent _input;
 
 
-    public override void Init(Node parentNode)
+	public void Init(Node parentNode)
 	{
-		base.Init(parentNode);
-
 		_character = (Player) parentNode;
 		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
-    }
+	}
 
-	public override void PhysicsProcess(float dt)
+	public void PrePhysicsProcess(float dt)
 	{
-		if (_input == null) 
-		{
-			return;
-		}
-		
 		UpdateCooldowns(dt);
-		CheckDashTriggered();
-		HandleGroundReset();
-		UpdateDash(dt);
+		_justDashed = CheckDashTriggered();	
 		UpdateRecovery(dt);
+	}
+
+	public void PhysicsProcess(float dt)
+	{
+		UpdateDash(dt);
+	}
+
+	public void PostPhysicsProcess(float dt)
+	{
+		HandleGroundReset();
+		if (!_justDashed)
+		{
+			UpdateDashDuration(dt);
+		}
 	}
 
 	private void UpdateCooldowns(float dt)
@@ -55,8 +56,8 @@ public partial class DashComponent : Component
 			return;
 		}
 		
-		_cooldownTimer -= dt;
-		if (_cooldownTimer > 0)
+		float excess = _cooldownTimer.Tick(dt);
+		if (_cooldownTimer.isRunning)
 		{
 			return;
 		}
@@ -64,72 +65,73 @@ public partial class DashComponent : Component
 		_currentDashCharges++;
 		if (_currentDashCharges < maxDashes)
 		{
-			_cooldownTimer = dashCooldown + _cooldownTimer;
+			_cooldownTimer.Start(dashCooldown - excess);
 		}
 	}
 
-	private void CheckDashTriggered()
+	private void UpdateDashDuration(float dt)
+	{
+		float excess = _dashTimer.Tick(dt);
+		if (_dashTimer.isRunning)
+		{
+			StartRecovery(dashRecoveryTime - excess);
+		}
+	}
+
+	private bool CheckDashTriggered()
 	{
 		if (!_input.ability1Pressed)
 		{
-			return;
+			return false;
 		}
 
 		if (!CanDash())
 		{
-			return;
+			return false;
 		}
 
-		_dashing = true;
-		_dashTimer = dashTime;
-
+		_dashTimer.Start(dashTime);
 		_currentDashCharges--;
 
 		if (_currentDashCharges == maxDashes - 1)
 		{
-			_cooldownTimer = dashCooldown;
+			_cooldownTimer.Start(dashCooldown);
 		}
 
 		if (_currentDashCharges == 0)
 		{
 			_requiresGroundReset = true;
 		}
+
+		return true;
 	}
 
 	private bool CanDash()
 	{
-		return _currentDashCharges > 0 && !_dashing && !_recovering;
+		return _currentDashCharges > 0 && !_dashTimer.isRunning && !_dashRecoveryTimer.isRunning;
 	}
 
 	private void HandleGroundReset()
-    {
-        if (_requiresGroundReset && _character.IsOnFloor())
-        {
-            _requiresGroundReset = false;
-        }
-    }
+	{
+		if (_requiresGroundReset && _character.IsOnFloor())
+		{
+			_requiresGroundReset = false;
+		}
+	}
 
 	private void UpdateDash(float dt)
 	{
-		if (!_dashing)
+		if (!_dashTimer.isRunning)
 		{
 			return;
 		}
 		
 		ApplyDashForce(_input.lastInputX);
-
-		_dashTimer -= dt;
-		if (_dashTimer <= 0)
-		{
-			_dashing = false;
-			StartRecovery(dashRecoveryTime + _dashTimer);
-		}
 	}
 
 	private void StartRecovery(float recoveryTime)
 	{
-		_recovering = true;
-		_dashRecoveryTimer = recoveryTime;
+		_dashRecoveryTimer.Start(recoveryTime);
 	}
 
 	private void ApplyDashForce(int directionX)
@@ -144,15 +146,11 @@ public partial class DashComponent : Component
 
 	private void UpdateRecovery(float dt)
 	{
-		if (!_recovering)
+		if (!_dashRecoveryTimer.isRunning)
 		{
 			return;
 		}
 
-		_dashRecoveryTimer -= dt;
-		if (_dashRecoveryTimer <= 0)
-		{
-			_recovering = false;
-		}
+		_dashRecoveryTimer.Tick(dt);
 	}
 }

@@ -1,7 +1,7 @@
 {
   "godotTools.editorPath.godot4": "c:\\Program Files\\Godot\\Godot 4.6.2.exe",
   "files.exclude": {
-    "**/*.uid": false
+    "**/*.uid": true
   },
   "editor.tabSize": 4,
   "cSpell.words": ["Chimeling", "Chimelings"]

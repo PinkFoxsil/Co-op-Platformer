@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class PlungeComponent : Component
+public partial class PlungeComponent : Node, IComponent
 {
 	[Export] public float slamForce = 800f;
 	[Export] public int attackDamage = 1;
@@ -12,10 +12,8 @@ public partial class PlungeComponent : Component
 	private Player _character;
 	private InputComponent _input;
 	
-	public override void Init(Node parentNode)
+	public void Init(Node parentNode)
 	{
-		base.Init(parentNode);
-
 		_character = (Player) parentNode;
 		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
 
@@ -23,7 +21,7 @@ public partial class PlungeComponent : Component
 		_plungeHitbox = hitboxes.GetNode<Hitbox>("AirDownHitbox");
 	}
 
-	public override void PhysicsProcess(float dt)
+	public void PhysicsProcess(float dt)
 	{
 		if (_isSlamming && _character.IsOnFloor()) {
 			_isSlamming = false;

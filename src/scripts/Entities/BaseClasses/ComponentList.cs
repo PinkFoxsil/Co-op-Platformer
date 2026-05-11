@@ -8,7 +8,7 @@ public class ComponentList
 
 	public Node parentNode => _parentNode;
 
-	private readonly List<Component> _components = [];
+	private readonly List<IComponent> _components = [];
 
 	private ComponentList(){}
 
@@ -21,20 +21,20 @@ public class ComponentList
 	{
 		foreach (Node child in _parentNode.GetChildren())
 		{
-			if (child is Component c)
+			if (child is IComponent c)
 			{
 				AddComponent(c);
 			}
 		}
 	}
 
-	public void AddComponent(Component component)
+	public void AddComponent(IComponent component)
 	{
 		_components.Add(component);
 		component.Init(_parentNode);
 	}
 
-	public Component GetComponent(Type type)
+	public IComponent GetComponent(Type type)
 	{
 		foreach (var c in _components)
 		{
