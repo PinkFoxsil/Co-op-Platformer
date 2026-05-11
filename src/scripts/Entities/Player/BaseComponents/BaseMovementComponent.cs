@@ -99,7 +99,7 @@ public partial class BaseMovementComponent : Node, IComponent
 		if (moveState == MoveState.Jumping ||
 			moveState == MoveState.Falling)
 		{
-			AdjustHangTimeGravity();
+			AdjustJumpHangGravity();
 		}
 		
 		if (moveState == MoveState.Falling)
@@ -179,8 +179,7 @@ public partial class BaseMovementComponent : Node, IComponent
 		);
 	}
 
-	// Adjust gravity at the peak of the player's jump
-	private void AdjustHangTimeGravity()
+	private void AdjustJumpHangGravity()
 	{
 		if (Mathf.Abs(_character.Velocity.Y) < jumpHangTimeThreshold)
 		{
