@@ -7,20 +7,18 @@
 [ext_resource type="Script" uid="uid://bjp6sxbvm0mem" path="res://src/scripts/Entities/Player/BaseComponents/BaseMovementComponent.cs" id="4_4mk40"]
 [ext_resource type="Script" uid="uid://da6mjm4qic4il" path="res://src/scripts/Entities/Player/BaseComponents/DashComponent.cs" id="5_n4nwn"]
 [ext_resource type="Script" uid="uid://s25x3j7av7uv" path="res://src/scripts/Entities/Player/BaseComponents/DirectionalAttackComponent.cs" id="7_56prs"]
-[ext_resource type="Script" uid="uid://bvreeks6whf7o" path="res://src/scripts/Entities/Player/ChimeComponents/PlungeComponent.cs" id="7_tkivx"]
-[ext_resource type="Script" uid="uid://baxjapo6nnv85" path="res://src/scripts/Entities/Player/ChimeComponents/GroundSlamComponent.cs" id="8_e2bc7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ut82q"]
 size = Vector2(32, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fsmad"]
+size = Vector2(120, 80)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hsffa"]
 size = Vector2(82, 117)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xjkdw"]
 size = Vector2(146, 48)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_fsmad"]
-size = Vector2(120, 80)
 
 [node name="ControllableCharacter" type="CharacterBody2D" unique_id=1425957284]
 script = ExtResource("1_fog2k")
@@ -35,27 +33,6 @@ texture = ExtResource("1_cv7mj")
 
 [node name="Hitboxes" type="Node2D" parent="." unique_id=44870706]
 
-[node name="AirDownHitbox" type="Area2D" parent="Hitboxes" unique_id=1039402662]
-monitoring = false
-monitorable = false
-script = ExtResource("3_4mk40")
-staysActive = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitboxes/AirDownHitbox" unique_id=1568513328]
-position = Vector2(0, 65.5)
-shape = SubResource("RectangleShape2D_hsffa")
-disabled = true
-
-[node name="GroundHitbox" type="Area2D" parent="Hitboxes" unique_id=1416313919]
-monitoring = false
-monitorable = false
-script = ExtResource("3_4mk40")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitboxes/GroundHitbox" unique_id=641559411]
-position = Vector2(0, 16)
-shape = SubResource("RectangleShape2D_xjkdw")
-disabled = true
-
 [node name="InputComponent" type="Node" parent="." unique_id=1710401691]
 script = ExtResource("3_56prs")
 
@@ -64,14 +41,6 @@ script = ExtResource("4_4mk40")
 
 [node name="DashComponent" type="Node" parent="." unique_id=282637028]
 script = ExtResource("5_n4nwn")
-
-[node name="AttackComboComponent" type="Node" parent="." unique_id=2089433268]
-
-[node name="PlungeComponent" type="Node" parent="." unique_id=1341418642]
-script = ExtResource("7_tkivx")
-
-[node name="GroundSlamComponent" type="Node" parent="." unique_id=1182941634]
-script = ExtResource("8_e2bc7")
 
 [node name="DirectionalAttackComponent" type="Node2D" parent="." unique_id=1397684563]
 script = ExtResource("7_56prs")
@@ -84,4 +53,27 @@ script = ExtResource("3_4mk40")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DirectionalAttackComponent/Hitbox" unique_id=996297961]
 position = Vector2(50, 0)
 shape = SubResource("RectangleShape2D_fsmad")
+disabled = true
+
+[node name="GroundSlamComponent" type="Node2D" parent="." unique_id=1500053669]
+script = ExtResource("7_56prs")
+
+[node name="PlungeHitbox" type="Area2D" parent="GroundSlamComponent" unique_id=1039402662]
+monitoring = false
+monitorable = false
+script = ExtResource("3_4mk40")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GroundSlamComponent/PlungeHitbox" unique_id=1568513328]
+position = Vector2(0, 65.5)
+shape = SubResource("RectangleShape2D_hsffa")
+disabled = true
+
+[node name="SlamHitbox" type="Area2D" parent="GroundSlamComponent" unique_id=1416313919]
+monitoring = false
+monitorable = false
+script = ExtResource("3_4mk40")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GroundSlamComponent/SlamHitbox" unique_id=641559411]
+position = Vector2(0, 16)
+shape = SubResource("RectangleShape2D_xjkdw")
 disabled = true

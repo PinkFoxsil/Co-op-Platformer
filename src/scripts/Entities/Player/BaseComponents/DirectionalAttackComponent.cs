@@ -5,14 +5,13 @@ using System.Collections.Generic;
 public partial class DirectionalAttackComponent : Node2D, IComponent
 {
     [Export] public float attackCooldown = 1f;
-	[Export] public float attackDuration = 0.5f;
-	[Export] public int attackDamage = 1;
-
-	private float _attackCooldownTimer;
+	[Export] public float hitboxDuration = 0.5f;
+	[Export] public int damage = 1;
 
 	private Hitbox _hitbox;
 
 	private InputComponent _input;
+	private Player _character;
 
     public Dictionary<CardinalDirection, Action> attacks = new()
     {
@@ -24,7 +23,7 @@ public partial class DirectionalAttackComponent : Node2D, IComponent
 	
 	public void Init(Node parentNode)
 	{
-		Player _character = (Player) parentNode;
+		_character = (Player) parentNode;
 		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
 
 		_hitbox = GetNode<Hitbox>("Hitbox");
@@ -36,23 +35,22 @@ public partial class DirectionalAttackComponent : Node2D, IComponent
                 attacks[attack.Key] = GetAttack(attack.Key);
             }
         }
-
-        attacks[CardinalDirection.DOWN] = null;
 	}
 
     private Action GetAttack(CardinalDirection dir)
     {
         return () =>
         {
+			_character.currentState.stateTag = PlayerStateTag.Attacking;
+            _character.currentState.Start(attackCooldown);
+			
             RotateHitbox(dir);
-            _hitbox.Activate(attackDuration);
+            _hitbox.Activate(hitboxDuration);
         };
     }
 
 	public void PhysicsProcess(float dt)
 	{
-		_attackCooldownTimer -= dt;
-
 		if (_input == null)
 		{
 			return;
@@ -67,7 +65,7 @@ public partial class DirectionalAttackComponent : Node2D, IComponent
 
 	public virtual bool CanAttack()
 	{
-		return _attackCooldownTimer <= 0f;
+		return _character.currentState.stateTag == PlayerStateTag.Neutral;
 	}
 
 	private CardinalDirection GetAttackDirection()
@@ -82,7 +80,6 @@ public partial class DirectionalAttackComponent : Node2D, IComponent
             return;
         }
 
-        _attackCooldownTimer = attackCooldown;
         attacks[dir]();
     }
 

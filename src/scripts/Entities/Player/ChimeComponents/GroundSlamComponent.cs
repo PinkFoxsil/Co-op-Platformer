@@ -1,15 +1,16 @@
 using Godot;
 using System;
 
-public partial class GroundSlamComponent : Node, IComponent
+public partial class GroundSlamComponent : Node2D, IComponent
 {
 	[Export] public float attackCooldown = 1f;
-	[Export] public float attackDuration = 0.5f;
-	[Export] public int attackDamage = 1;
+	[Export] public float slamHitboxDuration = 0.5f;
 
-	private float _attackCooldownTimer;
+	[Export] public int plungeAttackDamage = 1;
+	[Export] public int slamAttackDamage = 1;
 
-	private Hitbox _groundSlamHitbox;
+	private Hitbox _slamHitbox;
+	private Hitbox _plungeHitbox;
 	
 	private Player _character;
 	private InputComponent _input;
@@ -20,43 +21,19 @@ public partial class GroundSlamComponent : Node, IComponent
 
 		_character = (Player) parentNode;
 		_input = (InputComponent) _character.ComponentList.GetComponent(typeof(InputComponent));
-		//_directionalAttack = (DirectionalAttackComponent) _character.ComponentList.GetComponent(typeof(DirectionalAttackComponent));
+		_directionalAttack = (DirectionalAttackComponent) _character.ComponentList.GetComponent(typeof(DirectionalAttackComponent));
 
-		Node2D hitboxes = _character.GetNode<Node2D>("Hitboxes");
-		_groundSlamHitbox = hitboxes.GetNode<Hitbox>("GroundHitbox");
+		_slamHitbox = GetNode<Hitbox>("SlamHitbox");
+		_plungeHitbox = GetNode<Hitbox>("PlungeHitbox");
 
-		//_directionalAttack.attacks[CardinalDirection.DOWN] = Attack;
-	}
-
-	public void PhysicsProcess(float dt)
-	{
-		_attackCooldownTimer -= dt;
-
-		if (_input == null)
-		{
-			return;
-		}
-
-		if (_input.attack1Pressed && CanAttack())
-		{
-			Attack();
-		}
-	}
-
-	public virtual bool CanAttack()
-	{
-		return _attackCooldownTimer <= 0f;
+		_directionalAttack.attacks[CardinalDirection.DOWN] = Attack;
 	}
 
 	private void Attack()
 	{
-		_attackCooldownTimer = attackCooldown;
-		CardinalDirection dir = DirectionUtility.GetCardinalDirection(_input.mouseRelativePosition);
-
-		if (dir == CardinalDirection.DOWN && _character.IsOnFloor())
+		if (_character.IsOnFloor())
 		{
-			_groundSlamHitbox.Activate(attackDuration);
-
+			_slamHitbox.Activate(slamHitboxDuration);
 		}
 	}
 }
