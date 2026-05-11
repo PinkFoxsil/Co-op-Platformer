@@ -72,6 +72,7 @@ public partial class DashComponent : Node, IComponent
 		}
 
 		_dashTimer.Start(dashTime);
+		isDashing = true;
 		_currentDashCharges--;
 
 		if (_currentDashCharges == maxDashes - 1)
@@ -89,7 +90,7 @@ public partial class DashComponent : Node, IComponent
 
 	private bool CanDash()
 	{
-		return _currentDashCharges > 0 && !_dashTimer.IsRunning && !_dashRecoveryTimer.IsRunning;
+		return canDash && _currentDashCharges > 0 && !_dashTimer.IsRunning && !_dashRecoveryTimer.IsRunning;
 	}
 
 	private void UpdateRecovery(float dt)
@@ -111,6 +112,7 @@ public partial class DashComponent : Node, IComponent
 	{
 		if (!_dashTimer.IsRunning)
 		{
+			isDashing = false;
 			return;
 		}
 		
@@ -147,7 +149,7 @@ public partial class DashComponent : Node, IComponent
 	private void UpdateDashDuration(float dt)
 	{
 		float excess = _dashTimer.Tick(dt);
-		if (_dashTimer.IsRunning)
+		if (_dashTimer.IsRunning) // Is this supposed to be HasStopped?
 		{
 			StartRecovery(dashRecoveryTime - excess);
 		}

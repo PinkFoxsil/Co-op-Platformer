@@ -52,7 +52,13 @@ public partial class ChimeControllerComponent : Node, IComponent
 
 		UpdateMouseProperties();
 
+        if (Mathf.Abs(InputSingleton.Instance.inputX) > Mathf.Epsilon)
+        {
+            _facingRight = InputSingleton.Instance.inputX > 0;
+        }
+
         _attackComponent.attackDirection = DirectionUtility.GetCardinalDirection(_mouseRelativePosition);
+        _dashComponent.dashDirection = _facingRight ? 1 : -1;
 
         _dashComponent.canDash = true;
         _moveComponent.canMove = true;
