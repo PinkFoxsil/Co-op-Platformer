@@ -39,20 +39,6 @@ public partial class DashComponent : Node, IComponent
 		UpdateRecovery(dt);
 	}
 
-	public void PhysicsProcess(float dt)
-	{
-		UpdateDash(dt);
-	}
-
-	public void PostPhysicsProcess(float dt)
-	{
-		HandleGroundReset();
-		if (!_justDashed)
-		{
-			UpdateDashDuration(dt);
-		}
-	}
-
 	private void UpdateCooldowns(float dt)
 	{
 		if (_currentDashCharges == maxDashes)
@@ -70,15 +56,6 @@ public partial class DashComponent : Node, IComponent
 		if (_currentDashCharges < maxDashes)
 		{
 			_cooldownTimer.Start(dashCooldown - excess);
-		}
-	}
-
-	private void UpdateDashDuration(float dt)
-	{
-		float excess = _dashTimer.Tick(dt);
-		if (_dashTimer.IsRunning)
-		{
-			StartRecovery(dashRecoveryTime - excess);
 		}
 	}
 
@@ -115,12 +92,19 @@ public partial class DashComponent : Node, IComponent
 		return _currentDashCharges > 0 && !_dashTimer.IsRunning && !_dashRecoveryTimer.IsRunning;
 	}
 
-	private void HandleGroundReset()
+	private void UpdateRecovery(float dt)
 	{
-		if (_requiresGroundReset && _character.IsOnFloor())
+		if (!_dashRecoveryTimer.IsRunning)
 		{
-			_requiresGroundReset = false;
+			return;
 		}
+
+		_dashRecoveryTimer.Tick(dt);
+	}
+
+	public void PhysicsProcess(float dt)
+	{
+		UpdateDash(dt);
 	}
 
 	private void UpdateDash(float dt)
@@ -133,11 +117,6 @@ public partial class DashComponent : Node, IComponent
 		ApplyDashForce(dashDirection);
 	}
 
-	private void StartRecovery(float recoveryTime)
-	{
-		_dashRecoveryTimer.Start(recoveryTime);
-	}
-
 	private void ApplyDashForce(int directionX)
 	{
 		if (directionX == 0)
@@ -148,13 +127,34 @@ public partial class DashComponent : Node, IComponent
 		_character.Velocity = new Vector2(directionX * dashSpeed, 0);
 	}
 
-	private void UpdateRecovery(float dt)
+	public void PostPhysicsProcess(float dt)
 	{
-		if (!_dashRecoveryTimer.IsRunning)
+		HandleGroundReset();
+		if (!_justDashed)
 		{
-			return;
+			UpdateDashDuration(dt);
 		}
+	}
 
-		_dashRecoveryTimer.Tick(dt);
+	private void HandleGroundReset()
+	{
+		if (_requiresGroundReset && _character.IsOnFloor())
+		{
+			_requiresGroundReset = false;
+		}
+	}
+
+	private void UpdateDashDuration(float dt)
+	{
+		float excess = _dashTimer.Tick(dt);
+		if (_dashTimer.IsRunning)
+		{
+			StartRecovery(dashRecoveryTime - excess);
+		}
+	}
+
+	private void StartRecovery(float recoveryTime)
+	{
+		_dashRecoveryTimer.Start(recoveryTime);
 	}
 }
