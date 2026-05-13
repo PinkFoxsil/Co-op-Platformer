@@ -134,20 +134,7 @@ public partial class BaseMovementComponent : Node, IComponent
 		ApplyHorizontalMovement(dt, targetSpeed);
 		ApplyGravity(dt);
 		CapSpeed();
-		GroundSnap();
-	}
-
-	private float GetAccelRate(float targetSpeed)
-	{
-		return Mathf.Abs(targetSpeed) > 0 ? _runAccelAmount : _runDeccelAmount;
-	}
-
-	private void ApplyHorizontalMovement(float dt, float targetSpeed)
-	{
-		float desiredSpeedDifference = targetSpeed - _character.Velocity.X;
-		float movementX = desiredSpeedDifference*_accelRate;
-
-		_character.Velocity += movementX*Vector2.Right*dt;
+		SnapToGround();
 	}
 
 	private void UpdateState()
@@ -195,6 +182,11 @@ public partial class BaseMovementComponent : Node, IComponent
 		);
 	}
 
+	private float GetAccelRate(float targetSpeed)
+	{
+		return Mathf.Abs(targetSpeed) > 0 ? _runAccelAmount : _runDeccelAmount;
+	}
+
 	private void ApplyJumpHangMovementBoost()
 	{
 		if (Mathf.Abs(_character.Velocity.Y) < jumpHangTimeThreshold)
@@ -207,6 +199,14 @@ public partial class BaseMovementComponent : Node, IComponent
 	private void ApplyFallMultiplier()
 	{
 		_currentGravity *= fallMultiplier;
+	}
+
+	private void ApplyHorizontalMovement(float dt, float targetSpeed)
+	{
+		float desiredSpeedDifference = targetSpeed - _character.Velocity.X;
+		float movementX = desiredSpeedDifference*_accelRate;
+
+		_character.Velocity += movementX*Vector2.Right*dt;
 	}
 
 	private void ApplyGravity(float dt)
@@ -222,7 +222,7 @@ public partial class BaseMovementComponent : Node, IComponent
 		}
 	}
 
-	private void GroundSnap()
+	private void SnapToGround()
 	{
 		if (_character.IsOnFloor() && _character.Velocity.Y > 0)
 		{
