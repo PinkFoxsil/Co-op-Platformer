@@ -38,13 +38,13 @@ public partial class DashComponent : Node, IComponent
 	{
 		_character = (Player) parentNode;
 		_input = InputSingleton.Instance;
+		_lastFacedDirection = 1;
 	}
 
 	public void PrePhysicsProcess(float dt)
 	{
 		_justDashed = false;
-		_lastFacedDirection = _input.inputX > 0f ? 1 : -1;
-
+		
 		if (dashState == DashState.Recovering)
 		{
 			UpdateRecovery(dt);
@@ -52,6 +52,7 @@ public partial class DashComponent : Node, IComponent
 
 		UpdateCooldowns(dt);
 		
+		UpdateLastFacedDirection();
 		if (dashState == DashState.Idle)
 		{
 			_justDashed = CheckDashTriggered();
@@ -72,6 +73,14 @@ public partial class DashComponent : Node, IComponent
 		if (!_justDashed && dashState == DashState.Dashing)
 		{
 			UpdateDashDuration(dt);
+		}
+	}
+
+	private void UpdateLastFacedDirection()
+	{
+		if (MathUtility.SnapToZero(_input.inputX) != 0)
+		{
+			_lastFacedDirection = _input.inputX >= 0f ? 1 : -1;
 		}
 	}
 
