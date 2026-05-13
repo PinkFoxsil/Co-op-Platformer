@@ -11,7 +11,9 @@ public enum MoveState
 
 public partial class BaseMovementComponent : Node, IComponent
 {
-	[ExportCategory("Movement")]
+	[Export] public float maxSpeed = 960f;
+
+	[ExportCategory("Running")]
 	[Export] public float moveSpeed = 352f;
 	[Export] public float acceleration = 80f;
 	[Export] public float deceleration = 160f;
@@ -21,7 +23,6 @@ public partial class BaseMovementComponent : Node, IComponent
 	[Export] public float jumpTimeToApex = 0.3f;
 
 	[Export] public float fallMultiplier = 2f;
-	[Export] public float maxSpeed = 960f;
 
 	[ExportGroup("Grace Timers")]
 	[Export] public float coyoteTime = 0.125f;
@@ -32,7 +33,7 @@ public partial class BaseMovementComponent : Node, IComponent
 	[Export] public float jumpHangGravityMultiplier = 0.5f;
 	[Export] public float jumpHangAccelerationMultiplier = 1.1f;
 
-	[ExportCategory("Control")]
+	[ExportCategory("Movement Control")]
 	[Export] public float airControl = 0.65f;
 	[Export] public float groundControl = 1f;
 
