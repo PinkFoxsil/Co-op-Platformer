@@ -8,7 +8,7 @@ public partial class DirectionalAttackComponent : Node2D, IComponent
 	[Export] public float hitboxDuration = 0.3f;
 	[Export] public int damage = 1;
 
-	public bool canAttack;
+	public bool attackEnabled;
 	public bool isAttacking;
 	public CardinalDirection attackDirection;
 
@@ -68,12 +68,17 @@ public partial class DirectionalAttackComponent : Node2D, IComponent
 			return;
 		}
 		
-		if (_input.attack1Pressed && canAttack)
+		if (_input.attack1Pressed && CanAttack())
 		{
 			Attack(attackDirection);
 		}
 
 		UpdateIsAttacking(dt);
+	}
+
+	private bool CanAttack()
+	{
+		return attackEnabled && !isAttacking;
 	}
 
     public void Attack(CardinalDirection dir)

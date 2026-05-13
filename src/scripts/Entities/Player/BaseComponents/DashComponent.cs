@@ -10,7 +10,7 @@ public partial class DashComponent : Node, IComponent
 	[Export] public float dashCooldown = 2f;
 	[Export] public int maxDashes = 2;
 
-	public bool canDash;
+	public bool dashEnabled;
 	public bool isDashing;
 	public int dashDirection;
 
@@ -90,7 +90,7 @@ public partial class DashComponent : Node, IComponent
 
 	private bool CanDash()
 	{
-		return canDash && _currentDashCharges > 0 && !_dashTimer.IsRunning && !_dashRecoveryTimer.IsRunning;
+		return dashEnabled && _currentDashCharges > 0 && !_dashTimer.IsRunning && !_dashRecoveryTimer.IsRunning;
 	}
 
 	private void UpdateRecovery(float dt)

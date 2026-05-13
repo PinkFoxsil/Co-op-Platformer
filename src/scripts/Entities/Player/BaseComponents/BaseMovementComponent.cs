@@ -12,33 +12,41 @@ public enum MoveState
 public partial class BaseMovementComponent : Node, IComponent
 {
 	[ExportCategory("Movement")]
-	[Export] public float moveSpeed = 270f;
-	[Export] public float acceleration = 2000f;
-	[Export] public float deceleration = 3000f;
+	[Export] public float moveSpeed = 352f;
+	[Export] public float acceleration = 80f;
+	[Export] public float deceleration = 160f;
 
 	[ExportCategory("Jumping")]
-	[Export] public float jumpForce = 560f;
+	[Export] public float jumpHeight = 112f;
+	[Export] public float jumpTimeToApex = 0.3f;
 
+	[Export] public float fallMultiplier = 2f;
+	[Export] public float maxSpeed = 960f;
+
+	[ExportGroup("Grace Timers")]
 	[Export] public float coyoteTime = 0.125f;
 	[Export] public float jumpBufferTime = 0.1f;
 
-	[ExportGroup("Gravity")]
-	[Export] public float gravityScale = 1.4f;
-	[Export] public float fallMultiplier = 1.4f;
-	[Export] public float maxSpeed = 1000f;
-
 	[ExportGroup("Jump Hang")]
-	[Export] public float jumpHangTimeThreshold = 5f;
+	[Export] public float jumpHangTimeThreshold = 32f;
 	[Export] public float jumpHangGravityMultiplier = 0.5f;
+	[Export] public float jumpHangAccelerationMultiplier = 1.1f;
 
 	[ExportCategory("Control")]
-	[Export] public float airControl = 0.6f;
+	[Export] public float airControl = 0.65f;
 	[Export] public float groundControl = 1f;
 
-	public bool canMove;
+	public bool movementEnabled;
 	public MoveState moveState;
-	
-	private Vector2 _currentGravity;
+
+	private float _gravityStrength;
+	private float _gravityScale;
+	private float _jumpForce;
+
+	private float _runAccelAmount;
+	private float _runDeccelAmount;
+	private float _accelRate;
+	private float _currentGravity;
 
 	private Timer _coyoteTimer = new Timer();
 	private Timer _jumpBufferTimer = new Timer();
@@ -52,6 +60,9 @@ public partial class BaseMovementComponent : Node, IComponent
 		_input = InputSingleton.Instance;
 
 		moveState = _character.IsOnFloor() ? MoveState.Idle : MoveState.Falling;
+
+		_gravityStrength = 2*jumpHeight/(jumpTimeToApex*jumpTimeToApex);
+		GD.Print(_gravityStrength);
 	}
 
 	public void PrePhysicsProcess(float dt)
@@ -84,9 +95,20 @@ public partial class BaseMovementComponent : Node, IComponent
 
 	public void PhysicsProcess(float dt)
 	{
-		_currentGravity = _character.GetGravity() * gravityScale;
+		if (_character.GetGravity().Y == 0)
+		{
+			return;
+		}
 
-		ApplyHorizontalMovement(dt);
+		_gravityScale = _gravityStrength / _character.GetGravity().Y;
+		_currentGravity = _character.GetGravity().Y*_gravityScale;
+		_jumpForce = _gravityStrength*jumpTimeToApex;
+
+		float inverseDeltaTime = 1/dt;
+		_runAccelAmount = inverseDeltaTime*acceleration/moveSpeed;
+		_runDeccelAmount = inverseDeltaTime*deceleration/moveSpeed;
+
+		float targetSpeed = _input.inputX * moveSpeed;
 
 		UpdateState();
 
@@ -94,44 +116,38 @@ public partial class BaseMovementComponent : Node, IComponent
 			moveState == MoveState.Running)
 		{
 			CheckJump();
+			_accelRate = GetAccelRate(targetSpeed)*groundControl;
 		}
 
 		if (moveState == MoveState.Jumping ||
 			moveState == MoveState.Falling)
 		{
-			AdjustJumpHangGravity();
+			_accelRate = GetAccelRate(targetSpeed)*airControl;
+			ApplyJumpHangMovementBoost();
 		}
 		
 		if (moveState == MoveState.Falling)
 		{
 			ApplyFallMultiplier();
 		}
-		
+
+		ApplyHorizontalMovement(dt, targetSpeed);
 		ApplyGravity(dt);
 		CapSpeed();
 		GroundSnap();
 	}
 
-	private void ApplyHorizontalMovement(float dt)
+	private float GetAccelRate(float targetSpeed)
 	{
-		float control = _character.IsOnFloor() ? groundControl : airControl;
-		float actualAcceleration = acceleration * control;
-		float targetSpeed = _input.inputX * moveSpeed;
+		return Mathf.Abs(targetSpeed) > 0 ? _runAccelAmount : _runDeccelAmount;
+	}
 
-		if (Mathf.Abs(targetSpeed) > Mathf.Epsilon)
-		{
-			_character.Velocity = new Vector2(
-				Mathf.MoveToward(_character.Velocity.X, targetSpeed, actualAcceleration * dt),
-				_character.Velocity.Y
-			);
-		}
-		else
-		{
-			_character.Velocity = new Vector2(
-				Mathf.MoveToward(_character.Velocity.X, 0, deceleration * dt * control),
-				_character.Velocity.Y
-			);
-		}
+	private void ApplyHorizontalMovement(float dt, float targetSpeed)
+	{
+		float desiredSpeedDifference = targetSpeed - _character.Velocity.X;
+		float movementX = desiredSpeedDifference*_accelRate;
+
+		_character.Velocity += movementX*Vector2.Right*dt;
 	}
 
 	private void UpdateState()
@@ -155,7 +171,7 @@ public partial class BaseMovementComponent : Node, IComponent
 
 	private void CheckJump()
 	{
-		if (_input.jumpPressed && canMove)
+		if (_input.jumpPressed && movementEnabled)
 		{
 			Jump();
 		}
@@ -175,15 +191,16 @@ public partial class BaseMovementComponent : Node, IComponent
 	{
 		_character.Velocity = new Vector2(
 			_character.Velocity.X,
-			-jumpForce
+			-_jumpForce
 		);
 	}
 
-	private void AdjustJumpHangGravity()
+	private void ApplyJumpHangMovementBoost()
 	{
 		if (Mathf.Abs(_character.Velocity.Y) < jumpHangTimeThreshold)
 		{
 			_currentGravity *= jumpHangGravityMultiplier;
+			_accelRate *= jumpHangAccelerationMultiplier;
 		}
 	}
 
@@ -194,7 +211,7 @@ public partial class BaseMovementComponent : Node, IComponent
 
 	private void ApplyGravity(float dt)
 	{
-		_character.Velocity += _currentGravity * dt;
+		_character.Velocity += Vector2.Down*_currentGravity*dt;
 	}
 
 	private void CapSpeed()

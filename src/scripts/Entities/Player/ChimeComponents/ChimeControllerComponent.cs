@@ -38,9 +38,9 @@ public partial class ChimeControllerComponent : Node, IComponent
     {
         enabled = true;
 
-        _dashComponent.canDash = true;
-        _moveComponent.canMove = true;
-        _attackComponent.canAttack = true;
+        _dashComponent.dashEnabled = true;
+        _moveComponent.movementEnabled = true;
+        _attackComponent.attackEnabled = true;
     }
 
 	public void PrePhysicsProcess(float dt)
@@ -60,22 +60,9 @@ public partial class ChimeControllerComponent : Node, IComponent
         _attackComponent.attackDirection = DirectionUtility.GetCardinalDirection(_mouseRelativePosition);
         _dashComponent.dashDirection = _facingRight ? 1 : -1;
 
-        _dashComponent.canDash = true;
-        _moveComponent.canMove = true;
-        _attackComponent.canAttack = true;
-
-        if (_attackComponent.isAttacking)
-        {
-            _attackComponent.canAttack = false;
-            _dashComponent.canDash = false;
-        }
-        
-        if (_dashComponent.isDashing)
-        {
-            _dashComponent.canDash = false;
-            _attackComponent.canAttack = false;
-            _moveComponent.canMove = false;
-        }
+        _dashComponent.dashEnabled = !_attackComponent.isAttacking;
+        _moveComponent.movementEnabled = !_dashComponent.isDashing;
+        _attackComponent.attackEnabled = !_dashComponent.isDashing;
 	}
 
     private void UpdateMouseProperties()
