@@ -6,7 +6,6 @@ public partial class ChimeControllerComponent : Node, IComponent
     public bool enabled;
 
 	private float _inputX;
-	private bool _facingRight;
 
 	private Vector2 _mouseWorldPosition;
 	private Vector2 _mouseRelativePosition;
@@ -21,8 +20,6 @@ public partial class ChimeControllerComponent : Node, IComponent
 
 	public void Init(Node parentNode)
 	{
-        _facingRight = true;
-
 		_character = (Player) parentNode;
 
         _moveComponent = (BaseMovementComponent) _character.ComponentList.GetComponent(typeof(BaseMovementComponent));
@@ -52,17 +49,11 @@ public partial class ChimeControllerComponent : Node, IComponent
 
 		UpdateMouseProperties();
 
-        if (Mathf.Abs(InputSingleton.Instance.inputX) > Mathf.Epsilon)
-        {
-            _facingRight = InputSingleton.Instance.inputX > 0;
-        }
-
         _attackComponent.attackDirection = DirectionUtility.GetCardinalDirection(_mouseRelativePosition);
-        _dashComponent.dashDirection = _facingRight ? 1 : -1;
 
         _dashComponent.dashEnabled = !_attackComponent.isAttacking;
-        _moveComponent.movementEnabled = !_dashComponent.isDashing;
-        _attackComponent.attackEnabled = !_dashComponent.isDashing;
+        _moveComponent.movementEnabled = _dashComponent.dashState != DashState.Dashing;
+        _attackComponent.attackEnabled = _dashComponent.dashState != DashState.Dashing;
 	}
 
     private void UpdateMouseProperties()

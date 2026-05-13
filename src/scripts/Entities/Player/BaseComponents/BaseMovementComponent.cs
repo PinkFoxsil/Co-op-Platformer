@@ -90,10 +90,6 @@ public partial class BaseMovementComponent : Node, IComponent
 		}
 
 		ApplyHorizontalMovement(dt, inputX, control);
-	}
-
-	public void PostPhysicsProcess(float dt)
-	{
 		UpdateState();
 	}
 
@@ -122,17 +118,17 @@ public partial class BaseMovementComponent : Node, IComponent
 		_jumpBufferTimer.Tick(dt);
 	}
 
+	private bool CanJump()
+	{
+		return _character.IsOnFloor() || _coyoteTimer.IsRunning;
+	}
+
 	private void ProcessBufferedJump()
 	{
 		if (_jumpBufferTimer.IsRunning && CanJump())
 		{
 			Jump();
 		}
-	}
-
-	private bool CanJump()
-	{
-		return _character.IsOnFloor() || _coyoteTimer.IsRunning;
 	}
 
 	private void Jump()

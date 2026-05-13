@@ -1,6 +1,13 @@
 using Godot;
 using System;
 
+public enum DashState
+{
+	Idle,
+	Dashing,
+	Recovering,
+}
+
 public partial class DashComponent : Node, IComponent
 {
 	[ExportCategory("Dash")]
@@ -11,12 +18,12 @@ public partial class DashComponent : Node, IComponent
 	[Export] public int maxDashes = 2;
 
 	public bool dashEnabled;
-	public bool isDashing;
-	public int dashDirection;
+	public DashState dashState;
 
 	private int _currentDashCharges;
-	private bool _requiresGroundReset;
+	private int _dashDirection;
 	private bool _justDashed;
+	private bool _requiresGroundReset;
 
 	private Timer _dashTimer = new();
 	private Timer _dashRecoveryTimer = new();
@@ -24,7 +31,6 @@ public partial class DashComponent : Node, IComponent
 
 	private Player _character;
 	private InputSingleton _input;
-
 
 	public void Init(Node parentNode)
 	{
@@ -34,11 +40,56 @@ public partial class DashComponent : Node, IComponent
 
 	public void PrePhysicsProcess(float dt)
 	{
+		UpdateRecovery(dt);
 		UpdateCooldowns(dt);
 		_justDashed = CheckDashTriggered();	
-		UpdateRecovery(dt);
 	}
 
+	public void PhysicsProcess(float dt)
+	{
+		ApplyDashForce(dt);
+	}
+
+	public void PostPhysicsProcess(float dt)
+	{
+		HandleGroundReset();
+		if (!_justDashed)
+		{
+			UpdateDashDuration(dt);
+		}
+	}
+
+	private void UpdateDashDuration(float dt)
+	{
+
+		if (!_dashTimer.IsRunning)
+		{
+			return;
+		}
+
+		float excess = _dashTimer.Tick(dt);
+		if (_dashTimer.HasStopped)
+		{
+			dashState = DashState.Recovering;
+			_dashRecoveryTimer.Start(dashRecoveryTime - excess);
+		}
+	}
+
+	private void UpdateRecovery(float dt)
+	{
+		if (!_dashRecoveryTimer.IsRunning)
+		{
+			return;
+		}
+
+		_dashRecoveryTimer.Tick(dt);
+
+		if (_dashTimer.HasStopped)
+		{
+			dashState = DashState.Idle;
+		}
+	}
+	
 	private void UpdateCooldowns(float dt)
 	{
 		if (_currentDashCharges == maxDashes)
@@ -59,6 +110,11 @@ public partial class DashComponent : Node, IComponent
 		}
 	}
 
+	private bool CanDash()
+	{
+		return dashEnabled && _currentDashCharges > 0 && !_dashTimer.IsRunning && !_dashRecoveryTimer.IsRunning;
+	}
+
 	private bool CheckDashTriggered()
 	{
 		if (!_input.ability1Pressed)
@@ -71,8 +127,10 @@ public partial class DashComponent : Node, IComponent
 			return false;
 		}
 
+		dashState = DashState.Dashing;
+
 		_dashTimer.Start(dashTime);
-		isDashing = true;
+		_dashDirection = _input.inputX > 0 ? 1 : -1;
 		_currentDashCharges--;
 
 		if (_currentDashCharges == maxDashes - 1)
@@ -88,54 +146,14 @@ public partial class DashComponent : Node, IComponent
 		return true;
 	}
 
-	private bool CanDash()
-	{
-		return dashEnabled && _currentDashCharges > 0 && !_dashTimer.IsRunning && !_dashRecoveryTimer.IsRunning;
-	}
-
-	private void UpdateRecovery(float dt)
-	{
-		if (!_dashRecoveryTimer.IsRunning)
-		{
-			return;
-		}
-
-		_dashRecoveryTimer.Tick(dt);
-	}
-
-	public void PhysicsProcess(float dt)
-	{
-		UpdateDash(dt);
-	}
-
-	private void UpdateDash(float dt)
+	private void ApplyDashForce(float dt)
 	{
 		if (!_dashTimer.IsRunning)
 		{
-			isDashing = false;
 			return;
 		}
 		
-		ApplyDashForce(dashDirection);
-	}
-
-	private void ApplyDashForce(int directionX)
-	{
-		if (directionX == 0)
-		{
-			return;
-		}
-
-		_character.Velocity = new Vector2(directionX * dashSpeed, 0);
-	}
-
-	public void PostPhysicsProcess(float dt)
-	{
-		HandleGroundReset();
-		if (!_justDashed)
-		{
-			UpdateDashDuration(dt);
-		}
+		_character.Velocity = new Vector2(_dashDirection * dashSpeed, 0);
 	}
 
 	private void HandleGroundReset()
@@ -144,19 +162,5 @@ public partial class DashComponent : Node, IComponent
 		{
 			_requiresGroundReset = false;
 		}
-	}
-
-	private void UpdateDashDuration(float dt)
-	{
-		float excess = _dashTimer.Tick(dt);
-		if (_dashTimer.IsRunning) // Is this supposed to be HasStopped?
-		{
-			StartRecovery(dashRecoveryTime - excess);
-		}
-	}
-
-	private void StartRecovery(float recoveryTime)
-	{
-		_dashRecoveryTimer.Start(recoveryTime);
 	}
 }
