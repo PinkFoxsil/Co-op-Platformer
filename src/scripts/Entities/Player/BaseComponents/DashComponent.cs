@@ -22,6 +22,8 @@ public partial class DashComponent : Node, IComponent
 
 	private int _currentDashCharges;
 	private int _dashDirection;
+	private int _lastFacedDirection;
+
 	private bool _justDashed;
 	private bool _requiresGroundReset;
 
@@ -40,20 +42,34 @@ public partial class DashComponent : Node, IComponent
 
 	public void PrePhysicsProcess(float dt)
 	{
-		UpdateRecovery(dt);
+		_justDashed = false;
+		_lastFacedDirection = _input.inputX > 0f ? 1 : -1;
+
+		if (dashState == DashState.Recovering)
+		{
+			UpdateRecovery(dt);
+		}
+
 		UpdateCooldowns(dt);
-		_justDashed = CheckDashTriggered();	
+		
+		if (dashState == DashState.Idle)
+		{
+			_justDashed = CheckDashTriggered();
+		}
 	}
 
 	public void PhysicsProcess(float dt)
 	{
-		ApplyDashForce(dt);
+		if (dashState == DashState.Dashing)
+		{
+			ApplyDashForce(dt);	
+		}
 	}
 
 	public void PostPhysicsProcess(float dt)
 	{
 		HandleGroundReset();
-		if (!_justDashed)
+		if (!_justDashed && dashState == DashState.Dashing)
 		{
 			UpdateDashDuration(dt);
 		}
@@ -61,12 +77,6 @@ public partial class DashComponent : Node, IComponent
 
 	private void UpdateDashDuration(float dt)
 	{
-
-		if (!_dashTimer.IsRunning)
-		{
-			return;
-		}
-
 		float excess = _dashTimer.Tick(dt);
 		if (_dashTimer.HasStopped)
 		{
@@ -77,14 +87,9 @@ public partial class DashComponent : Node, IComponent
 
 	private void UpdateRecovery(float dt)
 	{
-		if (!_dashRecoveryTimer.IsRunning)
-		{
-			return;
-		}
-
 		_dashRecoveryTimer.Tick(dt);
 
-		if (_dashTimer.HasStopped)
+		if (_dashRecoveryTimer.HasStopped)
 		{
 			dashState = DashState.Idle;
 		}
@@ -112,7 +117,7 @@ public partial class DashComponent : Node, IComponent
 
 	private bool CanDash()
 	{
-		return dashEnabled && _currentDashCharges > 0 && !_dashTimer.IsRunning && !_dashRecoveryTimer.IsRunning;
+		return dashEnabled && _currentDashCharges > 0;
 	}
 
 	private bool CheckDashTriggered()
@@ -130,7 +135,7 @@ public partial class DashComponent : Node, IComponent
 		dashState = DashState.Dashing;
 
 		_dashTimer.Start(dashTime);
-		_dashDirection = _input.inputX > 0 ? 1 : -1;
+		_dashDirection = _lastFacedDirection;
 		_currentDashCharges--;
 
 		if (_currentDashCharges == maxDashes - 1)
@@ -147,12 +152,7 @@ public partial class DashComponent : Node, IComponent
 	}
 
 	private void ApplyDashForce(float dt)
-	{
-		if (!_dashTimer.IsRunning)
-		{
-			return;
-		}
-		
+	{		
 		_character.Velocity = new Vector2(_dashDirection * dashSpeed, 0);
 	}
 
