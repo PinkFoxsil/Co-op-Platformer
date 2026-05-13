@@ -34,6 +34,7 @@ texture = ExtResource("1_cv7mj")
 
 [node name="BaseMovementComponent" type="Node" parent="." unique_id=1271246942]
 script = ExtResource("4_4mk40")
+moveSpeed = 352.0
 
 [node name="DashComponent" type="Node" parent="." unique_id=282637028]
 script = ExtResource("5_n4nwn")

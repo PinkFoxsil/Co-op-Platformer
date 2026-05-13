@@ -42,8 +42,8 @@ public partial class BaseMovementComponent : Node, IComponent
 	private float _gravityStrength;
 	private float _jumpForce;
 
-	private Timer _coyoteTimer = new Timer();
-	private Timer _jumpBufferTimer = new Timer();
+	private Timer _coyoteTimer = new();
+	private Timer _jumpBufferTimer = new();
 
 	private Player _character;
 	private InputSingleton _input;
@@ -55,7 +55,7 @@ public partial class BaseMovementComponent : Node, IComponent
 
 		moveState = _character.IsOnFloor() ? MoveState.Idle : MoveState.Falling;
 
-		_gravityStrength = 2 * jumpHeight/(jumpTimeToApex * jumpTimeToApex);
+		_gravityStrength = 2 * jumpHeight / (jumpTimeToApex * jumpTimeToApex);
 		_jumpForce = _gravityStrength * jumpTimeToApex;
 	}
 
@@ -156,7 +156,7 @@ public partial class BaseMovementComponent : Node, IComponent
 
 	private void ApplyGravity(float dt, float scaledGravity)
 	{
-		_character.Velocity += Vector2.Down * scaledGravity *dt;
+		_character.Velocity += Vector2.Down * scaledGravity * dt;
 	}
 
 	private void ClampFallSpeed()
