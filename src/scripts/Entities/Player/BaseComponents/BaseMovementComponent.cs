@@ -112,13 +112,6 @@ public partial class BaseMovementComponent : Node, IComponent
 
 	private void ProcessBufferedJump()
 	{
-		if (_jumpBufferTimer.IsRunning)
-		{
-			GD.Print(_character.IsOnFloor());
-			GD.Print(_coyoteTimer.IsRunning);
-			GD.Print(" ");
-		}
-		
 		if (_jumpBufferTimer.IsRunning && CanJump())
 		{
 			Jump();

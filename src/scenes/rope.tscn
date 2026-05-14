@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://cq3nmcvps863h"]
+
+[ext_resource type="Script" uid="uid://bbo7m0ppsdfua" path="res://src/scripts/Tmp/Rope.cs" id="1_8winm"]
+[ext_resource type="PackedScene" uid="uid://lcx2iy1suqgj" path="res://src/scenes/rope_segment.tscn" id="1_vxyu0"]
+
+[node name="rope" type="Node2D" unique_id=1017927398]
+script = ExtResource("1_8winm")
+
+[node name="Line2D" type="Line2D" parent="." unique_id=1571028116]
+width = 5.0
+
+[node name="RopeStart" parent="." unique_id=1609995574 instance=ExtResource("1_vxyu0")]
+mass = 0.02
+freeze = true
+
+[node name="RopeEnd" parent="." unique_id=1192729259 instance=ExtResource("1_vxyu0")]
+position = Vector2(0, 133)

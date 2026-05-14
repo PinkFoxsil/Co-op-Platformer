@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://lcx2iy1suqgj"]
+
+[ext_resource type="Script" uid="uid://dsuoa3rwf2sb4" path="res://src/scripts/Tmp/RopeSegment.cs" id="1_yjexh"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yjexh"]
+radius = 2.5
+
+[node name="RopeSegment" type="RigidBody2D" unique_id=1609995574]
+mass = 25.0
+gravity_scale = 0.5
+linear_damp = 0.15
+script = ExtResource("1_yjexh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1599895293]
+shape = SubResource("CircleShape2D_yjexh")
+
+[node name="PinJoint2D" type="PinJoint2D" parent="." unique_id=1737910739]
+node_a = NodePath("..")

@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://s25x3j7av7uv" path="res://src/scripts/Entities/Player/BaseComponents/DirectionalAttackComponent.cs" id="7_56prs"]
 [ext_resource type="Script" uid="uid://dm03wvdncp8u2" path="res://src/scripts/Entities/Player/ChimeComponents/ChimeControllerComponent.cs" id="7_rwegb"]
 [ext_resource type="Script" uid="uid://baxjapo6nnv85" path="res://src/scripts/Entities/Player/ChimeComponents/GroundSlamComponent.cs" id="8_e2bc7"]
+[ext_resource type="Script" uid="uid://dl70youisqwty" path="res://src/scripts/Entities/Player/BaseComponents/CharacterColliderComponent.cs" id="9_56prs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ut82q"]
 size = Vector2(32, 64)
@@ -34,10 +35,6 @@ texture = ExtResource("1_cv7mj")
 
 [node name="BaseMovementComponent" type="Node" parent="." unique_id=1271246942]
 script = ExtResource("4_4mk40")
-jumpHeight = 100.0
-jumpTimeToApex = 0.35
-fallMultiplier = 1.6
-coyoteTime = 1.0
 
 [node name="DashComponent" type="Node" parent="." unique_id=282637028]
 script = ExtResource("5_n4nwn")
@@ -81,3 +78,7 @@ disabled = true
 
 [node name="ControllerComponent" type="Node" parent="." unique_id=1816177114]
 script = ExtResource("7_rwegb")
+
+[node name="CharacterColliderComponent" type="Node" parent="." unique_id=1776524653]
+script = ExtResource("9_56prs")
+mass = 62.0
