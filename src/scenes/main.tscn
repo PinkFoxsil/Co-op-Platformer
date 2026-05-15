@@ -38,4 +38,5 @@ tile_set = SubResource("TileSet_32aa5")
 [node name="rope" parent="." unique_id=1017927398 instance=ExtResource("3_32aa5")]
 position = Vector2(435, 129)
 rotation = -0.7770194
-segmentLength = 10.0
+segmentLength = 20.0
+softness = 0.003

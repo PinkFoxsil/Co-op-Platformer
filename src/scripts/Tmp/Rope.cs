@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 public partial class Rope : Node2D
 {
-	[Export] public float segmentLength = 7.5f;
+	[Export] public float segmentLength = 10f;
+	[Export] public float softness = 0f;
 
 	private Line2D _line2D;
 	private List<Vector2> _line2DPoints = [];
@@ -24,6 +25,10 @@ public partial class Rope : Node2D
 		_line2D = GetNode<Line2D>("Line2D");
 		_ropeStart = GetNode<RopeSegment>("RopeStart");
 		_ropeEnd = GetNode<RopeSegment>("RopeEnd");
+
+		
+		_ropeStart.pinJoint.Softness = softness;
+		_ropeEnd.pinJoint.Softness = softness;
 
 		SpawnRope();
 	}
@@ -62,7 +67,8 @@ public partial class Rope : Node2D
 
 	public void AppendRopeSegment(RopeSegment segment)
 	{
-		PinJoint2D pinJoint = _ropeSegments.Last.Value.GetNode<PinJoint2D>("PinJoint2D");
+		PinJoint2D pinJoint = _ropeSegments.Last.Value.pinJoint;
+		pinJoint.Softness = softness;
 		pinJoint.NodeB = segment.GetPath();
 
 		_ropeSegments.AddLast(segment);

@@ -2,11 +2,15 @@
 
 [ext_resource type="Script" uid="uid://dsuoa3rwf2sb4" path="res://src/scripts/Tmp/RopeSegment.cs" id="1_yjexh"]
 
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_yjexh"]
+friction = 0.0
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_yjexh"]
 radius = 2.5
 
 [node name="RopeSegment" type="RigidBody2D" unique_id=1609995574]
 mass = 25.0
+physics_material_override = SubResource("PhysicsMaterial_yjexh")
 gravity_scale = 0.5
 linear_damp = 0.15
 script = ExtResource("1_yjexh")
