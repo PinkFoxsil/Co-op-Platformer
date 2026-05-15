@@ -4,19 +4,18 @@ using System.Collections.Generic;
 
 public partial class Rope : Node2D
 {
-	[Export] public bool staticRopeEnd = false;
-	[Export] public float segmentLength = 10f;
+	[Export] public float segmentLength = 7.5f;
 
 	private Line2D _line2D;
 	private List<Vector2> _line2DPoints = [];
 
 	private RopeSegment _ropeStart;
 	private RopeSegment _ropeEnd;
-	private PinJoint2D _ropeStartPinJoint;
-	private PinJoint2D _ropeEndPinJoint;
 	
 	private PackedScene _ropeSegmentPackedScene;
-	private List<RopeSegment> _ropeSegments = [];
+	private LinkedList<RopeSegment> _ropeSegments = [];
+
+	private float length;
 
     public override void _Ready()
 	{
@@ -25,11 +24,6 @@ public partial class Rope : Node2D
 		_line2D = GetNode<Line2D>("Line2D");
 		_ropeStart = GetNode<RopeSegment>("RopeStart");
 		_ropeEnd = GetNode<RopeSegment>("RopeEnd");
-		_ropeStartPinJoint = GetNode<PinJoint2D>("RopeStart/PinJoint2D");
-		_ropeEndPinJoint = GetNode<PinJoint2D>("RopeEnd/PinJoint2D");
-
-		_ropeStart.rope = this;
-		_ropeEnd.rope = this;
 
 		SpawnRope();
 	}
@@ -38,7 +32,6 @@ public partial class Rope : Node2D
     {
         UpdateLine2DRope();
     }
-
 
 	public void SpawnRope()
 	{
@@ -49,56 +42,36 @@ public partial class Rope : Node2D
 		float distance = ropeStartPos.DistanceTo(ropeEndPos);
 
 		Vector2 direction = (ropeEndPos - ropeStartPos).Normalized();
-		float rotationAngle = direction.Angle() - Mathf.Pi/2;
-
-		RopeSegment currentSegment = _ropeStart;
 
 		_ropeSegments.Clear();
-		_ropeSegments.Add(currentSegment);
+		_ropeSegments.AddFirst(_ropeStart);
 
 		while (currentDistance < distance)
 		{
 			Vector2 newSegmentPos = ropeStartPos + currentDistance*direction;
-			currentSegment = AppendRopeSegment(currentSegment, rotationAngle, newSegmentPos);
-			_ropeSegments.Add(currentSegment);
+			RopeSegment newSegment = CreateRopeSegment(newSegmentPos);
+			AddChild(newSegment);
+			AppendRopeSegment(newSegment);
 			currentDistance += segmentLength;
 		}
 
-		ConnectRopeParts(currentSegment, _ropeEnd);
-		_ropeEnd.Rotation = rotationAngle;
-		_ropeSegments.Add(_ropeEnd);
+		AppendRopeSegment(_ropeEnd);
 
-		if (staticRopeEnd)
-		{
-			_ropeEnd.Freeze = true;
-		}
+		length = distance;
 	}
 
-	private void ConnectRopeParts(RopeSegment a, RopeSegment b)
+	public void AppendRopeSegment(RopeSegment segment)
 	{
-		PinJoint2D pinJoint = a.GetNode<PinJoint2D>("PinJoint2D");
-		pinJoint.NodeB = b.GetPath();
-	}
-
-	public RopeSegment AppendRopeSegment(RopeSegment previousSegment, float rotationAngle, Vector2 position)
-	{
-		RopeSegment segment = CreateRopeSegment(rotationAngle, position);
-		AddChild(segment);
-		
-		PinJoint2D pinJoint = previousSegment.GetNode<PinJoint2D>("PinJoint2D");
+		PinJoint2D pinJoint = _ropeSegments.Last.Value.GetNode<PinJoint2D>("PinJoint2D");
 		pinJoint.NodeB = segment.GetPath();
-		pinJoint.Bias = 0.99f;
-		pinJoint.Softness = 0.003f;
 
-		return segment;
+		_ropeSegments.AddLast(segment);
 	}
 
-	private RopeSegment CreateRopeSegment(float rotationAngle, Vector2 position)
+	private RopeSegment CreateRopeSegment(Vector2 position)
 	{
 		RopeSegment segment = _ropeSegmentPackedScene.Instantiate<RopeSegment>();
 		segment.Position = position;
-		segment.Rotation = rotationAngle;
-		segment.rope = this;
 
 		return segment;
 	}

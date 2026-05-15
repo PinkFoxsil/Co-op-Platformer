@@ -14,4 +14,5 @@ mass = 0.02
 freeze = true
 
 [node name="RopeEnd" parent="." unique_id=1192729259 instance=ExtResource("1_vxyu0")]
-position = Vector2(0, 133)
+position = Vector2(189, 0)
+freeze = true

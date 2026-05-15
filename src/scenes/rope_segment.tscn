@@ -15,4 +15,9 @@ script = ExtResource("1_yjexh")
 shape = SubResource("CircleShape2D_yjexh")
 
 [node name="PinJoint2D" type="PinJoint2D" parent="." unique_id=1737910739]
+rotation = -0.00094730017
 node_a = NodePath("..")
+softness = 0.01
+angular_limit_enabled = true
+angular_limit_lower = -2.3561945
+angular_limit_upper = 2.3561945
