@@ -3,10 +3,11 @@
 [ext_resource type="Script" uid="uid://dsuoa3rwf2sb4" path="res://src/scripts/Tmp/RopeSegment.cs" id="1_yjexh"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_yjexh"]
-friction = 0.0
+friction = 0.1
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_yjexh"]
-radius = 2.5
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yjexh"]
+radius = 2.0
+height = 20.0
 
 [node name="RopeSegment" type="RigidBody2D" unique_id=1609995574]
 mass = 25.0
@@ -16,10 +17,10 @@ linear_damp = 0.15
 script = ExtResource("1_yjexh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1599895293]
-shape = SubResource("CircleShape2D_yjexh")
+shape = SubResource("CapsuleShape2D_yjexh")
 
 [node name="PinJoint2D" type="PinJoint2D" parent="." unique_id=1737910739]
-rotation = -0.00094730017
+position = Vector2(0, 8.000001)
 node_a = NodePath("..")
 softness = 0.01
 angular_limit_enabled = true

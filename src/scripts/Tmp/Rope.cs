@@ -4,31 +4,31 @@ using System.Collections.Generic;
 
 public partial class Rope : Node2D
 {
+	[Export] public PinJoint2D startPinJoint;
 	[Export] public float segmentLength = 10f;
 	[Export] public float softness = 0f;
+
+	// When true set the length every physics process.
+	public bool dynamicLength;
 
 	private Line2D _line2D;
 	private List<Vector2> _line2DPoints = [];
 
-	private RopeSegment _ropeStart;
-	private RopeSegment _ropeEnd;
+	private Marker2D _endMarker;
 	
 	private PackedScene _ropeSegmentPackedScene;
 	private LinkedList<RopeSegment> _ropeSegments = [];
 
-	private float length;
+	private float _halfSegmentLength;
 
     public override void _Ready()
 	{
 		_ropeSegmentPackedScene = GD.Load<PackedScene>("res://src/scenes/rope_segment.tscn");
 		
 		_line2D = GetNode<Line2D>("Line2D");
-		_ropeStart = GetNode<RopeSegment>("RopeStart");
-		_ropeEnd = GetNode<RopeSegment>("RopeEnd");
+		_endMarker = GetNode<Marker2D>("EndMarker");
 
-		
-		_ropeStart.pinJoint.Softness = softness;
-		_ropeEnd.pinJoint.Softness = softness;
+		_halfSegmentLength = segmentLength * 0.5f;
 
 		SpawnRope();
 	}
@@ -40,44 +40,50 @@ public partial class Rope : Node2D
 
 	public void SpawnRope()
 	{
-		Vector2 ropeStartPos = _ropeStart.Position;
-		Vector2 ropeEndPos = _ropeEnd.Position;
+		Vector2 startPos = ToLocal(startPinJoint.GlobalPosition);
+		Vector2 endPos = _endMarker.Position;
 
-		float currentDistance = segmentLength;
-		float distance = ropeStartPos.DistanceTo(ropeEndPos);
+		Vector2 startToEndVect = endPos - startPos;
+		float distance = startToEndVect.Length();
+		Vector2 direction = startToEndVect.Normalized();
 
-		Vector2 direction = (ropeEndPos - ropeStartPos).Normalized();
+		float rotation = direction.Angle() - Mathf.Pi / 2;
 
-		_ropeSegments.Clear();
-		_ropeSegments.AddFirst(_ropeStart);
-
-		while (currentDistance < distance)
+		float targetDistance = distance - _halfSegmentLength;
+		for (float interval = _halfSegmentLength; interval <= targetDistance; interval += segmentLength)
 		{
-			Vector2 newSegmentPos = ropeStartPos + currentDistance*direction;
-			RopeSegment newSegment = CreateRopeSegment(newSegmentPos);
-			AddChild(newSegment);
+			Vector2 newSegmentPos = interval * direction + startPos;
+			RopeSegment newSegment = CreateRopeSegment(newSegmentPos, rotation);
 			AppendRopeSegment(newSegment);
-			currentDistance += segmentLength;
 		}
-
-		AppendRopeSegment(_ropeEnd);
-
-		length = distance;
 	}
 
 	public void AppendRopeSegment(RopeSegment segment)
 	{
-		PinJoint2D pinJoint = _ropeSegments.Last.Value.pinJoint;
-		pinJoint.Softness = softness;
-		pinJoint.NodeB = segment.GetPath();
+		if (_ropeSegments.Last != null)
+		{
+			PinJoint2D pinJoint = _ropeSegments.Last.Value.pinJoint;
+			pinJoint.NodeB = segment.GetPath();
+		}
+		else
+		{
+			startPinJoint.NodeB = segment.GetPath();
+		}
 
 		_ropeSegments.AddLast(segment);
+		
 	}
 
-	private RopeSegment CreateRopeSegment(Vector2 position)
+	private RopeSegment CreateRopeSegment(Vector2 position, float rotation)
 	{
 		RopeSegment segment = _ropeSegmentPackedScene.Instantiate<RopeSegment>();
 		segment.Position = position;
+		segment.Rotation = rotation;
+		segment.length = segmentLength;
+
+		AddChild(segment);
+		PinJoint2D pinJoint = segment.pinJoint;
+		pinJoint.Softness = softness;
 
 		return segment;
 	}
@@ -85,14 +91,13 @@ public partial class Rope : Node2D
 	private void UpdateLine2DRope()
 	{
 		_line2DPoints.Clear();
-		_line2DPoints.Add(_ropeStart.Position);
+		_line2DPoints.Add(ToLocal(startPinJoint.GlobalPosition));
 
 		foreach (RopeSegment segment in _ropeSegments)
 		{
-			_line2DPoints.Add(segment.Position);
+			_line2DPoints.Add(ToLocal(segment.pinJoint.GlobalPosition));
 		}
 
-		_line2DPoints.Add(_ropeEnd.Position);
 		_line2D.Points = _line2DPoints.ToArray();
 	}
 }
