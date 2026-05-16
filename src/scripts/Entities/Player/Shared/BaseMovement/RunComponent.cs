@@ -1,0 +1,43 @@
+using Godot;
+
+public partial class RunComponent : Node, IActionComponent
+{
+    [Export] public float moveSpeed = 350f;
+    [Export] public float acceleration = 2000f;
+    [Export] public float deceleration = 3000f;
+
+    [Export] public float airControl = 0.65f;
+    [Export] public float groundControl = 1f;
+
+    private Player _player;
+    private CharacterMotor _motor;
+    private PlayerInput _input;
+
+    public void Init(Player player)
+    {
+        _player = player;
+        _motor = player.Motor;
+        _input = player.Input;
+    }
+
+    public void PhysicsUpdate(float dt)
+    {
+        if (!_player.Orchestrator.CanMove())
+        {
+            return;
+        }
+
+        float control = _player.IsOnFloor() ? groundControl : airControl;
+
+        float inputX = _input.current.moveX;
+        float targetSpeed = inputX * moveSpeed;
+        float currentSpeed = MathUtility.SnapToZero(_player.Velocity.X);
+        bool slowingDown = Mathf.IsZeroApprox(inputX) || Mathf.Sign(inputX) != Mathf.Sign(currentSpeed);
+
+        float rate = slowingDown ? deceleration : acceleration;
+
+        float newVelocityX = Mathf.MoveToward(currentSpeed, targetSpeed, rate * control * dt);
+
+        _motor.RequestVelocity(this, new Vector2(newVelocityX, 0), priority: 0);
+    }
+}

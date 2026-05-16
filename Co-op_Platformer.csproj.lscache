@@ -76,13 +76,22 @@ src/scripts/Archive/
  Utilities/
   DirectionUtility.cs
   MathUtility.cs
-src/scripts/Entities/
+src/scripts/Entities/Player/Shared/BaseMovement/
+ GravityComponent.cs
+ JumpComponent.cs
+ JumpHangComponent.cs
+ MovementStateComponent.cs
+ RunComponent.cs
+src/scripts/Entities/Player/Shared/
+ Dash/DashComponent.cs
+ Input/
+  InputSnapshot.cs
+  PlayerInput.cs
+ Player.cs
+src/scripts/Entities/Shared/
  ActionComponent.cs
  ActionOrchestrator.cs
  CharacterMotor.cs
- InputSnapshot.cs
- Player.cs
- PlayerInput.cs
 
 [metadataReferences]
 <NUGET>/
