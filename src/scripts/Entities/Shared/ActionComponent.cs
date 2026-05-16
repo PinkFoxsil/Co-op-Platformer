@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Player : CharacterBody2D
+public partial class ActionComponent : CharacterBody2D
 {
     public PlayerInput Input { get; private set; }
     public CharacterMotor Motor { get; private set; }

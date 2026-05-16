@@ -7,7 +7,7 @@ public struct VelocityRequest
     public object source;
     public Vector2 velocity;
     public int priority;
-    public bool persistant;
+    public bool persistent;
     public Timer timer;
 }
 
@@ -16,7 +16,7 @@ public struct GravityRequest
     public object source;
     public float multiplier;
     public int priority;
-    public bool persistant;
+    public bool persistent;
     public Timer timer;
 }
 
@@ -41,9 +41,9 @@ public partial class CharacterMotor : Node
     }
 
     // Velocity Requests
-    public VelocityRequest RequestVelocity(object source, Vector2 velocity, int priority = 0, bool persistant = false, Timer timer = null)
+    public VelocityRequest RequestVelocity(object source, Vector2 velocity, int priority = 0, bool persistent = false, Timer timer = null)
     {
-        VelocityRequest velocityRequest = new VelocityRequest{source = source, velocity = velocity, priority = priority, persistant = persistant, timer = timer};
+        VelocityRequest velocityRequest = new VelocityRequest{source = source, velocity = velocity, priority = priority, persistent = persistent, timer = timer};
         _velocityRequests.Add(velocityRequest);
         return velocityRequest;
     }
@@ -64,9 +64,16 @@ public partial class CharacterMotor : Node
     }
 
     // Gravity Multipliers
-    public GravityRequest RequestGravityMultiplier(object source, float multiplier, int priority = 0, bool persistant = false, Timer timer = null)
+    public GravityRequest RequestGravityMultiplier(object source, float multiplier, int priority = 0, bool persistent = false, Timer timer = null)
     {
-        GravityRequest gravityRequest = new GravityRequest{source = source, multiplier = multiplier, priority = priority, persistant = persistant, timer = timer}; 
+        GravityRequest gravityRequest = new GravityRequest{
+            source = source,
+            multiplier = multiplier,
+            priority = priority,
+            persistent = persistent,
+            timer = timer
+        }; 
+
         _gravityRequests.Add(gravityRequest);
         return gravityRequest;
     }
@@ -123,7 +130,7 @@ public partial class CharacterMotor : Node
 
         _player.Velocity = velocity;
         CleanupExpiredRequests();
-        CleanupNonPersistantRequests();
+        CleanupNonPersistentRequests();
     }
 
     private void TickTimers(float dt)
@@ -150,14 +157,14 @@ public partial class CharacterMotor : Node
         );
     }
 
-    private void CleanupNonPersistantRequests()
+    private void CleanupNonPersistentRequests()
     {
         _velocityRequests.RemoveAll(r =>
-            !r.persistant
+            !r.persistent
         );
 
         _gravityRequests.RemoveAll(r =>
-            !r.persistant
+            !r.persistent
         );
     }
 }
