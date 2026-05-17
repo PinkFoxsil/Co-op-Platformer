@@ -74,14 +74,16 @@ src/scripts/Archive/
  Utilities/
   DirectionUtility.cs
   MathUtility.cs
+src/scripts/Entities/Player/Shared/Attacks/
+ AttackComponent.cs
+ BasicAttackComponent.cs
+src/scripts/Entities/Player/Shared/BaseMovement/
+ GravityComponent.cs
+ JumpComponent.cs
+ JumpHangComponent.cs
+ MovementStateComponent.cs
+ RunComponent.cs
 src/scripts/Entities/Player/Shared/
- Attacks/BasicAttackComponent.cs
- BaseMovement/
-  GravityComponent.cs
-  JumpComponent.cs
-  JumpHangComponent.cs
-  MovementStateComponent.cs
-  RunComponent.cs
  Dash/DashComponent.cs
  Input/
   InputSnapshot.cs
