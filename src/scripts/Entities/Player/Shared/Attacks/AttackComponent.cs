@@ -12,16 +12,16 @@ public partial class AttackComponent : Node2D, IActionComponent
     [Export] public bool lockMovementDuringAttack;
     [Export] public bool lockDashDuringAttack;
 
-    private readonly Timer _cooldownTimer = new Timer();
+    protected readonly Timer _cooldownTimer = new Timer();
     
-    private bool _attackQueued;
-    private bool _justAttacked;
+    protected bool _attackQueued;
+    protected bool _justAttacked;
     
-    private Player _player;
-    private PlayerInput _input;
-    private ActionOrchestrator _orchestrator;
+    protected Player _player;
+    protected PlayerInput _input;
+    protected ActionOrchestrator _orchestrator;
 
-    public void Init(Player player)
+    public virtual void Init(Player player)
     {
         _player = player;
         _input = player.Input;
@@ -112,7 +112,7 @@ public partial class AttackComponent : Node2D, IActionComponent
         }
     }
 
-    private void UpdateCooldown(float dt)
+    protected void UpdateCooldown(float dt)
     {
         _cooldownTimer.Tick(dt);
 
