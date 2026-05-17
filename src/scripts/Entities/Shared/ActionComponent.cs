@@ -1,32 +1,8 @@
-using Godot;
-using System;
-
-public partial class ActionComponent : CharacterBody2D
+public interface IActionComponent
 {
-    public PlayerInput Input { get; private set; }
-    public CharacterMotor Motor { get; private set; }
-    public ActionOrchestrator Orchestrator { get; private set; }
+    void Init(Player player);
 
-    public override void _Ready()
-    {
-        Input = GetNode<PlayerInput>("PlayerInput");
-        Motor = GetNode<CharacterMotor>("CharacterMotor");
-        Orchestrator = GetNode<ActionOrchestrator>("ActionOrchestrator");
-
-        Input.Init(this);
-        Motor.Init(this);
-        Orchestrator.Init(this);
-    }
-
-    public override void _PhysicsProcess(double delta)
-    {
-        float dt = (float) delta;
-        Input.Capture();
-        Orchestrator.PrePhysicsUpdate(dt);
-        Motor.Resolve(dt);
-
-        MoveAndSlide();
-
-        Orchestrator.PostPhysicsUpdate(dt);
-    }
+    virtual void PrePhysicsUpdate(float dt) {}
+    virtual void PhysicsUpdate(float dt) {}
+    virtual void PostPhysicsUpdate(float dt) {}
 }

@@ -23,10 +23,11 @@ public partial class Player : CharacterBody2D
         float dt = (float) delta;
         Input.Capture();
         Orchestrator.PrePhysicsUpdate(dt);
-        Motor.Resolve(dt);
+        Orchestrator.PhysicsUpdate(dt);
+        Motor.Tick(dt);
 
         MoveAndSlide();
-
+    
         Orchestrator.PostPhysicsUpdate(dt);
     }
 }
