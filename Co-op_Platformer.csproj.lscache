@@ -55,6 +55,7 @@ TemporaryDependencyNodeTargetIdentifier=net8.0
 .godot/mono/temp/obj/Debug/
  .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
  Co-op_Platformer.AssemblyInfo.cs
+<<<<<<< HEAD
 src/scripts/Archive/Entities/BaseClasses/
  ComponentList.cs
  IComponent.cs
@@ -62,6 +63,18 @@ src/scripts/Archive/Entities/
  Chimeling/Chimeling.cs
  Player/BaseComponents/
   BaseMovementComponent.cs
+=======
+src/scripts/Entities/BaseClasses/
+ ComponentList.cs
+ Hitbox.cs
+ IComponent.cs
+ Timer.cs
+src/scripts/Entities/
+ Chimeling/Chimeling.cs
+ Player/BaseComponents/
+  BaseMovementComponent.cs
+  CharacterColliderComponent.cs
+>>>>>>> fox-implementation
   DashComponent.cs
   DirectionalAttackComponent.cs
  Player/ChimeComponents/
@@ -69,6 +82,7 @@ src/scripts/Archive/Entities/
   ChimeControllerComponent.cs
   GroundSlamComponent.cs
  Player/PlayerClasses/Player.cs
+<<<<<<< HEAD
 src/scripts/Archive/
  Singletons/InputSingleton.cs
  Utilities/
@@ -96,6 +110,16 @@ src/scripts/Entities/Shared/
 src/scripts/GameState/
  Hitbox.cs
  Timer.cs
+=======
+src/scripts/
+ Singletons/InputSingleton.cs
+ Tmp/
+  Rope.cs
+  RopeSegment.cs
+ Utilities/
+  DirectionUtility.cs
+  MathUtility.cs
+>>>>>>> fox-implementation
 
 [metadataReferences]
 <NUGET>/
@@ -267,7 +291,11 @@ src/scripts/GameState/
   WindowsBase.dll
 
 [analyzerReferences]
+<<<<<<< HEAD
 <DOTNET>/sdk/10.0.203/Sdks/Microsoft.NET.Sdk/analyzers/
+=======
+<DOTNET>/sdk/10.0.202/Sdks/Microsoft.NET.Sdk/analyzers/
+>>>>>>> fox-implementation
  Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll
  Microsoft.CodeAnalysis.NetAnalyzers.dll
 <NUGET>/
@@ -283,4 +311,8 @@ src/scripts/GameState/
 [analyzerConfigFiles]
 .editorconfig
 .godot/mono/temp/obj/Debug/Co-op_Platformer.GeneratedMSBuildEditorConfig.editorconfig
+<<<<<<< HEAD
 <DOTNET>/sdk/10.0.203/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_8_default.globalconfig
+=======
+<DOTNET>/sdk/10.0.202/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_8_default.globalconfig
+>>>>>>> fox-implementation

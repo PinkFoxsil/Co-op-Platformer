@@ -17,9 +17,9 @@ public partial class BaseMovementComponent : Node, IComponent
 	[Export] public float deceleration = 3000f;
 
 	[ExportCategory("Jumping")]
-	[Export] public float jumpHeight = 112f;
-	[Export] public float jumpTimeToApex = 0.3f;
-	[Export] public float fallMultiplier = 2f;
+	[Export] public float jumpHeight = 100f;
+	[Export] public float jumpTimeToApex = 0.35f;
+	[Export] public float fallMultiplier = 1.6f;
 	[Export] public float maxFallSpeed = 1000f;
 
 	[ExportGroup("Grace Timers")]
@@ -37,13 +37,11 @@ public partial class BaseMovementComponent : Node, IComponent
 	public bool movementEnabled;
 	public MoveState moveState;
 
-	private bool _wasOnFloor;
-
 	private float _gravityStrength;
 	private float _jumpForce;
 
-	private Timer _coyoteTimer = new Timer();
-	private Timer _jumpBufferTimer = new Timer();
+	private Timer _coyoteTimer = new();
+	private Timer _jumpBufferTimer = new();
 
 	private Player _character;
 	private InputSingleton _input;
@@ -55,7 +53,7 @@ public partial class BaseMovementComponent : Node, IComponent
 
 		moveState = _character.IsOnFloor() ? MoveState.Idle : MoveState.Falling;
 
-		_gravityStrength = 2 * jumpHeight/(jumpTimeToApex * jumpTimeToApex);
+		_gravityStrength = 2 * jumpHeight / (jumpTimeToApex * jumpTimeToApex);
 		_jumpForce = _gravityStrength * jumpTimeToApex;
 	}
 
@@ -71,10 +69,7 @@ public partial class BaseMovementComponent : Node, IComponent
 		float control = groundControl;
 		float inputX = MathUtility.SnapToZero(_input.inputX);
 		
-		if (moveState == MoveState.Idle || moveState == MoveState.Running)
-		{
-			ProcessBufferedJump();
-		}
+		ProcessBufferedJump();
 
 		if (moveState == MoveState.Falling)
 		{
@@ -95,10 +90,7 @@ public partial class BaseMovementComponent : Node, IComponent
 
 	private void UpdateCoyoteTime(float dt)
 	{
-		bool wasOnFloor = _wasOnFloor;
-		bool isOnFloor = _character.IsOnFloor();
-		_wasOnFloor = isOnFloor;
-		if (wasOnFloor && !isOnFloor)
+		if (_character.IsOnFloor())
 		{
 			_coyoteTimer.Start(coyoteTime);
 			return;
@@ -109,7 +101,7 @@ public partial class BaseMovementComponent : Node, IComponent
 
 	private void UpdateJumpBuffer(float dt)
 	{
-		if (_input.jumpHeld)
+		if (_input.jumpPressed) // jumpHeld auto jumps when landing which can feel bad when unintentional, I suggest adding a debounce before changing it back.
 		{
 			_jumpBufferTimer.Start(jumpBufferTime);
 			return;
@@ -118,17 +110,17 @@ public partial class BaseMovementComponent : Node, IComponent
 		_jumpBufferTimer.Tick(dt);
 	}
 
-	private bool CanJump()
-	{
-		return _character.IsOnFloor() || _coyoteTimer.IsRunning;
-	}
-
 	private void ProcessBufferedJump()
 	{
 		if (_jumpBufferTimer.IsRunning && CanJump())
 		{
 			Jump();
 		}
+	}
+
+	private bool CanJump()
+	{
+		return _character.IsOnFloor() || _coyoteTimer.IsRunning;
 	}
 
 	private void Jump()
@@ -156,7 +148,7 @@ public partial class BaseMovementComponent : Node, IComponent
 
 	private void ApplyGravity(float dt, float scaledGravity)
 	{
-		_character.Velocity += Vector2.Down * scaledGravity *dt;
+		_character.Velocity += Vector2.Down * scaledGravity * dt;
 	}
 
 	private void ClampFallSpeed()
