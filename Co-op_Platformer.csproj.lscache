@@ -57,9 +57,7 @@ TemporaryDependencyNodeTargetIdentifier=net8.0
  Co-op_Platformer.AssemblyInfo.cs
 src/scripts/Archive/Entities/BaseClasses/
  ComponentList.cs
- Hitbox.cs
  IComponent.cs
- Timer.cs
 src/scripts/Archive/Entities/
  Chimeling/Chimeling.cs
  Player/BaseComponents/
@@ -76,13 +74,14 @@ src/scripts/Archive/
  Utilities/
   DirectionUtility.cs
   MathUtility.cs
-src/scripts/Entities/Player/Shared/BaseMovement/
- GravityComponent.cs
- JumpComponent.cs
- JumpHangComponent.cs
- MovementStateComponent.cs
- RunComponent.cs
 src/scripts/Entities/Player/Shared/
+ Attacks/BasicAttackComponent.cs
+ BaseMovement/
+  GravityComponent.cs
+  JumpComponent.cs
+  JumpHangComponent.cs
+  MovementStateComponent.cs
+  RunComponent.cs
  Dash/DashComponent.cs
  Input/
   InputSnapshot.cs
@@ -92,6 +91,9 @@ src/scripts/Entities/Shared/
  ActionComponent.cs
  ActionOrchestrator.cs
  CharacterMotor.cs
+src/scripts/GameState/
+ Hitbox.cs
+ Timer.cs
 
 [metadataReferences]
 <NUGET>/
