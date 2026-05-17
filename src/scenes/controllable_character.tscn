@@ -1,14 +1,16 @@
 [gd_scene format=3 uid="uid://dd3565bcxw6ar"]
 
 [ext_resource type="Texture2D" uid="uid://cg6a5ke7luu3a" path="res://src/images/Square.png" id="1_cv7mj"]
-[ext_resource type="Script" uid="uid://cj116krv5sl7p" path="res://src/scripts/Entities/Player/PlayerClasses/Player.cs" id="1_fog2k"]
-[ext_resource type="Script" uid="uid://btu33u5xj8wcj" path="res://src/scripts/Entities/BaseClasses/Hitbox.cs" id="3_4mk40"]
-[ext_resource type="Script" uid="uid://bjp6sxbvm0mem" path="res://src/scripts/Entities/Player/BaseComponents/BaseMovementComponent.cs" id="4_4mk40"]
-[ext_resource type="Script" uid="uid://da6mjm4qic4il" path="res://src/scripts/Entities/Player/BaseComponents/DashComponent.cs" id="5_n4nwn"]
-[ext_resource type="Script" uid="uid://s25x3j7av7uv" path="res://src/scripts/Entities/Player/BaseComponents/DirectionalAttackComponent.cs" id="7_56prs"]
-[ext_resource type="Script" uid="uid://dm03wvdncp8u2" path="res://src/scripts/Entities/Player/ChimeComponents/ChimeControllerComponent.cs" id="7_rwegb"]
-[ext_resource type="Script" uid="uid://baxjapo6nnv85" path="res://src/scripts/Entities/Player/ChimeComponents/GroundSlamComponent.cs" id="8_e2bc7"]
-[ext_resource type="Script" uid="uid://dl70youisqwty" path="res://src/scripts/Entities/Player/BaseComponents/CharacterColliderComponent.cs" id="9_56prs"]
+[ext_resource type="Script" uid="uid://buur022vwgvco" path="res://src/scripts/Entities/Player/Shared/Player.cs" id="1_fog2k"]
+[ext_resource type="Script" uid="uid://cia2qq47qddme" path="res://src/scripts/Entities/Player/Shared/Dash/DashComponent.cs" id="3_56prs"]
+[ext_resource type="Script" uid="uid://biyum18eej35n" path="res://src/scripts/Entities/Player/Shared/BaseMovement/GravityComponent.cs" id="4_4mk40"]
+[ext_resource type="Script" uid="uid://c73h6n6xbw3d7" path="res://src/scripts/Entities/Player/Shared/BaseMovement/JumpComponent.cs" id="5_n4nwn"]
+[ext_resource type="Script" uid="uid://fprlrrsrr4q6" path="res://src/scripts/Entities/Player/Shared/BaseMovement/JumpHangComponent.cs" id="6_svhiv"]
+[ext_resource type="Script" uid="uid://dm4pwpqygf718" path="res://src/scripts/Entities/Player/Shared/BaseMovement/RunComponent.cs" id="7_tkivx"]
+[ext_resource type="Script" uid="uid://t8diu60q2vpt" path="res://src/scripts/Entities/Player/Shared/BaseMovement/MovementStateComponent.cs" id="8_e2bc7"]
+[ext_resource type="Script" uid="uid://o14svaawisot" path="res://src/scripts/Entities/Shared/ActionOrchestrator.cs" id="9_4mk40"]
+[ext_resource type="Script" uid="uid://dlnfh7qogbfn6" path="res://src/scripts/Entities/Shared/CharacterMotor.cs" id="10_n4nwn"]
+[ext_resource type="Script" uid="uid://ds5rxnmvt778n" path="res://src/scripts/Entities/Player/Shared/Input/PlayerInput.cs" id="11_n4nwn"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ut82q"]
 size = Vector2(32, 64)
@@ -33,19 +35,11 @@ modulate = Color(2.117753e-06, 0.5749738, 0.5752016, 1)
 scale = Vector2(0.5, 1)
 texture = ExtResource("1_cv7mj")
 
-[node name="BaseMovementComponent" type="Node" parent="." unique_id=1271246942]
-script = ExtResource("4_4mk40")
-
-[node name="DashComponent" type="Node" parent="." unique_id=282637028]
-script = ExtResource("5_n4nwn")
-
 [node name="DirectionalAttackComponent" type="Node2D" parent="." unique_id=1397684563]
-script = ExtResource("7_56prs")
 
 [node name="Hitbox" type="Area2D" parent="DirectionalAttackComponent" unique_id=2000297250]
 monitoring = false
 monitorable = false
-script = ExtResource("3_4mk40")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DirectionalAttackComponent/Hitbox" unique_id=996297961]
 position = Vector2(50, 0)
@@ -53,13 +47,10 @@ shape = SubResource("RectangleShape2D_fsmad")
 disabled = true
 
 [node name="GroundSlamComponent" type="Node2D" parent="." unique_id=1500053669]
-script = ExtResource("8_e2bc7")
 
 [node name="PlungeHitbox" type="Area2D" parent="GroundSlamComponent" unique_id=1039402662]
 monitoring = false
 monitorable = false
-script = ExtResource("3_4mk40")
-staysActive = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GroundSlamComponent/PlungeHitbox" unique_id=1568513328]
 position = Vector2(0, 65.5)
@@ -69,16 +60,35 @@ disabled = true
 [node name="SlamHitbox" type="Area2D" parent="GroundSlamComponent" unique_id=1416313919]
 monitoring = false
 monitorable = false
-script = ExtResource("3_4mk40")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GroundSlamComponent/SlamHitbox" unique_id=641559411]
 position = Vector2(0, 16)
 shape = SubResource("RectangleShape2D_xjkdw")
 disabled = true
 
-[node name="ControllerComponent" type="Node" parent="." unique_id=1816177114]
-script = ExtResource("7_rwegb")
+[node name="DashComponent" type="Node" parent="." unique_id=922003249]
+script = ExtResource("3_56prs")
 
-[node name="CharacterColliderComponent" type="Node" parent="." unique_id=1776524653]
-script = ExtResource("9_56prs")
-mass = 62.0
+[node name="GravityComponent" type="Node" parent="." unique_id=1321462217]
+script = ExtResource("4_4mk40")
+
+[node name="JumpComponent" type="Node" parent="." unique_id=1931692839]
+script = ExtResource("5_n4nwn")
+
+[node name="JumpHangComponent" type="Node" parent="." unique_id=1845232689]
+script = ExtResource("6_svhiv")
+
+[node name="RunComponent" type="Node" parent="." unique_id=1338852621]
+script = ExtResource("7_tkivx")
+
+[node name="MovementStateComponent" type="Node" parent="." unique_id=1890259627]
+script = ExtResource("8_e2bc7")
+
+[node name="ActionOrchestrator" type="Node" parent="." unique_id=265555422]
+script = ExtResource("9_4mk40")
+
+[node name="CharacterMotor" type="Node" parent="." unique_id=1075031296]
+script = ExtResource("10_n4nwn")
+
+[node name="PlayerInput" type="Node" parent="." unique_id=500706715]
+script = ExtResource("11_n4nwn")

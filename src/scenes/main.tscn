@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://dd3565bcxw6ar" path="res://src/scenes/controllable_character.tscn" id="1_kkvs4"]
 [ext_resource type="Texture2D" uid="uid://cg6a5ke7luu3a" path="res://src/images/Square.png" id="2_rr2wm"]
-[ext_resource type="PackedScene" uid="uid://cq3nmcvps863h" path="res://src/scenes/rope.tscn" id="3_32aa5"]
+[ext_resource type="PackedScene" path="res://src/scenes/rope.tscn" id="3_32aa5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rr2wm"]
 texture = ExtResource("2_rr2wm")

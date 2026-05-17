@@ -43,7 +43,7 @@ public partial class CharacterMotor : Node
     // Velocity Requests
     public VelocityRequest RequestVelocity(object source, Vector2 velocity, int priority = 0, bool persistent = false, Timer timer = null)
     {
-        VelocityRequest velocityRequest = new VelocityRequest{source = source, velocity = velocity, priority = priority, persistent = persistent, timer = timer};
+        VelocityRequest velocityRequest = new() { source = source, velocity = velocity, priority = priority, persistent = persistent, timer = timer};
         _velocityRequests.Add(velocityRequest);
         return velocityRequest;
     }

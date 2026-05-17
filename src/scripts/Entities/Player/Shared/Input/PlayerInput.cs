@@ -21,18 +21,18 @@ public partial class PlayerInput : Node
             
             // Move
             moveX = Input.GetAxis(
-                "move_left",
-                "move_right"
+                "Left",
+                "Right"
             ),
 
             // Jump
-            jumpHeld = Input.IsActionPressed("jump"),
+            jumpHeld = Input.IsActionPressed("Jump"),
 
             // Attack
-            attack1Held = Input.IsActionPressed("attack"),
+            attack1Held = Input.IsActionPressed("Attack1"),
 
             // Dash
-            dashHeld = Input.IsActionPressed("dash"),
+            dashHeld = Input.IsActionPressed("Ability1"),
 
             // Mouse
             mouseWorldPosition = mouseWorld,
