@@ -6,6 +6,7 @@ public partial class InputSingleton : Node
     public float inputX;
 	
 	public bool jumpPressed;
+	public bool jumpHeld;
 
 	public bool ability1Pressed;
 	public bool ability1Held;
@@ -31,6 +32,7 @@ public partial class InputSingleton : Node
 		inputX = Input.GetActionStrength("Right") - Input.GetActionStrength("Left");
 
 		jumpPressed = Input.IsActionJustPressed("Jump");
+		jumpHeld = Input.IsActionPressed("Jump");
 
 		attack1Pressed = Input.IsActionJustPressed("Attack1");
 		attack1Held = Input.IsActionPressed("Attack1");
