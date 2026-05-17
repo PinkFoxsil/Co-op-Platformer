@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 public partial class ActionOrchestrator : Node
 {
-    private Player _player;
+    private Node _owner;
 
     private readonly List<IActionComponent> _components = new();
 
     private readonly HashSet<string> _tags = new();
 
-    public void Init(Player player)
+    public void Init(Node owner)
     {
-        _player = player;
+        _owner = owner;
         RegisterChildren(this);
     }
 
@@ -21,7 +21,7 @@ public partial class ActionOrchestrator : Node
         { 
             if (child is IActionComponent component)
             { 
-                component.Init(_player); 
+                component.Init(_owner); 
                 _components.Add(component); 
             } 
             RegisterChildren(child); 

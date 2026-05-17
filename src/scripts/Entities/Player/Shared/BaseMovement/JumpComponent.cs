@@ -19,8 +19,9 @@ public partial class JumpComponent : Node, IActionComponent
     private CharacterMotor _motor;
     private PlayerInput _input;
 
-    public void Init(Player player)
+    public void Init(Node owner)
     {
+        Player player = (Player) owner;
         _player = player;
         _motor = player.Motor;
         _input = player.Input;

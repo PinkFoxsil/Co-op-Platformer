@@ -35,8 +35,9 @@ public partial class DashComponent : Node, IActionComponent
     private CharacterMotor _motor;
     private ActionOrchestrator _orchestrator;
 
-    public void Init(Player player)
+    public void Init(Node owner)
     {
+        Player player = (Player) owner;
         _player = player;
         _input = player.Input;
         _motor = player.Motor;

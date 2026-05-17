@@ -1,23 +1,21 @@
 using Godot;
-using System;
 
 public partial class Hitbox : Area2D
 {
 	[Export] public bool startsActive = false;
 	[Export] public bool staysActive = false;
 
-	private ComponentList _componentList;
-	
-	public ComponentList ComponentList => _componentList;
+    public ActionOrchestrator Orchestrator { get; private set; }
 
 	private CollisionShape2D _collisionShape;
 	private float _lifetimeTimer;
 	private bool active;
-
+	
 	public override void _Ready()
-	{
-		_componentList = new ComponentList(this);
-		_componentList.RegisterChildren();
+	{	
+        Orchestrator = GetNode<ActionOrchestrator>("ActionOrchestrator");
+        Orchestrator.Init(this);
+
 		_collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
 
 		if (startsActive)
@@ -39,9 +37,9 @@ public partial class Hitbox : Area2D
 
 		float dt = (float) delta;
 		
-		_componentList.PrePhysicsProcess(dt);
-		_componentList.PhysicsProcess(dt);
-		_componentList.PostPhysicsProcess(dt);
+        Orchestrator.PrePhysicsUpdate(dt);
+        Orchestrator.PhysicsUpdate(dt);
+        Orchestrator.PostPhysicsUpdate(dt);
 
 		if (staysActive)
 		{

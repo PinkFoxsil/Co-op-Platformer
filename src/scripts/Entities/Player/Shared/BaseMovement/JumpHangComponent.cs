@@ -8,8 +8,9 @@ public partial class JumpHangComponent : Node, IActionComponent
     private Player _player;
     private CharacterMotor _motor;
 
-    public void Init(Player player)
+    public void Init(Node owner)
     {
+        Player player = (Player) owner;
         _player = player;
         _motor = player.Motor;
     }
