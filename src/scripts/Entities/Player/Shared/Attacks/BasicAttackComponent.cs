@@ -6,9 +6,9 @@ public partial class BasicAttackComponent : AttackComponent
     private CardinalDirection _attackDirection;
     private Hitbox _attackHitbox;
 
-    public override void Init(Player player)
+    public override void Init(Node owner)
     {
-        base.Init(player);
+        base.Init((Player) owner);
         Node2D hitboxes = GetNode<Node2D>("../Hitboxes");
         _attackHitbox = hitboxes.GetNode<Hitbox>("BasicAttackHitbox");
     }
