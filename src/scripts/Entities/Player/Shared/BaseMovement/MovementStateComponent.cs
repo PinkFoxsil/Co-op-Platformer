@@ -14,8 +14,9 @@ public partial class MovementStateComponent : Node, IActionComponent
 
     private Player _player;
 
-    public void Init(Player player)
+    public void Init(Node owner)
     {
+        Player player = (Player) owner;
         _player = player;
     }
 
