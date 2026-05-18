@@ -24,11 +24,13 @@ public partial class CharacterMotor : Node
 {
 
 	[ExportCategory("Gravity")]
-	[Export] public float gravity = 2489f;
+	[Export] public float gravity = 1632f;
 
 	[ExportCategory("Clamps")]
 	[Export] public float maxFallSpeed = 1000f;
 
+	private float highestPoint = 500000000;
+	
 	// Velocity contributors
 	private readonly List<VelocityRequest> _velocityRequests = new();
 	private readonly List<GravityRequest> _gravityRequests = new();
@@ -97,8 +99,9 @@ public partial class CharacterMotor : Node
 	public void Tick(float dt)
 	{
 		TickTimers(dt);
-
-		Vector2 velocity = Vector2.Zero;
+		
+		Vector2 velocity = _player.Velocity;
+		GD.Print(velocity.Y);
 		float gravityMultiplier = 1f;
 		if (_gravityRequests.Count > 0)
 		{
