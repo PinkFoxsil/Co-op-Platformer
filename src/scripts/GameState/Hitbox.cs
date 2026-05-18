@@ -5,7 +5,7 @@ public partial class Hitbox : Area2D
 	[Export] public bool startsActive = false;
 	[Export] public bool staysActive = false;
 
-    public ActionOrchestrator Orchestrator { get; private set; }
+	public ActionOrchestrator Orchestrator { get; private set; }
 
 	private CollisionShape2D _collisionShape;
 	private float _lifetimeTimer;
@@ -13,8 +13,8 @@ public partial class Hitbox : Area2D
 	
 	public override void _Ready()
 	{	
-        Orchestrator = GetNode<ActionOrchestrator>("ActionOrchestrator");
-        Orchestrator.Init(this);
+		Orchestrator = GetNode<ActionOrchestrator>("ActionOrchestrator");
+		Orchestrator.Init(this);
 
 		_collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
 
@@ -37,9 +37,9 @@ public partial class Hitbox : Area2D
 
 		float dt = (float) delta;
 		
-        Orchestrator.PrePhysicsUpdate(dt);
-        Orchestrator.PhysicsUpdate(dt);
-        Orchestrator.PostPhysicsUpdate(dt);
+		Orchestrator.PrePhysicsUpdate(dt);
+		Orchestrator.PhysicsUpdate(dt);
+		Orchestrator.PostPhysicsUpdate(dt);
 
 		if (staysActive)
 		{
