@@ -1,8 +1,8 @@
 using Godot;
 public partial class JumpComponent : Node, IActionComponent
 {
-	[Export] public float jumpHeight = 112f;
-	[Export] public float jumpTimeToApex = 0.3f;
+	[Export] public float jumpHeight = 60f;
+	[Export] public float jumpTimeToApex = 0.35f;
 
 	[Export] public float coyoteTime = 0.125f;
 	[Export] public float jumpBufferTime = 0.1f;
@@ -51,10 +51,10 @@ public partial class JumpComponent : Node, IActionComponent
 
 	private void Jump()
 	{
-		_motor.RequestVelocity(this, new Vector2(0, -_jumpForce), priority: 0);
-
 		_coyoteTimer.Stop();
 		_jumpBufferTimer.Stop();
+		
+		_motor.RequestVelocity(this, new Vector2(0, -_jumpForce), priority: 0);
 	}
 
 	private bool CanJump()
@@ -82,7 +82,6 @@ public partial class JumpComponent : Node, IActionComponent
 		{
 			_jumpBufferTimer.Start(jumpBufferTime);
 		}
-
 		_jumpBufferTimer.Tick(dt);
 	}
 }
