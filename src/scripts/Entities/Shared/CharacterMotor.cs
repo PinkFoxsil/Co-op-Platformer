@@ -66,7 +66,8 @@ public partial class CharacterMotor : Node
 	// Gravity Multipliers
 	public GravityRequest RequestGravityMultiplier(object source, float multiplier, int priority = 0, bool persistent = false, Timer timer = null)
 	{
-		GravityRequest gravityRequest = new GravityRequest{
+		GravityRequest gravityRequest = new()
+        {
 			source = source,
 			multiplier = multiplier,
 			priority = priority,
