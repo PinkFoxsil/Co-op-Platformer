@@ -175,7 +175,6 @@ public partial class DashComponent : Node, IActionComponent
 	private void ApplyDashForce()
 	{
 		_motor.RequestVelocity(this, new Vector2(_dashDirection * dashSpeed, 0), priority: 10);
-		_motor.RequestGravityMultiplier(this, 0f, priority: 10);
 	}
 
 	private void HandleGroundReset()

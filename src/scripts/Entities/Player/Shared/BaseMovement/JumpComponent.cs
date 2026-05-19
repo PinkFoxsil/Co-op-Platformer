@@ -16,6 +16,7 @@ public partial class JumpComponent : Node, IActionComponent
 	private bool _wasOnFloor;
 
 	private Player _player;
+	private PlayableCharacterData _characterData;
 	private CharacterMotor _motor;
 	private PlayerInput _input;
 
@@ -26,8 +27,9 @@ public partial class JumpComponent : Node, IActionComponent
 		_motor = player.Motor;
 		_input = player.Input;
 
-		_gravity = 2f * jumpHeight / (jumpTimeToApex * jumpTimeToApex);
-		_jumpForce = _gravity * jumpTimeToApex;
+		_characterData = owner.GetNode<PlayableCharacterData>("CharacterData");
+		_characterData.JumpHeight = jumpHeight;
+		_characterData.JumpTimeToApex = jumpTimeToApex;
 	}
 
 	public void PrePhysicsUpdate(float dt)
@@ -54,7 +56,7 @@ public partial class JumpComponent : Node, IActionComponent
 		_coyoteTimer.Stop();
 		_jumpBufferTimer.Stop();
 		
-		_motor.RequestVelocity(this, new Vector2(0, -_jumpForce), priority: 0);
+		_motor.RequestVelocity(this, new Vector2(0, -_characterData.JumpForce), priority: 0);
 	}
 
 	private bool CanJump()

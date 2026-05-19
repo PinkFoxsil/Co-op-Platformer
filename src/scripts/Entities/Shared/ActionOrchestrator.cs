@@ -5,9 +5,8 @@ public partial class ActionOrchestrator : Node
 {
 	private Node _owner;
 
-	private readonly List<IActionComponent> _components = new();
-
-	private readonly HashSet<string> _tags = new();
+	private readonly List<IActionComponent> _components = [];
+	private readonly HashSet<string> _tags = [];
 
 	public void Init(Node owner)
 	{

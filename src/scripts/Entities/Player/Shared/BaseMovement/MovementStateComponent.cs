@@ -10,7 +10,7 @@ public enum MoveState
 
 public partial class MovementStateComponent : Node, IActionComponent
 {
-    public MoveState state { get; private set; }
+    public MoveState State { get; private set; }
 
     private Player _player;
 
@@ -24,11 +24,11 @@ public partial class MovementStateComponent : Node, IActionComponent
     {
         if (_player.IsOnFloor())
         {
-            state = Mathf.IsZeroApprox(Mathf.Abs(_player.Velocity.X)) ? MoveState.Idle: MoveState.Running;
+            State = Mathf.IsZeroApprox(Mathf.Abs(_player.Velocity.X)) ? MoveState.Idle : MoveState.Running;
         }
         else
         {
-            state = _player.Velocity.Y >= 0 ? MoveState.Falling : MoveState.Jumping;
+            State = _player.Velocity.Y >= 0 ? MoveState.Falling : MoveState.Jumping;
         }
     }
 }

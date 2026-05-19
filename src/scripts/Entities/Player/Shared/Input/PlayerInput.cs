@@ -26,7 +26,7 @@ public partial class PlayerInput : Node
             ),
 
             // Jump
-            jumpHeld = Input.IsActionPressed("Jump"),
+            jumpHeld = Input.IsActionJustPressed("Jump"),
 
             // Attack
             attack1Held = Input.IsActionPressed("Attack1"),
