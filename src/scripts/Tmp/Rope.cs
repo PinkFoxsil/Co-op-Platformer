@@ -5,8 +5,8 @@ using System.Collections.Generic;
 public partial class Rope : Node2D
 {
 	[Export] public PinJoint2D startPinJoint;
-	[Export] public float segmentLength = 10f;
-	[Export] public float softness = 0f;
+	[Export] public float segmentLength = 20f;
+	[Export] public float softness = 0.003f;
 
 	// When true set the length every physics process.
 	public bool dynamicLength;

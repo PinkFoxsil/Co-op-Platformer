@@ -13,6 +13,8 @@
 [ext_resource type="Script" uid="uid://o14svaawisot" path="res://src/scripts/Entities/Shared/ActionOrchestrator.cs" id="9_4mk40"]
 [ext_resource type="Script" uid="uid://dlnfh7qogbfn6" path="res://src/scripts/Entities/Shared/CharacterMotor.cs" id="10_n4nwn"]
 [ext_resource type="Script" uid="uid://ds5rxnmvt778n" path="res://src/scripts/Entities/Player/Shared/Input/PlayerInput.cs" id="11_n4nwn"]
+[ext_resource type="Script" uid="uid://d3llvd4n54drp" path="res://src/scripts/Tmp/HarpoonGun.cs" id="14_wp886"]
+[ext_resource type="PackedScene" uid="uid://cq3nmcvps863h" path="res://src/scenes/rope.tscn" id="15_fqy3x"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ut82q"]
 size = Vector2(32, 64)
@@ -25,6 +27,15 @@ size = Vector2(82, 117)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xjkdw"]
 size = Vector2(146, 48)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gr1yq"]
+size = Vector2(50, 10)
+
+[sub_resource type="Gradient" id="Gradient_kkmar"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_aebxm"]
+size = Vector2(38, 4)
 
 [node name="ControllableCharacter" type="CharacterBody2D" unique_id=1425957284]
 script = ExtResource("1_fog2k")
@@ -99,3 +110,53 @@ script = ExtResource("10_n4nwn")
 
 [node name="PlayerInput" type="Node" parent="." unique_id=500706715]
 script = ExtResource("11_n4nwn")
+
+[node name="HarpoonGun" type="RigidBody2D" parent="." unique_id=1940101543]
+position = Vector2(30, 0)
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("14_wp886")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HarpoonGun" unique_id=1549997380]
+shape = SubResource("RectangleShape2D_gr1yq")
+
+[node name="Sprite2D" type="Sprite2D" parent="HarpoonGun" unique_id=1233364066]
+modulate = Color(0.55148095, 0.3120395, 0.15231901, 1)
+position = Vector2(-4.7683716e-07, -1.4901161e-07)
+scale = Vector2(0.78125024, 0.15625)
+texture = ExtResource("1_cv7mj")
+
+[node name="StartPinJoint" type="PinJoint2D" parent="HarpoonGun" unique_id=280502038]
+position = Vector2(23, -2)
+node_a = NodePath("..")
+
+[node name="TrajectoryVisual" type="Line2D" parent="HarpoonGun" unique_id=853078706]
+position = Vector2(42, -2)
+points = PackedVector2Array(0, 0, 100, 0)
+width = 1.0
+gradient = SubResource("Gradient_kkmar")
+
+[node name="Harpoon" type="RigidBody2D" parent="HarpoonGun" unique_id=1368851181]
+position = Vector2(19, -2)
+collision_layer = 8
+collision_mask = 8
+continuous_cd = 2
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HarpoonGun/Harpoon" unique_id=556181701]
+shape = SubResource("RectangleShape2D_aebxm")
+
+[node name="Sprite2D" type="Sprite2D" parent="HarpoonGun/Harpoon" unique_id=981207712]
+modulate = Color(0.74, 0.74, 0.74, 1)
+position = Vector2(0, -8.940697e-08)
+scale = Vector2(0.6, 0.0625)
+texture = ExtResource("1_cv7mj")
+
+[node name="EndPinJoint" type="PinJoint2D" parent="HarpoonGun/Harpoon" unique_id=29025267]
+position = Vector2(-17, 0)
+node_b = NodePath("..")
+
+[node name="rope" parent="HarpoonGun" unique_id=1017927398 node_paths=PackedStringArray("startPinJoint") instance=ExtResource("15_fqy3x")]
+position = Vector2(19, -2)
+startPinJoint = NodePath("../StartPinJoint")
