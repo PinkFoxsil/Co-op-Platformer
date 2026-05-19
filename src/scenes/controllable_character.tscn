@@ -157,6 +157,7 @@ texture = ExtResource("1_cv7mj")
 position = Vector2(-17, 0)
 node_b = NodePath("..")
 
-[node name="rope" parent="HarpoonGun" unique_id=1017927398 node_paths=PackedStringArray("startPinJoint") instance=ExtResource("15_fqy3x")]
+[node name="rope" parent="HarpoonGun" unique_id=1017927398 node_paths=PackedStringArray("startPinJoint", "entPinJoint") instance=ExtResource("15_fqy3x")]
 position = Vector2(19, -2)
 startPinJoint = NodePath("../StartPinJoint")
+entPinJoint = NodePath("../Harpoon/EndPinJoint")

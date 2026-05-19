@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public partial class Rope : Node2D
 {
 	[Export] public PinJoint2D startPinJoint;
+	[Export] public PinJoint2D entPinJoint;
 	[Export] public float segmentLength = 20f;
 	[Export] public float softness = 0.003f;
 
@@ -13,8 +14,6 @@ public partial class Rope : Node2D
 
 	private Line2D _line2D;
 	private List<Vector2> _line2DPoints = [];
-
-	private Marker2D _endMarker;
 	
 	private PackedScene _ropeSegmentPackedScene;
 	private LinkedList<RopeSegment> _ropeSegments = [];
@@ -26,7 +25,6 @@ public partial class Rope : Node2D
 		_ropeSegmentPackedScene = GD.Load<PackedScene>("res://src/scenes/rope_segment.tscn");
 		
 		_line2D = GetNode<Line2D>("Line2D");
-		_endMarker = GetNode<Marker2D>("EndMarker");
 
 		_halfSegmentLength = segmentLength * 0.5f;
 
@@ -41,7 +39,7 @@ public partial class Rope : Node2D
 	public void SpawnRope()
 	{
 		Vector2 startPos = ToLocal(startPinJoint.GlobalPosition);
-		Vector2 endPos = _endMarker.Position;
+		Vector2 endPos = ToLocal(entPinJoint.GlobalPosition);
 
 		Vector2 startToEndVect = endPos - startPos;
 		float distance = startToEndVect.Length();
@@ -55,6 +53,13 @@ public partial class Rope : Node2D
 			Vector2 newSegmentPos = interval * direction + startPos;
 			RopeSegment newSegment = CreateRopeSegment(newSegmentPos, rotation);
 			AppendRopeSegment(newSegment);
+		}
+
+		if (_ropeSegments.Last != null)
+		{
+			_ropeSegments.Last.Value.pinJoint.QueueFree();
+			entPinJoint.NodeA = _ropeSegments.Last.Value.GetPath();
+			_ropeSegments.Last.Value.pinJoint = entPinJoint;
 		}
 	}
 
