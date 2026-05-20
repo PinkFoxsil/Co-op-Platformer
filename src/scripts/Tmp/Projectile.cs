@@ -1,11 +1,17 @@
 using Godot;
-using Godot.Collections;
 
 public struct ShapeCastCollision
 {
-    public Vector2 Point;
-    public Vector2 Normal;
-    public GodotObject Object;
+    public Vector2 Point { get; }
+    public Vector2 Normal { get; }
+    public GodotObject Object { get; }
+
+    public ShapeCastCollision(ShapeCast2D shapeCast, int index)
+    {
+        Point = shapeCast.GetCollisionPoint(index);
+        Normal = shapeCast.GetCollisionNormal(index);
+        Object = shapeCast.GetCollider(index);
+    }
 }
 
 public partial class Projectile : Area2D
@@ -51,7 +57,7 @@ public partial class Projectile : Area2D
     public virtual void OnHit(ShapeCastCollision collision)
     {
         Position = Velocity * shapeCast.GetClosestCollisionSafeFraction();
-        Rotation = Velocity.Angle() - Mathf.Pi / 2;
+        Rotation = Velocity.Angle() - Mathf.Pi * 0.5f;
         Active = false;
     }
 
@@ -77,12 +83,7 @@ public partial class Projectile : Area2D
 
         for (int i = 0; i < collisionCount; i++)
         {
-            ShapeCastCollision collision = new()
-            {
-                Point = shapeCast.GetCollisionPoint(i),
-                Normal = shapeCast.GetCollisionNormal(i),
-                Object = shapeCast.GetCollider(i)
-            };
+            ShapeCastCollision collision = new(shapeCast, i);
 
             float distance = collision.Point.DistanceTo(Position);
             if (distance < closestDistance)

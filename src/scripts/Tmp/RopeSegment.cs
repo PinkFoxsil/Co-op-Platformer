@@ -5,7 +5,6 @@ public partial class RopeSegment : RigidBody2D
     [Export] public float length = 20f;
     [Export] public float radius = 2f;
 
-	public PinJoint2D pinJoint;
     public CollisionShape2D collisionShape;
     public CapsuleShape2D capsuleShape;
 
@@ -19,8 +18,5 @@ public partial class RopeSegment : RigidBody2D
         _diameter = radius*2;
         capsuleShape.Height = length + _diameter;
         capsuleShape.Radius = radius;
-
-        pinJoint = GetNode<PinJoint2D>("PinJoint2D");
-        pinJoint.Position = new Vector2(0, length * 0.5f);
     }
 }

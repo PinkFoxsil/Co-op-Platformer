@@ -2,14 +2,25 @@
 
 [ext_resource type="Script" uid="uid://bbo7m0ppsdfua" path="res://src/scripts/Tmp/Rope.cs" id="1_8winm"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_vxyu0"]
+radius = 2.0
+
 [node name="rope" type="Node2D" unique_id=1017927398]
 script = ExtResource("1_8winm")
-segmentLength = 20.0
 
 [node name="Line2D" type="Line2D" parent="." unique_id=1571028116]
 width = 5.0
 
-[node name="EndMarker" type="Marker2D" parent="." unique_id=682541966]
-modulate = Color(1, 0, 0, 1)
-position = Vector2(454, -4)
-gizmo_extents = 5.0
+[node name="StartStaticBody" type="StaticBody2D" parent="." unique_id=1349182393]
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StartStaticBody" unique_id=1116475051]
+shape = SubResource("CircleShape2D_vxyu0")
+
+[node name="EndStaticBody" type="StaticBody2D" parent="." unique_id=1043604802]
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EndStaticBody" unique_id=1097260682]
+shape = SubResource("CircleShape2D_vxyu0")
