@@ -14,7 +14,9 @@
 [ext_resource type="Script" uid="uid://dlnfh7qogbfn6" path="res://src/scripts/Entities/Shared/CharacterMotor.cs" id="10_n4nwn"]
 [ext_resource type="Script" uid="uid://ds5rxnmvt778n" path="res://src/scripts/Entities/Player/Shared/Input/PlayerInput.cs" id="11_n4nwn"]
 [ext_resource type="Script" uid="uid://d3llvd4n54drp" path="res://src/scripts/Tmp/HarpoonGun.cs" id="14_wp886"]
+[ext_resource type="Texture2D" uid="uid://clprup1o0xiic" path="res://src/images/HarpoonGun.png" id="15_aebxm"]
 [ext_resource type="PackedScene" uid="uid://cq3nmcvps863h" path="res://src/scenes/rope.tscn" id="15_fqy3x"]
+[ext_resource type="Texture2D" uid="uid://bdpw4vhpalcwx" path="res://src/images/Harpoon.png" id="16_gr1yq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ut82q"]
 size = Vector2(32, 64)
@@ -121,10 +123,8 @@ script = ExtResource("14_wp886")
 shape = SubResource("RectangleShape2D_gr1yq")
 
 [node name="Sprite2D" type="Sprite2D" parent="HarpoonGun" unique_id=1233364066]
-modulate = Color(0.55148095, 0.3120395, 0.15231901, 1)
 position = Vector2(-4.7683716e-07, -1.4901161e-07)
-scale = Vector2(0.78125024, 0.15625)
-texture = ExtResource("1_cv7mj")
+texture = ExtResource("15_aebxm")
 
 [node name="StartPinJoint" type="PinJoint2D" parent="HarpoonGun" unique_id=280502038]
 position = Vector2(23, -2)
@@ -148,10 +148,8 @@ max_contacts_reported = 1
 shape = SubResource("RectangleShape2D_aebxm")
 
 [node name="Sprite2D" type="Sprite2D" parent="HarpoonGun/Harpoon" unique_id=981207712]
-modulate = Color(0.74, 0.74, 0.74, 1)
 position = Vector2(0, -8.940697e-08)
-scale = Vector2(0.6, 0.0625)
-texture = ExtResource("1_cv7mj")
+texture = ExtResource("16_gr1yq")
 
 [node name="EndPinJoint" type="PinJoint2D" parent="HarpoonGun/Harpoon" unique_id=29025267]
 position = Vector2(-17, 0)
