@@ -63,9 +63,7 @@ public partial class Projectile : Area2D
 
     public virtual void OnHit(float dt, ShapeCastCollision collision)
     {
-        Position = Velocity * dt * shapeCast.GetClosestCollisionSafeFraction();
-        Rotation = Velocity.Angle();
-        Active = false;
+        QueueFree();
     }
 
     private void UpdateVelocity(float dt)
