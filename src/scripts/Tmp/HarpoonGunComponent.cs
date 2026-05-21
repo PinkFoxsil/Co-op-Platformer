@@ -11,17 +11,27 @@ public enum HarpoonGunState
     Shot
 }
 
-public partial class HarpoonGun : RigidBody2D
+public partial class HarpoonGunComponent : Node2D
 {
     public HarpoonGunState State { get; private set; }
 
-    private RigidBody2D _harpoon;
-    private Rope _rope;
+    private PackedScene _harpoonPackedScene;
+
+    private Line2D _trajectoryLine;
 
     public override void _Ready()
     {
-        _harpoon = GetNode<RigidBody2D>("Harpoon");
-        _rope = GetNode<Rope>("rope");
+        _trajectoryLine = GetNode<Line2D>("TrajectoryLine");
+        State = HarpoonGunState.Stashed;
+        _trajectoryLine.Visible = false;
+    }
+
+    public override void _Process(double delta)
+    {
+        if (State == HarpoonGunState.Aiming)
+        {
+            UpdateAimTransform();
+        }
     }
 
     public override void _PhysicsProcess(double delta)
@@ -62,20 +72,21 @@ public partial class HarpoonGun : RigidBody2D
     private void Stash()
     {
         State = HarpoonGunState.Stashed;
-
-        // Transform = stashedTransform;
-        // VisibilityLayer = -1;
+        _trajectoryLine.Visible = false;
     }
 
     private void Aim()
     {
         State = HarpoonGunState.Aiming;
-        UpdateAimTransform();
+        _trajectoryLine.Visible = true;
     }
 
     private void UpdateAimTransform()
     {
-        // Transform = pivotTransform - GetGlobalMousePosition;
+        Vector2 mousePosition = GetGlobalMousePosition();
+        Vector2 mouseVector = mousePosition - GlobalPosition;
+
+        Rotation = mouseVector.Angle();
     }
 
     private void Fire()
