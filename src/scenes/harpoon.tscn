@@ -1,23 +1,29 @@
 [gd_scene format=3 uid="uid://51vfix24nuwt"]
 
-[ext_resource type="Script" uid="uid://3jqj81ro2cd8" path="res://src/scripts/Tmp/Projectile.cs" id="1_5080w"]
+[ext_resource type="Script" uid="uid://dcx68t5yiwwje" path="res://src/scripts/Tmp/Harpoon.cs" id="1_5080w"]
 [ext_resource type="Texture2D" uid="uid://bdpw4vhpalcwx" path="res://src/images/Harpoon.png" id="2_uj8ig"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ontq3"]
-size = Vector2(44, 3)
+size = Vector2(12, 6)
 
 [node name="Harpoon" type="Area2D" unique_id=2060184770]
+top_level = true
+z_index = -1
+z_as_relative = false
 collision_layer = 0
+collision_mask = 10
 monitorable = false
 script = ExtResource("1_5080w")
+gravityScale = 1.0
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=782364233]
-position = Vector2(0, 0.5)
+position = Vector2(0, 1)
+scale = Vector2(2, 2)
 texture = ExtResource("2_uj8ig")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1769103883]
 shape = SubResource("RectangleShape2D_ontq3")
 
 [node name="RopeAttachMarker" type="Marker2D" parent="." unique_id=1986304423]
-position = Vector2(-20.5, 0)
+position = Vector2(-41, 0)
 gizmo_extents = 5.0

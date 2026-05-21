@@ -26,38 +26,45 @@ public partial class Projectile : Area2D
     public override void _Ready()
     {
         CollisionShape2D collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
+
         shapeCast = new()
         {
+            CollisionMask = CollisionMask,
             Shape = collisionShape.Shape,
-            Position = Position,
-            TargetPosition = Position + Velocity,
+            TargetPosition = Vector2.Zero,
             Enabled = false
         };
+        
+        AddChild(shapeCast);
+
+        Rotation = Velocity.Angle();
     }
 
-    public override void _PhysicsProcess(double dt)
+    public override void _PhysicsProcess(double delta)
     {
         if (!Active)
         {
             return;
         }
         
-        UpdateVelocity((float) dt);
+        float dt = (float) delta;
 
-        ShapeCastCollision? collision = GetClosestCollision();
+        UpdateVelocity(dt);
+
+        ShapeCastCollision? collision = GetClosestCollision(dt);
         if (collision != null)
         {
-            OnHit((ShapeCastCollision) collision);
+            OnHit(dt, (ShapeCastCollision) collision);
             return;
         }
         
-        Move();
+        Move(dt);
     }
 
-    public virtual void OnHit(ShapeCastCollision collision)
+    public virtual void OnHit(float dt, ShapeCastCollision collision)
     {
-        Position = Velocity * shapeCast.GetClosestCollisionSafeFraction();
-        Rotation = Velocity.Angle() - Mathf.Pi * 0.5f;
+        Position = Velocity * dt * shapeCast.GetClosestCollisionSafeFraction();
+        Rotation = Velocity.Angle();
         Active = false;
     }
 
@@ -66,9 +73,9 @@ public partial class Projectile : Area2D
         Velocity += new Vector2(0, Gravity * gravityScale * dt);
     }
 
-    private ShapeCastCollision? GetClosestCollision()
+    private ShapeCastCollision? GetClosestCollision(float dt)
     {
-        shapeCast.TargetPosition = Position + Velocity;
+        shapeCast.TargetPosition = ToLocal(GlobalPosition + Velocity * dt);
         shapeCast.ForceShapecastUpdate();
 
         return FindClosestCollision();
@@ -96,9 +103,9 @@ public partial class Projectile : Area2D
         return closestCollision;
     }
 
-    private void Move()
+    private void Move(float dt)
     {
-        Rotation = Velocity.Angle() - Mathf.Pi / 2;
-        Position += Velocity;
+        Rotation = Velocity.Angle();
+        Position += Velocity * dt;
     }
 }

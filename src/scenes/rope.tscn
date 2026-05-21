@@ -13,14 +13,14 @@ width = 5.0
 
 [node name="StartStaticBody" type="StaticBody2D" parent="." unique_id=1349182393]
 collision_layer = 0
-collision_mask = 0
+collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StartStaticBody" unique_id=1116475051]
 shape = SubResource("CircleShape2D_vxyu0")
 
 [node name="EndStaticBody" type="StaticBody2D" parent="." unique_id=1043604802]
 collision_layer = 0
-collision_mask = 0
+collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EndStaticBody" unique_id=1097260682]
 shape = SubResource("CircleShape2D_vxyu0")

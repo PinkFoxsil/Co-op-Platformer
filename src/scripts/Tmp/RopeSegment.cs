@@ -15,7 +15,7 @@ public partial class RopeSegment : RigidBody2D
         collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
         CapsuleShape2D capsuleShape = (CapsuleShape2D) collisionShape.Shape;
 
-        _diameter = radius*2;
+        _diameter = radius * 2;
         capsuleShape.Height = length + _diameter;
         capsuleShape.Radius = radius;
     }

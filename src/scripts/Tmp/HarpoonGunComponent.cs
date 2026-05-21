@@ -15,15 +15,25 @@ public partial class HarpoonGunComponent : Node2D
 {
     public HarpoonGunState State { get; private set; }
 
-    private PackedScene _harpoonPackedScene;
-
     private Line2D _trajectoryLine;
+    private Marker2D _harpoonStartMaker;
+
+    private PackedScene _harpoonPackedScene;
+    private Harpoon _harpoon;
+
+    private PackedScene _ropePackedScene;
+    private Rope _rope;
 
     public override void _Ready()
     {
-        _trajectoryLine = GetNode<Line2D>("TrajectoryLine");
         State = HarpoonGunState.Stashed;
+
+        _trajectoryLine = GetNode<Line2D>("TrajectoryLine");
         _trajectoryLine.Visible = false;
+
+        _harpoonStartMaker = GetNode<Marker2D>("HarpoonStartMarker");
+
+        _harpoonPackedScene = GD.Load<PackedScene>("res://src/scenes/harpoon.tscn");
     }
 
     public override void _Process(double delta)
@@ -43,8 +53,7 @@ public partial class HarpoonGunComponent : Node2D
                 Aim();
             }
         }
-
-        if (State == HarpoonGunState.Aiming)
+        else if (State == HarpoonGunState.Aiming)
         {
             if (Input.IsActionJustPressed("Attack1"))
             {
@@ -55,8 +64,7 @@ public partial class HarpoonGunComponent : Node2D
                 Stash();
             }
         }
-
-        if (State == HarpoonGunState.Shot)
+        else if (State == HarpoonGunState.Shot)
         {
             if (Input.IsActionJustPressed("Attack1"))
             {
@@ -73,6 +81,12 @@ public partial class HarpoonGunComponent : Node2D
     {
         State = HarpoonGunState.Stashed;
         _trajectoryLine.Visible = false;
+
+        if (_harpoon != null)
+        {
+            _harpoon.QueueFree();
+            _harpoon = null;
+        }
     }
 
     private void Aim()
@@ -83,21 +97,29 @@ public partial class HarpoonGunComponent : Node2D
 
     private void UpdateAimTransform()
     {
-        Vector2 mousePosition = GetGlobalMousePosition();
-        Vector2 mouseVector = mousePosition - GlobalPosition;
-
-        Rotation = mouseVector.Angle();
+        Rotation = GetMouseVector().Angle();
     }
 
     private void Fire()
     {
         State = HarpoonGunState.Shot;
+        _trajectoryLine.Visible = false;
 
-        // _harpoon.launch(direction, speed);
+        _harpoon = _harpoonPackedScene.Instantiate<Harpoon>();
+        _harpoon.GlobalPosition = _harpoonStartMaker.GlobalPosition;
+        _harpoon.Velocity = GetMouseVector().Normalized() * 2000f;
+        _harpoon.Active = true;
+        AddChild(_harpoon);
+    }
+
+    private Vector2 GetMouseVector()
+    {
+        Vector2 mousePosition = GetGlobalMousePosition();
+        return mousePosition - GlobalPosition;
     }
 
     private void Reel()
     {
-        // _rope.length -= 1;
+        
     }
 }

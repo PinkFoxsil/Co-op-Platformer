@@ -101,7 +101,7 @@ public partial class CharacterMotor : Node
 		TickTimers(dt);
 		
 		Vector2 velocity = _player.Velocity;
-		GD.Print(velocity.Y);
+		
 		float gravityMultiplier = 1f;
 		if (_gravityRequests.Count > 0)
 		{
