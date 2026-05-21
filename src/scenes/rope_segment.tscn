@@ -19,4 +19,5 @@ linear_damp = 0.15
 script = ExtResource("1_yjexh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1599895293]
+rotation = -1.5707964
 shape = SubResource("CapsuleShape2D_yjexh")

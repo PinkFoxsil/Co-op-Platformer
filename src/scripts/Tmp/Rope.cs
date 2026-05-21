@@ -57,7 +57,7 @@ public partial class Rope : Node2D
 		float distance = startToEndVect.Length();
 		Vector2 direction = startToEndVect.Normalized();
 
-		float rotation = direction.Angle() - Mathf.Pi / 2;
+		float rotation = direction.Angle();
 
 		float targetDistance = distance - _halfSegmentLength;
 		for (float interval = _halfSegmentLength; interval <= targetDistance; interval += segmentLength)
