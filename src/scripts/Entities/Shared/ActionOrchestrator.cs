@@ -41,9 +41,9 @@ public partial class ActionOrchestrator : Node
 		_physics.AddRange(_components);
 		_postPhysics.AddRange(_components);
 
-		_prePhysics.Sort((a, b) => a.PrePhysicsPriority.CompareTo(b.PrePhysicsPriority));
-		_physics.Sort((a, b) => a.PhysicsPriority.CompareTo(b.PhysicsPriority));
-		_postPhysics.Sort((a, b) => a.PostPhysicsPriority.CompareTo(b.PostPhysicsPriority));
+		_prePhysics.Sort((a, b) => b.PrePhysicsPriority.CompareTo(a.PrePhysicsPriority));
+		_physics.Sort((a, b) => b.PhysicsPriority.CompareTo(a.PhysicsPriority));
+		_postPhysics.Sort((a, b) => b.PostPhysicsPriority.CompareTo(a.PostPhysicsPriority));
 	}
 
 	public void RegisterComponent(IActionComponent component)
@@ -54,9 +54,9 @@ public partial class ActionOrchestrator : Node
 		component.Init(_owner);
 		_components.Add(component);
 
-		InsertSorted(_prePhysics, component, (a, b) => a.PrePhysicsPriority.CompareTo(b.PrePhysicsPriority));
-		InsertSorted(_physics, component, (a, b) => a.PhysicsPriority.CompareTo(b.PhysicsPriority));
-		InsertSorted(_postPhysics, component, (a, b) => a.PostPhysicsPriority.CompareTo(b.PostPhysicsPriority));
+		InsertSorted(_prePhysics, component, (a, b) => b.PrePhysicsPriority.CompareTo(a.PrePhysicsPriority));
+		InsertSorted(_physics, component, (a, b) => b.PhysicsPriority.CompareTo(a.PhysicsPriority));
+		InsertSorted(_postPhysics, component, (a, b) => b.PostPhysicsPriority.CompareTo(a.PostPhysicsPriority));
 	}
 
 	private void InsertSorted(List<IActionComponent> list, IActionComponent item, System.Comparison<IActionComponent> comparison)
