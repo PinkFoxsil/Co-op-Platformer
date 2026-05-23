@@ -24,6 +24,7 @@ public partial class DashComponent : Node, IActionComponent
 	private int _lastFacedDirection;
 
 	private bool _justDashed;
+	private bool _requiresRetrigger;
 	private bool _requiresGroundReset;
 
 	private Timer _dashTimer = new();
@@ -49,6 +50,11 @@ public partial class DashComponent : Node, IActionComponent
 
 	public void PrePhysicsUpdate(float dt)
 	{
+		if (_input.current.dashReleased)
+		{
+			_requiresRetrigger = false;	
+		}
+
 		_justDashed = false;
 
 		if (dashState == DashState.Recovering)
@@ -141,7 +147,7 @@ public partial class DashComponent : Node, IActionComponent
 
 	private bool CheckDashTriggered()
 	{
-		if (!_input.current.dashHeld)
+		if (!_input.current.dashHeld || _requiresRetrigger)
 		{
 			return false;
 		}
@@ -156,6 +162,7 @@ public partial class DashComponent : Node, IActionComponent
 		_dashTimer.Start(dashTime);
 		_dashDirection = _lastFacedDirection;
 		_currentDashCharges--;
+		_requiresRetrigger = true;
 
 		_orchestrator.AddTag("MovementLocked");
 

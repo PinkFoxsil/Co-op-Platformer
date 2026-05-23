@@ -33,6 +33,7 @@ public partial class PlayerInput : Node
 
 			// Dash
 			dashHeld = Input.IsActionPressed("Ability1"),
+			dashReleased = Input.IsActionJustReleased("Ability1"),
 
 			// Mouse
 			mouseWorldPosition = mouseWorld,

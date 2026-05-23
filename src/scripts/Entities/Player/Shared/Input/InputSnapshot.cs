@@ -14,6 +14,7 @@ public struct InputSnapshot
 
 	// Dash
 	public bool dashHeld;
+	public bool dashReleased;
 
 	public Vector2 mouseWorldPosition;
 	public Vector2 mouseRelativePosition;
