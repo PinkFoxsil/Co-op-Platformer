@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class AttackComponent : Node2D, IActionComponent
+public partial class AttackComponent : Node, IActionComponent
 {
 	[ExportCategory("Attack")]
 	[Export] public float attackCooldown = 1f;
@@ -23,9 +23,9 @@ public partial class AttackComponent : Node2D, IActionComponent
 
 	public virtual void Init(Node owner)
 	{
-		Player player = (Player) owner;
-		_input = player.Input;
-		_orchestrator = player.Orchestrator;
+		_player = (Player) owner;
+		_input = _player.Input;
+		_orchestrator = _player.Orchestrator;
 	}
 
 	public virtual void PrePhysicsUpdate(float dt)

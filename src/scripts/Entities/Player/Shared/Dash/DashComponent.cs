@@ -10,7 +10,7 @@ public enum DashState
 public partial class DashComponent : Node, IActionComponent
 {
 	[ExportCategory("Dash")]
-	[Export] public float dashSpeed = 1000f;
+	[Export] public float dashSpeed = 200f;
 	[Export] public float dashTime = 0.05f;
 	[Export] public float dashRecoveryTime = 0.15f;
 	[Export] public float dashCooldown = 2f;
@@ -174,7 +174,7 @@ public partial class DashComponent : Node, IActionComponent
 
 	private void ApplyDashForce()
 	{
-		_motor.RequestVelocity(this, new Vector2(_dashDirection * dashSpeed, 0), priority: 10);
+		_motor.RequestBaseVelocity(this, new Vector2(_dashDirection * dashSpeed, 0), priority: 10);
 		_motor.RequestGravityMultiplier(this, 0f, priority: 10);
 	}
 

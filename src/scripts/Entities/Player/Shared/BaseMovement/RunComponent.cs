@@ -40,6 +40,6 @@ public partial class RunComponent : Node, IActionComponent
 		float newVelocityX = Mathf.MoveToward(currentSpeed, targetSpeed, rate * control * dt);
 		float changeVelocityX = newVelocityX - currentSpeed;
 
-		_motor.RequestVelocity(this, new Vector2(changeVelocityX, 0), priority: 0);
+		_motor.RequestBaseVelocity(this, new Vector2(changeVelocityX, 0), priority: 0);
 	}
 }

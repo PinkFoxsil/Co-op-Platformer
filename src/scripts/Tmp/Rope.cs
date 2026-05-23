@@ -21,7 +21,7 @@ public partial class Rope : Node2D
 	private StaticBody2D _startStaticBody;
 	private StaticBody2D _endStaticBody;
 
-    public override void _Ready()
+	public override void _Ready()
 	{
 		_ropeSegmentPackedScene = GD.Load<PackedScene>("res://src/scenes/rope_segment.tscn");
 		
@@ -32,16 +32,16 @@ public partial class Rope : Node2D
 		CreateRope();
 	}
 
-    public override void _Process(double dt)
-    {
-        UpdateLine2DRope();
-    }
+	public override void _Process(double dt)
+	{
+		UpdateLine2DRope();
+	}
 
-    public override void _PhysicsProcess(double delta)
-    {
-        _startStaticBody.GlobalPosition = startMarker.GlobalPosition;
+	public override void _PhysicsProcess(double delta)
+	{
+		_startStaticBody.GlobalPosition = startMarker.GlobalPosition;
 		_endStaticBody.GlobalPosition = endMarker.GlobalPosition;
-    }
+	}
 
 	public void CreateRope()
 	{
@@ -124,14 +124,14 @@ public partial class Rope : Node2D
 
 	private static PinJoint2D CreatePinJoint(Vector2 position, CollisionObject2D nodeA, CollisionObject2D nodeB)
 	{
-        PinJoint2D pinJoint = new()
-        {
-            Position = position,
-            NodeA = nodeA.GetPath(),
-            NodeB = nodeB.GetPath()
-        };
+		PinJoint2D pinJoint = new()
+		{
+			Position = position,
+			NodeA = nodeA.GetPath(),
+			NodeB = nodeB.GetPath()
+		};
 
-        pinJoint.AddChild(nodeA);
+		pinJoint.AddChild(nodeA);
 
 		return pinJoint;
 	}

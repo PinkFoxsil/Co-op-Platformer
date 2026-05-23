@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class GravityComponent : Node, IActionComponent
+public partial class FallComponent : Node, IActionComponent
 {
 	[Export] public float fallMultiplier = 2f;
 

@@ -1,17 +1,15 @@
 using Godot;
 public partial class JumpComponent : Node, IActionComponent
 {
-	[Export] public float jumpHeight = 60f;
-	[Export] public float jumpTimeToApex = 0.35f;
-
 	[Export] public float coyoteTime = 0.125f;
 	[Export] public float jumpBufferTime = 0.1f;
+	[Export] public float jumpCooldownTime = 0.1f;
 
-	private float _gravity;
 	private float _jumpForce;
 
 	private Timer _coyoteTimer = new();
 	private Timer _jumpBufferTimer = new();
+	private Timer _jumpCooldownTimer = new();
 
 	private bool _wasOnFloor;
 
@@ -26,14 +24,14 @@ public partial class JumpComponent : Node, IActionComponent
 		_motor = player.Motor;
 		_input = player.Input;
 
-		_gravity = 2f * jumpHeight / (jumpTimeToApex * jumpTimeToApex);
-		_jumpForce = _gravity * jumpTimeToApex;
+		_jumpForce = _motor.gravity * _motor.jumpTimeToApex;
 	}
 
 	public void PrePhysicsUpdate(float dt)
 	{
 		UpdateCoyoteTime(dt);
 		UpdateJumpBuffer(dt);
+		UpdateJumpCooldownTimer(dt);
 	}
 
 	public void PhysicsUpdate(float dt)
@@ -53,20 +51,21 @@ public partial class JumpComponent : Node, IActionComponent
 	{
 		_coyoteTimer.Stop();
 		_jumpBufferTimer.Stop();
+		_jumpCooldownTimer.Start(jumpCooldownTime);
 		
-		_motor.RequestVelocity(this, new Vector2(0, -_jumpForce), priority: 0);
+		_motor.RequestBaseVelocity(this, new Vector2(0, -_jumpForce), priority: 0);
 	}
 
 	private bool CanJump()
 	{
-		return _player.IsOnFloor() || _coyoteTimer.IsRunning;
+		return (_player.IsOnFloor() || _coyoteTimer.IsRunning) && !_jumpCooldownTimer.IsRunning;
 	}
 
 	private void UpdateCoyoteTime(float dt)
 	{
 		bool isOnFloor = _player.IsOnFloor();
 
-		if (_wasOnFloor && !isOnFloor)
+		if (_wasOnFloor && !isOnFloor && !_jumpCooldownTimer.IsRunning)
 		{
 			_coyoteTimer.Start(coyoteTime);
 		}
@@ -83,5 +82,13 @@ public partial class JumpComponent : Node, IActionComponent
 			_jumpBufferTimer.Start(jumpBufferTime);
 		}
 		_jumpBufferTimer.Tick(dt);
+	}
+	
+	private void UpdateJumpCooldownTimer(float dt)
+	{
+		if (_jumpCooldownTimer.IsRunning) 
+		{
+			_jumpCooldownTimer.Tick(dt);
+		}
 	}
 }

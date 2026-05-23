@@ -2,42 +2,42 @@ using Godot;
 
 public partial class PlayerInput : Node
 {
-    public InputSnapshot current { get; private set; }
+	public InputSnapshot current { get; private set; }
 
-    private Player _player;
+	private Player _player;
 
-    public void Init(Player player)
-    {
-        _player = player;
-    }
+	public void Init(Player player)
+	{
+		_player = player;
+	}
 
-    public void Capture()
-    {
-        Vector2 mouseWorld = _player.GetGlobalMousePosition();
-        Vector2 mouseRelative = mouseWorld - _player.GlobalPosition;
+	public void Capture()
+	{
+		Vector2 mouseWorld = _player.GetGlobalMousePosition();
+		Vector2 mouseRelative = mouseWorld - _player.GlobalPosition;
 
-        current = new InputSnapshot
-        {
-            
-            // Move
-            moveX = Input.GetAxis(
-                "Left",
+		current = new InputSnapshot
+		{
+			
+			// Move
+			moveX = Input.GetAxis(
+				"Left",
                 "Right"
-            ),
+			),
 
-            // Jump
-            jumpHeld = Input.IsActionPressed("Jump"),
+			// Jump
+			jumpHeld = Input.IsActionPressed("Jump"),
 
-            // Attack
-            attack1Held = Input.IsActionPressed("Attack1"),
+			// Attack
+			attack1Held = Input.IsActionPressed("Attack1"),
 
-            // Dash
-            dashHeld = Input.IsActionPressed("Ability1"),
+			// Dash
+			dashHeld = Input.IsActionPressed("Ability1"),
 
-            // Mouse
-            mouseWorldPosition = mouseWorld,
-            mouseRelativePosition = mouseRelative,
-            mouseDirection = mouseRelative.Normalized()
-        };
-    }
+			// Mouse
+			mouseWorldPosition = mouseWorld,
+			mouseRelativePosition = mouseRelative,
+			mouseDirection = mouseRelative.Normalized()
+		};
+	}
 }

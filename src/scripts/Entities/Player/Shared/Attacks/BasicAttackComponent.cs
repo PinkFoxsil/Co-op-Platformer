@@ -9,7 +9,8 @@ public partial class BasicAttackComponent : AttackComponent
 	public override void Init(Node owner)
 	{
 		base.Init((Player) owner);
-		_attackHitbox = this.GetNode<Hitbox>("Hitbox");
+		Node2D hitboxes = _player.GetNode<Node2D>("Hitboxes");
+		_attackHitbox = hitboxes.GetNode<Hitbox>("BasicAttackHitbox"); 
 	}
 
 	public override bool AttackTriggered()
