@@ -26,9 +26,12 @@ public partial class Rope : Node2D
 		_ropeSegmentPackedScene = GD.Load<PackedScene>("res://src/scenes/rope_segment.tscn");
 		
 		_line2D = GetNode<Line2D>("Line2D");
+		_startStaticBody = GetNode<StaticBody2D>("StartStaticBody");
+		_endStaticBody = GetNode<StaticBody2D>("EndStaticBody");
 
 		_halfSegmentLength = segmentLength * 0.5f;
 
+		UpdateStaticBodyPosition();
 		CreateRope();
 	}
 
@@ -38,6 +41,11 @@ public partial class Rope : Node2D
 	}
 
 	public override void _PhysicsProcess(double delta)
+	{
+		UpdateStaticBodyPosition();
+	}
+
+	private void UpdateStaticBodyPosition()
 	{
 		_startStaticBody.GlobalPosition = startMarker.GlobalPosition;
 		_endStaticBody.GlobalPosition = endMarker.GlobalPosition;
@@ -49,11 +57,12 @@ public partial class Rope : Node2D
 		Vector2 endPos = _endStaticBody.Position;
 
 		CreateSegments(startPos, endPos);
+		ConnectRopeSegments();
 	}
 
 	private void CreateSegments(Vector2 startPoint, Vector2 endPoint)
 	{
-		Vector2 startToEndVect = startPoint - endPoint;
+		Vector2 startToEndVect = endPoint - startPoint;
 		float distance = startToEndVect.Length();
 		Vector2 direction = startToEndVect.Normalized();
 
@@ -96,7 +105,7 @@ public partial class Rope : Node2D
 
 	private void ConnectStartRopeSegment()
 	{
-		PinJoint2D pinJoint = CreatePinJoint(_startStaticBody.Position, _startStaticBody, _ropeSegments.First.Value);
+		PinJoint2D pinJoint = CreatePinJoint(Vector2.Zero, _startStaticBody, _ropeSegments.First.Value);
 		_pinJoints.AddFirst(pinJoint);
 	}
 
@@ -109,7 +118,7 @@ public partial class Rope : Node2D
 			RopeSegment ropeA = ropeNode.Value;
 			RopeSegment ropeB = ropeNode.Next.Value;
 
-			Vector2 pinJointPosition = new(0, ropeA.length * 0.5f);
+			Vector2 pinJointPosition = new(ropeA.length * 0.5f, 0);
 			_pinJoints.AddLast(CreatePinJoint(pinJointPosition, ropeA, ropeB));
 
 			ropeNode = ropeNode.Next;
@@ -118,20 +127,22 @@ public partial class Rope : Node2D
 
 	private void ConnectEndRopeSegment()
 	{
-		PinJoint2D pinJoint = CreatePinJoint(_ropeSegments.Last.Value.Position, _ropeSegments.Last.Value, _endStaticBody);
+		PinJoint2D pinJoint = CreatePinJoint(new Vector2(_ropeSegments.Last.Value.length * 0.5f, 0), _ropeSegments.Last.Value, _endStaticBody);
 		_pinJoints.AddLast(pinJoint);
 	}
 
-	private static PinJoint2D CreatePinJoint(Vector2 position, CollisionObject2D nodeA, CollisionObject2D nodeB)
+	private PinJoint2D CreatePinJoint(Vector2 position, CollisionObject2D nodeA, CollisionObject2D nodeB)
 	{
 		PinJoint2D pinJoint = new()
 		{
 			Position = position,
+			Softness = softness,
+			Bias = 0.99f,
 			NodeA = nodeA.GetPath(),
 			NodeB = nodeB.GetPath()
 		};
 
-		pinJoint.AddChild(nodeA);
+		nodeA.AddChild(pinJoint);
 
 		return pinJoint;
 	}
