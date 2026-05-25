@@ -2,21 +2,76 @@ using Godot;
 
 public partial class RopeSegment : RigidBody2D
 {
-	[Export] public float length = 20f;
-	[Export] public float radius = 2f;
+    public float Length {
+        get;
+        set
+        {
+            field = value;
+            _halfLength = value * 0.5f;
+            UpdateCapsuleHeight();
+        }
+    }
 
-	public CollisionShape2D collisionShape;
-	public CapsuleShape2D capsuleShape;
+    public float Width {
+        get;
+        set
+        {
+            field = value;
+            _diameter = Width * 2.0f;
+            UpdateCapsuleHeight();
+            UpdateCapsuleRadius();
+        }
+    }
 
-	private float _diameter;
+    private CollisionShape2D _collisionShape;
+    private CapsuleShape2D _capsuleShape;
 
-	public override void _Ready()
+    private float _diameter;
+    private float _halfLength;
+
+    public RopeSegment()
+    {
+        _capsuleShape = CreateCapsuleShape();
+        _collisionShape = new()
+		{
+            Rotation = Mathf.DegToRad(90.0f),
+			Shape = _capsuleShape
+		};
+        
+        AddChild(_collisionShape);
+    }
+
+    public Vector2 GetPositionAlongLength(float scale)
+    {
+        return new(Length * scale - _halfLength, 0);
+    }
+
+    private void UpdateCapsuleHeight()
+    {
+        if (_capsuleShape == null)
+        {
+            return;
+        }
+
+        _capsuleShape.Height = _diameter + Length;
+    }
+
+    private void UpdateCapsuleRadius()
+    {
+        if (_capsuleShape == null)
+        {
+            return;
+        }
+
+        _capsuleShape.Radius = Width;
+    }
+
+	private CapsuleShape2D CreateCapsuleShape()
 	{
-		collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
-		CapsuleShape2D capsuleShape = (CapsuleShape2D) collisionShape.Shape;
-
-		_diameter = radius * 2;
-		capsuleShape.Height = length + _diameter;
-		capsuleShape.Radius = radius;
+		return new()
+		{
+			Radius = Width,
+			Height = _diameter + Length
+		};
 	}
 }

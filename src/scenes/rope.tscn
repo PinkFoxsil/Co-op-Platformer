@@ -7,6 +7,8 @@ radius = 2.0
 
 [node name="rope" type="Node2D" unique_id=1017927398]
 script = ExtResource("1_8winm")
+layer = 4
+mask = 8
 
 [node name="Line2D" type="Line2D" parent="." unique_id=1571028116]
 width = 5.0

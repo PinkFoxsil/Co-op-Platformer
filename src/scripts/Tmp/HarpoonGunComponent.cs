@@ -34,6 +34,7 @@ public partial class HarpoonGunComponent : Node2D
         _harpoonStartMaker = GetNode<Marker2D>("HarpoonStartMarker");
 
         _harpoonPackedScene = GD.Load<PackedScene>("res://src/scenes/harpoon.tscn");
+        _ropePackedScene = GD.Load<PackedScene>("res://src/scenes/rope.tscn");
     }
 
     public override void _Process(double delta)
@@ -74,6 +75,10 @@ public partial class HarpoonGunComponent : Node2D
             {
                 Reel();
             }
+            else if (_harpoon.Active)
+            {
+                _rope.Resize();
+            }
         }
     }
 
@@ -86,6 +91,12 @@ public partial class HarpoonGunComponent : Node2D
         {
             _harpoon.QueueFree();
             _harpoon = null;
+        }
+
+        if (_rope != null)
+        {
+            _rope.QueueFree();
+            _rope = null;
         }
     }
 
@@ -109,7 +120,12 @@ public partial class HarpoonGunComponent : Node2D
         _harpoon.GlobalPosition = _harpoonStartMaker.GlobalPosition;
         _harpoon.Velocity = GetMouseVector().Normalized() * 2000f;
         _harpoon.Active = true;
-        AddChild(_harpoon);
+        GetNode<Window>("/root/").AddChild(_harpoon);
+
+        _rope = _ropePackedScene.Instantiate<Rope>();
+        _rope.startMarker = _harpoonStartMaker;
+        _rope.endMarker = _harpoon.ropeAttachMarker;
+        GetNode<Window>("/root/").AddChild(_rope);
     }
 
     private Vector2 GetMouseVector()

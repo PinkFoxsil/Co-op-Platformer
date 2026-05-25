@@ -4,5 +4,6 @@
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>CoopPlatformer</RootNamespace>
+    <LangVersion>14.0</LangVersion>
   </PropertyGroup>
 </Project>

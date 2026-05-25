@@ -2,6 +2,15 @@ using Godot;
 
 public partial class Harpoon : Projectile
 {
+    public Marker2D ropeAttachMarker;
+
+    public override void _Ready()
+    {
+        base._Ready();
+
+        ropeAttachMarker = GetNode<Marker2D>("RopeAttachMarker");
+    }
+
     public override void OnHit(float dt, ShapeCastCollision collision)
     {
         shapeCast.Hide();
