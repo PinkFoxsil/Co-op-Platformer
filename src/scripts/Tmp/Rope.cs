@@ -125,7 +125,7 @@ public partial class Rope : Node2D
 		if (_ropeSegments.First != null)
 		{
 			RopeSegment firstRopeSegment = _ropeSegments.First.Value;
-			endPos = ToGlobal(firstRopeSegment.Position + firstRopeSegment.GetPositionAlongLength(0));
+			endPos = firstRopeSegment.Position + firstRopeSegment.GetPositionAlongLength(0);
 		}
 		else
 		{
@@ -137,18 +137,19 @@ public partial class Rope : Node2D
 
 		GD.Print("Finish");
 
-		CopyLinkedListToStart(_ropeSegments, ropeSegments);
-
 		PinJoint2D oldFirstPin = _pinJoints.First.Value;
 		_pinJoints.RemoveFirst();
 		_pinJoints.AddFirst(CreatePinJoint(
-			_ropeSegments.Last.Value.GetPositionAlongLength(1),
-			_ropeSegments.Last.Value,
-			ropeSegments.First.Value
+			ropeSegments.Last.Value.GetPositionAlongLength(1),
+			ropeSegments.Last.Value,
+			_ropeSegments.First.Value
 			
 		));
+
+		CopyLinkedListToStart(_ropeSegments, ropeSegments);
 		CopyLinkedListToStart(_pinJoints, pinJoints);
 		_pinJoints.AddFirst(oldFirstPin);
+		oldFirstPin.NodeB = _ropeSegments.First.Value.GetPath();
 	}
 
 	private void DisconnectFirstRopeSegment()
