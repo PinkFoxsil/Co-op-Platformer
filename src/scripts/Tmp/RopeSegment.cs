@@ -23,8 +23,6 @@ public partial class RopeSegment : RigidBody2D
         }
     }
 
-    private bool _update = false;
-
     public Vector2 TargetPosition {
         get;
         set
@@ -34,6 +32,10 @@ public partial class RopeSegment : RigidBody2D
         }
     }
 
+    public Vector2 TailPosition => Position + GetLengthOffset(0f);
+    public Vector2 HeadPosition => Position + GetLengthOffset(1f);
+
+    private bool _update = false;
     private CollisionShape2D _collisionShape;
     private CapsuleShape2D _capsuleShape;
 

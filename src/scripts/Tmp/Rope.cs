@@ -52,14 +52,22 @@ public partial class Rope : Node2D
 		UpdateStaticBodyPosition();
 		_ropeData = CreateRope(startMarker.GlobalPosition, endMarker.GlobalPosition);
 
-		_startPinJoint = ConnectStartToSegment(_ropeData.segments.First.Value);
-		_ropeData.pinJoints.AddLast(ConnectSegmentToEnd(_ropeData.segments.Last.Value));
+		if (_ropeData.segments.First != null)
+		{
+			_startPinJoint = ConnectStartToSegment(_ropeData.segments.First.Value);
+			_ropeData.pinJoints.AddLast(ConnectSegmentToEnd(_ropeData.segments.Last.Value));
+		}
+		else
+		{
+			_startPinJoint = CreatePinJoint($"PinJoint_Start", Vector2.Zero, _startStaticBody, _endStaticBody);
+		}
 	}
 
 	public override void _Process(double dt)
 	{
 		UpdateVisual();
-		Debugger.Instance.DrawPoint(Vector2.Zero, Colors.Red);
+
+		Debugger.Instance.DrawCircle(GetSegmentsStartPosition(_ropeData.segments), 5f, Colors.Green);
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -167,7 +175,7 @@ public partial class Rope : Node2D
 		RopeSegment startSegment = _ropeData.segments.First.Value;
 
 		// Get end position
-		Vector2 endPos = GetRopeStartPosition(_ropeData.segments);
+		Vector2 endPos = GetSegmentsStartPosition(_ropeData.segments);
 		Vector2 difference = endPos - startMarker.GlobalPosition;
 		
 		float length = difference.Length();
@@ -233,8 +241,13 @@ public partial class Rope : Node2D
 		_startPinJoint.NodeB = null;
 	}
 
-	private Vector2 GetRopeStartPosition(LinkedList<RopeSegment> segments)
+	private Vector2 GetSegmentsStartPosition(LinkedList<RopeSegment> segments)
 	{
+		if (segments.First == null)
+		{
+			return startMarker.GlobalPosition;
+		}
+
 		RopeSegment firstSegment = segments.First.Value;
 		return firstSegment.GetLengthOffset(0).Rotated(firstSegment.Rotation) + firstSegment.GlobalPosition;
 	}

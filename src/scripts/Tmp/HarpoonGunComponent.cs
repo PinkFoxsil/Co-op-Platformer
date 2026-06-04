@@ -78,6 +78,11 @@ public partial class HarpoonGunComponent : Node2D
             else if (_harpoon.Active)
             {
                 _rope.Resize();
+                Debugger.Instance.StartDebugSimulation();
+            }
+            else
+            {
+                Debugger.Instance.StopDebugSimulation();
             }
         }
     }
@@ -117,12 +122,13 @@ public partial class HarpoonGunComponent : Node2D
         _trajectoryLine.Visible = false;
 
         _harpoon = _harpoonPackedScene.Instantiate<Harpoon>();
-        _harpoon.GlobalPosition = _harpoonStartMaker.GlobalPosition;
         _harpoon.Velocity = GetMouseVector().Normalized() * 2000f;
         _harpoon.Active = true;
         GetTree().CurrentScene.AddChild(_harpoon);
+        _harpoon.GlobalPosition = _harpoonStartMaker.GlobalPosition - _harpoon.ropeAttachMarker.Position.Rotated(Rotation);
 
         _rope = _ropePackedScene.Instantiate<Rope>();
+        _rope.Name = "HarpoonRope";
         _rope.startMarker = _harpoonStartMaker;
         _rope.endMarker = _harpoon.ropeAttachMarker;
         GetTree().CurrentScene.AddChild(_rope);

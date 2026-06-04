@@ -21,16 +21,16 @@ public partial class DebugVisualizer : Node2D
         DrawVisuals();
     }
 
-    public void DrawPoint(Vector2 position, Color color, float duration = -1f)
+    public void DrawCircle(Vector2 position, float radius = 2.5f, Color? color = null, float duration = -1f)
     {
-        DebugCircleVisual pointVisual = new(
+        DebugCircleVisual circleVisual = new(
             position,
-            2.5f,
+            radius,
             color,
             duration
         );
 
-        _pointVisuals.Add(pointVisual);
+        _pointVisuals.Add(circleVisual);
     }
 
     private void DrawVisuals()

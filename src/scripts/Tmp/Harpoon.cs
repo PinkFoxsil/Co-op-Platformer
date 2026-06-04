@@ -8,6 +8,7 @@ public partial class Harpoon : Projectile
     {
         base._Ready();
 
+        Name = "Harpoon";
         ropeAttachMarker = GetNode<Marker2D>("RopeAttachMarker");
     }
 
