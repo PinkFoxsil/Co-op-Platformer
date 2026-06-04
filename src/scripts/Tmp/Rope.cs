@@ -1,8 +1,11 @@
 using Godot;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+
+public struct RopeData
+{
+	public LinkedList<RopeSegment> segments;
+	public LinkedList<PinJoint2D> pinJoints;
+}
 
 public partial class Rope : Node2D
 {
@@ -21,7 +24,7 @@ public partial class Rope : Node2D
 	[Export(PropertyHint.Layers2DPhysics)] public uint mask;
 
 	[ExportCategory("Pin Joint")]
-	[Export] public float softness = 0.003f;
+	[Export] public float softness = 0.01f;
 	[Export] public float bias = 0.99f;
 	
 	private float _halfSegmentLength;
@@ -29,8 +32,8 @@ public partial class Rope : Node2D
 	private Line2D _line2D;
 	private List<Vector2> _line2DPoints = [];
 	
-	private LinkedList<RopeSegment> _ropeSegments = [];
-	private LinkedList<PinJoint2D> _pinJoints = [];
+	private RopeData _ropeData;
+	private PinJoint2D _startPinJoint;
 
 	private StaticBody2D _startStaticBody;
 	private StaticBody2D _endStaticBody;
@@ -47,12 +50,16 @@ public partial class Rope : Node2D
 		_ropeSegmentPhysicsMaterial = CreatePhysicsMaterial();
 
 		UpdateStaticBodyPosition();
-		CreateRope();
+		_ropeData = CreateRope(startMarker.GlobalPosition, endMarker.GlobalPosition);
+
+		_startPinJoint = ConnectStartToSegment(_ropeData.segments.First.Value);
+		_ropeData.pinJoints.AddLast(ConnectSegmentToEnd(_ropeData.segments.Last.Value));
 	}
 
 	public override void _Process(double dt)
 	{
-		UpdateLine2DRope();
+		UpdateVisual();
+		Debugger.Instance.DrawPoint(Vector2.Zero, Colors.Red);
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -62,114 +69,10 @@ public partial class Rope : Node2D
 
 	public void Resize()
 	{
-		MoveToEndMarker();
-		FillStartSpace();
+		DisconnectFirstPinJoint();
+		MoveRopeToEnd();
+		//FillStartSpace();
 		//ConnectFirstRopeSegment();
-	}
-
-	
-
-	private void MoveToEndMarker()
-	{
-		Vector2 difference = endMarker.GlobalPosition - _endStaticBody.GlobalPosition;
-		_endStaticBody.Position += difference;
-		_startStaticBody.Position += difference;
-
-		foreach (RopeSegment segment in _ropeSegments)
-		{
-			segment.Position += difference;
-		}
-	}
-
-	private void FillStartSpace()
-	{
-		DisconnectFirstRopeSegment();
-
-		Vector2 difference = _ropeSegments.First.Value.GetPositionAlongLength(0) - _startStaticBody.GlobalPosition;
-		
-		float length = difference.Length();
-
-		// Adjust the length of the first rope segment since it'll likely be short
-		if (_ropeSegments.First != null && _ropeSegments.First.Value.Length != segmentLength)
-		{
-			RopeSegment firstRopeSegment = _ropeSegments.First.Value;
-			PinJoint2D pinJoint = _pinJoints.First.Next.Value;
-			
-			Vector2 originalPosition = firstRopeSegment.GlobalPosition;
-			Vector2 pinJointPosition = pinJoint.GlobalPosition;
-			Vector2 pinToPosDirection = (originalPosition - pinJointPosition).Normalized();
-			
-			firstRopeSegment.RemoveChild(pinJoint);
-
-			float correctiveLength = segmentLength - firstRopeSegment.Length;
-			if (length > correctiveLength)
-			{
-				length -= correctiveLength;
-				firstRopeSegment.Length = segmentLength;
-				firstRopeSegment.GlobalPosition += pinToPosDirection * correctiveLength * 0.5f;
-			}
-			else
-			{
-				firstRopeSegment.Length += length;
-				firstRopeSegment.GlobalPosition += pinToPosDirection * length * 0.5f;
-			}
-
-			pinJoint.Position = firstRopeSegment.GetPositionAlongLength(1);
-			firstRopeSegment.AddChild(pinJoint);
-		};
-
-		GD.Print(length);
-
-		// TODO: Fill the missing space with rope
-		Vector2 endPos;
-		if (_ropeSegments.First != null)
-		{
-			RopeSegment firstRopeSegment = _ropeSegments.First.Value;
-			endPos = firstRopeSegment.Position + firstRopeSegment.GetPositionAlongLength(0);
-		}
-		else
-		{
-			endPos = endMarker.GlobalPosition;
-		}
-		GD.Print(_startStaticBody.GlobalPosition, endPos);
-		LinkedList<RopeSegment> ropeSegments = CreateSegments(_startStaticBody.GlobalPosition, endPos);
-		LinkedList<PinJoint2D> pinJoints = ConnectRope(ropeSegments);
-
-		GD.Print("Finish");
-
-		PinJoint2D oldFirstPin = _pinJoints.First.Value;
-		_pinJoints.RemoveFirst();
-		_pinJoints.AddFirst(CreatePinJoint(
-			ropeSegments.Last.Value.GetPositionAlongLength(1),
-			ropeSegments.Last.Value,
-			_ropeSegments.First.Value
-			
-		));
-
-		CopyLinkedListToStart(_ropeSegments, ropeSegments);
-		CopyLinkedListToStart(_pinJoints, pinJoints);
-		_pinJoints.AddFirst(oldFirstPin);
-		oldFirstPin.NodeB = _ropeSegments.First.Value.GetPath();
-	}
-
-	private void DisconnectFirstRopeSegment()
-	{
-		if (_pinJoints.First == null)
-		{
-			return;
-		}
-
-		_pinJoints.First.Value.NodeB = null;
-	}
-
-	private void CopyLinkedListToStart<T>(LinkedList<T> listA, LinkedList<T> listB)
-	{
-		LinkedListNode<T> currentNode = listB.Last;
-		while (currentNode != null)
-		{
-			listA.AddFirst(currentNode.Value);
-			currentNode = currentNode.Previous;
-		}
 	}
 
 	private PhysicsMaterial CreatePhysicsMaterial()
@@ -186,16 +89,16 @@ public partial class Rope : Node2D
 		_endStaticBody.GlobalPosition = endMarker.GlobalPosition;
 	}
 
-	public void CreateRope()
+	public RopeData CreateRope(Vector2 startPos, Vector2 endPos)
 	{
-		Vector2 startPos = _startStaticBody.Position;
-		Vector2 endPos = _endStaticBody.Position;
+		LinkedList<RopeSegment> ropeSegments = CreateSegments(startPos, endPos);
+		LinkedList<PinJoint2D> pinJoints = WeldSegments(ropeSegments);
 
-		_ropeSegments = CreateSegments(startPos, endPos);
-		_pinJoints = ConnectRope(_ropeSegments);
-
-		_pinJoints.AddFirst(ConnectStartToRopeSegment(_ropeSegments.First.Value));
-		_pinJoints.AddLast(ConnectRopeSegmentToEnd(_ropeSegments.Last.Value));
+		return new RopeData
+		{
+			segments = ropeSegments,
+			pinJoints = pinJoints
+		};
 	}
 
 	private LinkedList<RopeSegment> CreateSegments(Vector2 startPoint, Vector2 endPoint)
@@ -210,7 +113,7 @@ public partial class Rope : Node2D
 		while (ropeLength >= segmentLength)
 		{
 			Vector2 newSegmentPos = (ropeLength - _halfSegmentLength) * direction + startPoint;
-			RopeSegment newSegment = CreateRopeSegment(segmentLength, newSegmentPos, rotation);
+			RopeSegment newSegment = CreateSegment($"RopeSegment_{ropeSegments.Count}", segmentLength, ToLocal(newSegmentPos), rotation);
 			ropeSegments.AddFirst(newSegment);
 
 			ropeLength -= segmentLength;
@@ -220,17 +123,127 @@ public partial class Rope : Node2D
 		if (ropeLength > Mathf.Epsilon)
 		{
 			Vector2 newSegmentPos = ropeLength * 0.5f * direction + startPoint;
-			RopeSegment newSegment = CreateRopeSegment(ropeLength, newSegmentPos, rotation);
+			RopeSegment newSegment = CreateSegment($"RopeSegment_{ropeSegments.Count}", ropeLength, ToLocal(newSegmentPos), rotation);
 			ropeSegments.AddFirst(newSegment);
 		}
 
 		return ropeSegments;
 	}
 
-	private RopeSegment CreateRopeSegment(float length, Vector2 position, float rotation)
+	private PinJoint2D ConnectStartToSegment(RopeSegment segment)
+	{
+		return CreatePinJoint($"PinJoint_Start", Vector2.Zero, _startStaticBody, segment);
+	}
+
+	private PinJoint2D ConnectSegmentToEnd(RopeSegment segment)
+	{
+		return CreatePinJoint($"PinJoint_End", segment.GetLengthOffset(1), segment, _endStaticBody);
+	}
+
+	private void MoveRopeToEnd()
+	{
+		if (_ropeData.segments.Last == null)
+		{
+			return;
+		}
+
+		RopeSegment lastSegment = _ropeData.segments.Last.Value;
+		Vector2 difference = _endStaticBody.GlobalPosition - ToGlobal(lastSegment.ToLocal(lastSegment.GetLengthOffset(1)));
+
+		foreach (RopeSegment segment in _ropeData.segments)
+		{
+			segment.TargetPosition = segment.GlobalPosition + difference;
+		}
+	}
+
+	private void FillStartSpace()
+	{
+		if (_ropeData.segments.First == null)
+		{
+			_ropeData = CreateRope(startMarker.GlobalPosition, endMarker.GlobalPosition);
+			return;
+		}
+
+		RopeSegment startSegment = _ropeData.segments.First.Value;
+
+		// Get end position
+		Vector2 endPos = GetRopeStartPosition(_ropeData.segments);
+		Vector2 difference = endPos - startMarker.GlobalPosition;
+		
+		float length = difference.Length();
+
+		// Adjust the length of the first rope segment since it'll likely be short
+		if (startSegment.Length < segmentLength)
+		{
+			PinJoint2D pinJoint = _ropeData.pinJoints.First.Value;
+			
+			Vector2 originalPosition = startSegment.GlobalPosition;
+			Vector2 offsetDirection = (endPos - originalPosition).Normalized();
+			
+			NodePath originalNodeA = pinJoint.NodeA;
+			NodePath originalNodeB = pinJoint.NodeB;
+			pinJoint.NodeA = null;
+			pinJoint.NodeB = null;
+
+			startSegment.RemoveChild(pinJoint);
+
+			float correctiveLength = segmentLength - startSegment.Length;
+			if (length > correctiveLength)
+			{
+				length -= correctiveLength;
+				startSegment.Length = segmentLength;
+				startSegment.Position += offsetDirection * correctiveLength * 0.5f;
+			}
+			else
+			{
+				startSegment.Length += length;
+				startSegment.Position += offsetDirection * length * 0.5f;
+			}
+
+			pinJoint.Position = startSegment.GetLengthOffset(1);
+			startSegment.AddChild(pinJoint);
+
+			pinJoint.NodeA = originalNodeA;
+			pinJoint.NodeB = originalNodeB;
+		};
+
+		// Fill the missing space with a new rope
+		RopeData newRopeData = CreateRope(startMarker.GlobalPosition, endPos);
+
+		// Connect the new rope to the existing rope
+		// if (newRopeData.segments.Last != null)
+		// {
+		// 	_ropeData.pinJoints.AddFirst(ConnectSegments(newRopeData.segments.Last.Value, startSegment));
+		// }
+
+		CopyLinkedListToStart(_ropeData.segments, newRopeData.segments);
+		CopyLinkedListToStart(_ropeData.pinJoints, newRopeData.pinJoints);
+		
+		// Reconnect the start pin joint
+		// _startPinJoint.NodeB = _ropeData.segments.First.Value.GetPath();
+	}
+
+	private void DisconnectFirstPinJoint()
+	{
+		if (_startPinJoint == null)
+		{
+			return;
+		}
+
+		_startPinJoint.NodeB = null;
+	}
+
+	private Vector2 GetRopeStartPosition(LinkedList<RopeSegment> segments)
+	{
+		RopeSegment firstSegment = segments.First.Value;
+		return firstSegment.GetLengthOffset(0).Rotated(firstSegment.Rotation) + firstSegment.GlobalPosition;
+	}
+
+	private RopeSegment CreateSegment(string Name, float length, Vector2 position, float rotation)
 	{
 		RopeSegment segment = new()
 		{
+			Name = Name,
 			Length = length,
 			Width = width,
 			CollisionLayer = layer,
@@ -246,14 +259,15 @@ public partial class Rope : Node2D
 		return segment;
 	}
 
-	private LinkedList<PinJoint2D> ConnectRope(LinkedList<RopeSegment> ropeSegments)
+	private LinkedList<PinJoint2D> WeldSegments(LinkedList<RopeSegment> segments)
 	{
 		LinkedList<PinJoint2D> pinJoints = [];
 
-		LinkedListNode<RopeSegment> ropeNode = ropeSegments.First;
-		while (ropeNode.Next != null)
+		LinkedListNode<RopeSegment> ropeNode = segments.First;
+		while (ropeNode != null && ropeNode.Next != null)
 		{
-			pinJoints.AddLast(ConnectRopeSegments(
+			pinJoints.AddLast(ConnectSegments(
+				 $"PinJoint",
 				ropeNode.Value,
 				ropeNode.Next.Value
 			));
@@ -264,43 +278,45 @@ public partial class Rope : Node2D
 		return pinJoints;
 	}
 
-	private PinJoint2D ConnectRopeSegments(RopeSegment a, RopeSegment b)
+	private PinJoint2D ConnectSegments(string name, RopeSegment a, RopeSegment b)
 	{
-		Vector2 pinJointPosition = a.GetPositionAlongLength(1);
-		return CreatePinJoint(pinJointPosition, a, b);
+		Vector2 pinJointPosition = a.GetLengthOffset(1);
+		return CreatePinJoint(name, pinJointPosition, a, b);
 	}
 
-	private PinJoint2D ConnectStartToRopeSegment(RopeSegment ropeSegment)
-	{
-		return CreatePinJoint(Vector2.Zero, _startStaticBody, ropeSegment);
-	}
-
-	private PinJoint2D ConnectRopeSegmentToEnd(RopeSegment ropeSegment)
-	{
-		return CreatePinJoint(ropeSegment.GetPositionAlongLength(1), ropeSegment, _endStaticBody);
-	}
-
-	private PinJoint2D CreatePinJoint(Vector2 position, CollisionObject2D nodeA, CollisionObject2D nodeB)
+	private PinJoint2D CreatePinJoint(string Name,Vector2 position, CollisionObject2D parentNode, CollisionObject2D otherNode)
 	{
 		PinJoint2D pinJoint = new()
 		{
+			Name = Name,
 			Position = position,
 			Softness = softness,
 			Bias = bias,
-			NodeA = nodeA.GetPath(),
-			NodeB = nodeB.GetPath()
+			NodeA = parentNode.GetPath(),
+			NodeB = otherNode.GetPath()
 		};
 
-		nodeA.AddChild(pinJoint);
+		parentNode.AddChild(pinJoint);
 
 		return pinJoint;
 	}
 
-	private void UpdateLine2DRope()
+	private void CopyLinkedListToStart<T>(LinkedList<T> listA, LinkedList<T> listB)
+	{
+		LinkedListNode<T> currentNode = listB.Last;
+		while (currentNode != null)
+		{
+			listA.AddFirst(currentNode.Value);
+			currentNode = currentNode.Previous;
+		}
+	}
+
+	private void UpdateVisual()
 	{
 		_line2DPoints.Clear();
 
-		foreach (PinJoint2D pinJoint in _pinJoints)
+		_line2DPoints.Add(ToLocal(_startPinJoint.GlobalPosition));
+		foreach (PinJoint2D pinJoint in _ropeData.pinJoints)
 		{
 			_line2DPoints.Add(ToLocal(pinJoint.GlobalPosition));
 		}

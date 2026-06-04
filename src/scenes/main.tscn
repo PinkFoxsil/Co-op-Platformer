@@ -42,7 +42,16 @@ startMarker = NodePath("Marker2D")
 endMarker = NodePath("Marker2D2")
 
 [node name="Marker2D" type="Marker2D" parent="rope" unique_id=611233117]
-position = Vector2(0, 1)
 
 [node name="Marker2D2" type="Marker2D" parent="rope" unique_id=925173121]
-position = Vector2(17, 2)
+position = Vector2(17, 0)
+
+[node name="rope2" parent="." unique_id=7509447 node_paths=PackedStringArray("startMarker", "endMarker") instance=ExtResource("3_32aa5")]
+position = Vector2(423, 301)
+startMarker = NodePath("Marker2D")
+endMarker = NodePath("Marker2D2")
+
+[node name="Marker2D" type="Marker2D" parent="rope2" unique_id=1340486785]
+
+[node name="Marker2D2" type="Marker2D" parent="rope2" unique_id=1665876885]
+position = Vector2(71, 0)

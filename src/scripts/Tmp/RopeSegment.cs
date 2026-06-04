@@ -23,6 +23,17 @@ public partial class RopeSegment : RigidBody2D
         }
     }
 
+    private bool _update = false;
+
+    public Vector2 TargetPosition {
+        get;
+        set
+        {
+            field = value;
+            _update = true;
+        }
+    }
+
     private CollisionShape2D _collisionShape;
     private CapsuleShape2D _capsuleShape;
 
@@ -34,14 +45,30 @@ public partial class RopeSegment : RigidBody2D
         _capsuleShape = CreateCapsuleShape();
         _collisionShape = new()
 		{
+            Name = "CollisionShape2D",
             Rotation = Mathf.DegToRad(90.0f),
 			Shape = _capsuleShape
 		};
+
+        CustomIntegrator = true;
         
         AddChild(_collisionShape);
     }
 
-    public Vector2 GetPositionAlongLength(float scale)
+    public override void _IntegrateForces(PhysicsDirectBodyState2D state)
+	{
+		if (_update)
+        {
+            GD.Print($"Updating rope segment to {TargetPosition}");
+            Transform2D transform = state.Transform;
+            transform.Origin = TargetPosition;
+            state.Transform = transform;
+
+            _update = false;
+        }
+	}
+
+    public Vector2 GetLengthOffset(float scale)
     {
         return new(Length * scale - _halfLength, 0);
     }

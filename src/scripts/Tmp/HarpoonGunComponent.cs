@@ -120,12 +120,12 @@ public partial class HarpoonGunComponent : Node2D
         _harpoon.GlobalPosition = _harpoonStartMaker.GlobalPosition;
         _harpoon.Velocity = GetMouseVector().Normalized() * 2000f;
         _harpoon.Active = true;
-        GetNode<Window>("/root/").AddChild(_harpoon);
+        GetTree().CurrentScene.AddChild(_harpoon);
 
         _rope = _ropePackedScene.Instantiate<Rope>();
         _rope.startMarker = _harpoonStartMaker;
         _rope.endMarker = _harpoon.ropeAttachMarker;
-        GetNode<Window>("/root/").AddChild(_rope);
+        GetTree().CurrentScene.AddChild(_rope);
     }
 
     private Vector2 GetMouseVector()
