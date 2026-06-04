@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bdpw4vhpalcwx"
-path="res://.godot/imported/Harpoon.png-60a9a58915b1111e39cb72461aec1267.ctex"
+uid="uid://dpwomeo7tpw2s"
+path="res://.godot/imported/Harpoon_Diffuse.png-42a14d816ae4ae22a2f345e4b9b80f80.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://src/images/Harpoon.png"
-dest_files=["res://.godot/imported/Harpoon.png-60a9a58915b1111e39cb72461aec1267.ctex"]
+source_file="res://src/images/Harpoon/Harpoon_Diffuse.png"
+dest_files=["res://.godot/imported/Harpoon_Diffuse.png-42a14d816ae4ae22a2f345e4b9b80f80.ctex"]
 
 [params]
 

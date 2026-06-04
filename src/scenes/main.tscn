@@ -62,3 +62,8 @@ collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Rope/StartStaticBody" unique_id=2030610273]
 shape = SubResource("CircleShape2D_o81g6")
+
+[node name="DirectionalLight2D" type="DirectionalLight2D" parent="." unique_id=1608435185]
+color = Color(1, 0.958, 0.88, 1)
+shadow_enabled = true
+shadow_color = Color(0.64, 0.694, 1, 0.23529412)

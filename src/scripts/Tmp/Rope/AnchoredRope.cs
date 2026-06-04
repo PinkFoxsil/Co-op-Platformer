@@ -11,8 +11,8 @@ public partial class AnchoredRope : Rope
 
     public override void _Ready()
     {
-        startPos = _startObject.GlobalPosition;
-        endPos = _endObject.GlobalPosition;
+        tailPos = _startObject.GlobalPosition;
+        headPos = _endObject.GlobalPosition;
 
         base._Ready();
 

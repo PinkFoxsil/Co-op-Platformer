@@ -2,10 +2,6 @@ using Godot;
 
 public partial class Rope : Node2D
 {
-	[ExportCategory("Attachment Positions")]
-	[Export] public Vector2 startPos;
-	[Export] public Vector2 endPos;
-
 	[ExportCategory("Rope Segment")]
 	[Export] public float segmentLength = 20f;
 	[Export] public float segmentMass = 25f;
@@ -19,6 +15,9 @@ public partial class Rope : Node2D
 	[ExportCategory("Pin Joint")]
 	[Export] public float softness = 0.01f;
 	[Export] public float bias = 0.99f;
+
+	public Vector2 tailPos;
+	public Vector2 headPos;
 	
 	private float _halfSegmentLength;
 
@@ -45,7 +44,7 @@ public partial class Rope : Node2D
 		_halfSegmentLength = segmentLength * 0.5f;
 		_ropeSegmentPhysicsMaterial = CreatePhysicsMaterial();
 
-        _segments = CreateSegments(startPos, endPos);
+        _segments = CreateSegments(tailPos, headPos);
 		_pinJoints = JoinSegments(_segments);
 	}
 

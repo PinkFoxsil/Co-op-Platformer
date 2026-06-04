@@ -1,7 +1,14 @@
 [gd_scene format=3 uid="uid://51vfix24nuwt"]
 
 [ext_resource type="Script" uid="uid://dcx68t5yiwwje" path="res://src/scripts/Tmp/Harpoon.cs" id="1_5080w"]
-[ext_resource type="Texture2D" uid="uid://bdpw4vhpalcwx" path="res://src/images/Harpoon.png" id="2_uj8ig"]
+[ext_resource type="Texture2D" uid="uid://dpwomeo7tpw2s" path="res://src/images/Harpoon/Harpoon_Diffuse.png" id="2_ontq3"]
+[ext_resource type="Texture2D" uid="uid://bxjh6ilaggqkw" path="res://src/images/Harpoon/Harpoon_Normal.png" id="3_ha633"]
+[ext_resource type="Texture2D" uid="uid://b8gvf4oqoij3f" path="res://src/images/Harpoon/Harpoon_Specular.png" id="4_2xtbv"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_pa7di"]
+diffuse_texture = ExtResource("2_ontq3")
+normal_texture = ExtResource("3_ha633")
+specular_texture = ExtResource("4_2xtbv")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ontq3"]
 size = Vector2(12, 6)
@@ -18,7 +25,7 @@ gravityScale = 1.0
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=782364233]
 position = Vector2(0, 1)
 scale = Vector2(2, 2)
-texture = ExtResource("2_uj8ig")
+texture = SubResource("CanvasTexture_pa7di")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1769103883]
 shape = SubResource("RectangleShape2D_ontq3")
