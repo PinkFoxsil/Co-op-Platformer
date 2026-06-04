@@ -21,8 +21,8 @@ public partial class HarpoonGunComponent : Node2D
     private PackedScene _harpoonPackedScene;
     private Harpoon _harpoon;
 
-    private PackedScene _ropePackedScene;
-    private Rope _rope;
+    //private PackedScene _ropePackedScene;
+    //private Rope _rope;
 
     public override void _Ready()
     {
@@ -34,7 +34,7 @@ public partial class HarpoonGunComponent : Node2D
         _harpoonStartMaker = GetNode<Marker2D>("HarpoonStartMarker");
 
         _harpoonPackedScene = GD.Load<PackedScene>("res://src/scenes/harpoon.tscn");
-        _ropePackedScene = GD.Load<PackedScene>("res://src/scenes/rope.tscn");
+        //_ropePackedScene = GD.Load<PackedScene>("res://src/scenes/rope.tscn");
     }
 
     public override void _Process(double delta)
@@ -77,7 +77,7 @@ public partial class HarpoonGunComponent : Node2D
             }
             else if (_harpoon.Active)
             {
-                _rope.Resize();
+                //_rope.Resize();
                 Debugger.Instance.StartDebugSimulation();
             }
             else
@@ -98,11 +98,11 @@ public partial class HarpoonGunComponent : Node2D
             _harpoon = null;
         }
 
-        if (_rope != null)
-        {
-            _rope.QueueFree();
-            _rope = null;
-        }
+        //if (_rope != null)
+        //{
+            //_rope.QueueFree();
+            //_rope = null;
+        //}
     }
 
     private void Aim()
@@ -127,11 +127,11 @@ public partial class HarpoonGunComponent : Node2D
         GetTree().CurrentScene.AddChild(_harpoon);
         _harpoon.GlobalPosition = _harpoonStartMaker.GlobalPosition - _harpoon.ropeAttachMarker.Position.Rotated(Rotation);
 
-        _rope = _ropePackedScene.Instantiate<Rope>();
-        _rope.Name = "HarpoonRope";
-        _rope.startMarker = _harpoonStartMaker;
-        _rope.endMarker = _harpoon.ropeAttachMarker;
-        GetTree().CurrentScene.AddChild(_rope);
+        // _rope = _ropePackedScene.Instantiate<Rope>();
+        // _rope.Name = "HarpoonRope";
+        // _rope.startMarker = _harpoonStartMaker;
+        // _rope.endMarker = _harpoon.ropeAttachMarker;
+        // GetTree().CurrentScene.AddChild(_rope);
     }
 
     private Vector2 GetMouseVector()

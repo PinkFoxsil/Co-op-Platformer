@@ -7,7 +7,7 @@ public struct RopeData
 	public LinkedList<PinJoint2D> pinJoints;
 }
 
-public partial class Rope : Node2D
+public partial class OldRope : Node2D
 {
 	[ExportCategory("Rope")]
 	[Export] public Marker2D startMarker;
