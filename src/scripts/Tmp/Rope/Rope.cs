@@ -89,8 +89,6 @@ public partial class Rope : Node2D
 	{
 		Vector2 moveVector = position - HeadPosition;
 
-		Debugger.Instance.DrawVector(HeadPosition, moveVector, 5f, Colors.Red);
-
 		foreach (RopeSegment segment in _segments)
 		{
 			segment.GlobalPosition += moveVector;

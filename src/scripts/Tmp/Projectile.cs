@@ -18,6 +18,9 @@ public partial class Projectile : Area2D
 {
     [Export] public float gravityScale = 0.1f;
 
+    [Signal] public delegate void OnMoveEventHandler();
+    [Signal] public delegate void OnHitEventHandler();
+
     public Vector2 Velocity { get; set; }
     public bool Active { get; set; }
 
@@ -54,16 +57,16 @@ public partial class Projectile : Area2D
         ShapeCastCollision? collision = GetClosestCollision(dt);
         if (collision != null)
         {
-            OnHit(dt, (ShapeCastCollision) collision);
+            Hit(dt, (ShapeCastCollision) collision);
             return;
         }
         
         Move(dt);
     }
 
-    public virtual void OnHit(float dt, ShapeCastCollision collision)
+    public virtual void Hit(float dt, ShapeCastCollision collision)
     {
-        QueueFree();
+        EmitSignal(SignalName.OnHit);
     }
 
     private void UpdateVelocity(float dt)
@@ -105,5 +108,7 @@ public partial class Projectile : Area2D
     {
         Rotation = Velocity.Angle();
         Position += Velocity * dt;
+
+        EmitSignal(SignalName.OnMove);
     }
 }

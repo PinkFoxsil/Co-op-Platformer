@@ -12,11 +12,13 @@ public partial class Harpoon : Projectile
         ropeAttachMarker = GetNode<Marker2D>("RopeAttachMarker");
     }
 
-    public override void OnHit(float dt, ShapeCastCollision collision)
+    public override void Hit(float dt, ShapeCastCollision collision)
     {
         shapeCast.Hide();
         Position += Velocity * dt * shapeCast.GetClosestCollisionSafeFraction();
         Rotation = Velocity.Angle();
         Active = false;
+
+        EmitSignal(SignalName.OnHit);
     }
 }

@@ -33,7 +33,6 @@ public partial class HarpoonGunComponent : Node2D
         _harpoonStartMaker = GetNode<Marker2D>("HarpoonStartMarker");
 
         _harpoonPackedScene = GD.Load<PackedScene>("res://src/scenes/harpoon.tscn");
-        //_ropePackedScene = GD.Load<PackedScene>("res://src/scenes/rope.tscn");
     }
 
     public override void _Process(double delta)
@@ -68,22 +67,15 @@ public partial class HarpoonGunComponent : Node2D
         {
             if (Input.IsActionJustPressed("Attack1"))
             {
+                _rope.Freeze = false;
+                Debugger.Instance.StopDebugSimulation();
                 Stash();
             }
             else if (Input.IsActionJustPressed("Attack2"))
             {
-                Reel();
-            }
-            else if (_harpoon.Active)
-            {
-                _rope.Freeze = true;
-                _rope.MoveHeadTo(_harpoonStartMaker.GlobalPosition);
-                Debugger.Instance.StartDebugSimulation();
-            }
-            else
-            {
                 _rope.Freeze = false;
                 Debugger.Instance.StopDebugSimulation();
+                //Reel();
             }
         }
     }
@@ -122,8 +114,22 @@ public partial class HarpoonGunComponent : Node2D
         State = HarpoonGunState.Shot;
         _trajectoryLine.Visible = false;
 
+        Debugger.Instance.StartDebugSimulation();
         _harpoon = CreateHarpoon(GetMouseVector().Normalized() * 2000f);
         _rope = CreateRope();
+
+        _rope.Freeze = true;
+        _harpoon.OnMove += UpdateRope;
+        _harpoon.OnHit += () =>
+        {
+            UpdateRope();
+            _harpoon.OnMove -= UpdateRope;
+            _rope.Freeze = false;
+
+            Debugger.Instance.StopDebugSimulation();
+
+            Free();
+        };
     }
 
     private Harpoon CreateHarpoon(Vector2 velocity)
@@ -134,7 +140,7 @@ public partial class HarpoonGunComponent : Node2D
 
         GetTree().CurrentScene.AddChild(harpoon);
         
-        harpoon.GlobalPosition = _harpoonStartMaker.GlobalPosition - harpoon.ropeAttachMarker.Position.Rotated(Rotation)*2;
+        harpoon.GlobalPosition = _harpoonStartMaker.GlobalPosition - harpoon.ropeAttachMarker.Position.Rotated(Rotation)*2; // TODO: remove *2
 
         return harpoon;
     }
@@ -152,14 +158,14 @@ public partial class HarpoonGunComponent : Node2D
         return rope;
     }
 
+    private void UpdateRope()
+    {
+        _rope.MoveHeadTo(_harpoon.ropeAttachMarker.GlobalPosition);
+    }
+
     private Vector2 GetMouseVector()
     {
         Vector2 mousePosition = GetGlobalMousePosition();
         return mousePosition - GlobalPosition;
-    }
-
-    private void Reel()
-    {
-        
     }
 }
