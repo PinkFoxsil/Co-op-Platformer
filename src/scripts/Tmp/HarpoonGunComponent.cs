@@ -67,14 +67,10 @@ public partial class HarpoonGunComponent : Node2D
         {
             if (Input.IsActionJustPressed("Attack1"))
             {
-                _rope.Freeze = false;
-                Debugger.Instance.StopDebugSimulation();
                 Stash();
             }
             else if (Input.IsActionJustPressed("Attack2"))
             {
-                _rope.Freeze = false;
-                Debugger.Instance.StopDebugSimulation();
                 //Reel();
             }
         }
