@@ -3,20 +3,25 @@ using Godot;
 public partial class AnchoredRope : Rope
 {
     [ExportCategory("Anchors")]
-    [Export] public CollisionObject2D _startObject;
-    [Export] public CollisionObject2D _endObject;
+    [Export] public CollisionObject2D tailAnchor;
+    [Export] public CollisionObject2D headAnchor;
 
-    private PinJoint2D _startPinJoint;
-    private PinJoint2D _endPinJoint;
+    private PinJoint2D _tailPinJoint;
+    private PinJoint2D _headPinJoint;
 
     public override void _Ready()
     {
-        tailPos = _startObject.GlobalPosition;
-        headPos = _endObject.GlobalPosition;
+        TailPosition = tailAnchor.GlobalPosition;
+        HeadPosition = headAnchor.GlobalPosition;
 
         base._Ready();
 
-        _startPinJoint = CreatePinJoint(Vector2.Zero, _startObject, GetStartSegment());
-        _endPinJoint = CreatePinJoint(GetEndSegment().GetLengthOffset(1), GetEndSegment(), _endObject);
+        _tailPinJoint = CreatePinJoint(Vector2.Zero, tailAnchor, TailSegment);
+        _headPinJoint = CreatePinJoint(HeadSegment.GetLengthOffset(1f), HeadSegment, headAnchor);
+    }
+
+    public override void _Process(double delta)
+    {
+        base._Process(delta);
     }
 }

@@ -160,7 +160,7 @@ public partial class OldRope : Node2D
 
 		foreach (RopeSegment segment in _ropeData.segments)
 		{
-			segment.TargetPosition = segment.GlobalPosition + difference;
+			segment.GlobalPosition += difference;
 		}
 	}
 

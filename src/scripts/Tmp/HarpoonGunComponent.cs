@@ -142,8 +142,8 @@ public partial class HarpoonGunComponent : Node2D
         Rope rope = new Rope
         {
             Name = "HarpoonRope",
-            tailPos = _harpoonStartMaker.GlobalPosition,
-            headPos = _harpoon.ropeAttachMarker.GlobalPosition
+            TailPosition = _harpoonStartMaker.GlobalPosition,
+            HeadPosition = _harpoon.ropeAttachMarker.GlobalPosition
         };
         GetTree().CurrentScene.AddChild(rope);
 

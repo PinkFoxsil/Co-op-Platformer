@@ -16,9 +16,36 @@ public partial class Rope : Node2D
 	[Export] public float softness = 0.01f;
 	[Export] public float bias = 0.99f;
 
-	public Vector2 tailPos;
-	public Vector2 headPos;
-	
+	private Vector2 _tailPosition;
+	public Vector2 TailPosition {
+		get => TailSegment != null ? TailSegment.TailPosition : _tailPosition;
+		set => _tailPosition = value;
+	}
+
+	private Vector2 _headPosition;
+	public Vector2 HeadPosition {
+		get => HeadSegment != null ? HeadSegment.HeadPosition : _headPosition;
+		set => _headPosition = value;
+	}
+
+	public RopeSegment TailSegment => _segments?[0];
+	public RopeSegment HeadSegment => _segments?[^1];
+
+	// Setting Position/GlobalPosition won't work unless the rope is Frozen
+	private bool _isFrozen = false;
+	public bool Freeze
+	{
+		get => _isFrozen;
+		set
+		{
+			_isFrozen = value;
+			foreach (RopeSegment segment in _segments)
+			{
+				segment.Freeze = value;
+			}
+		}
+	}
+
 	private float _halfSegmentLength;
 
 	private Line2D _line2D;
@@ -44,7 +71,7 @@ public partial class Rope : Node2D
 		_halfSegmentLength = segmentLength * 0.5f;
 		_ropeSegmentPhysicsMaterial = CreatePhysicsMaterial();
 
-        _segments = CreateSegments(tailPos, headPos);
+        _segments = CreateRope();
 		_pinJoints = JoinSegments(_segments);
 	}
 
@@ -53,26 +80,14 @@ public partial class Rope : Node2D
 		UpdateVisual();
 	}
 
-	public Vector2 GetStartPosition()
+	public void MoveHeadTo(Vector2 position)
 	{
-		RopeSegment firstSegment = _segments[0];
-		return firstSegment.TailPosition;
-	}
+		Vector2 moveVector = position - HeadPosition;
 
-    public Vector2 GetEndPosition()
-	{
-		RopeSegment firstSegment = _segments[_segments.Length - 1];
-		return firstSegment.HeadPosition;
-	}
-	
-	public RopeSegment GetStartSegment()
-	{
-		return _segments[0];
-	}
-
-	public RopeSegment GetEndSegment()
-	{
-		return _segments[_segments.Length - 1];
+		foreach (RopeSegment segment in _segments)
+		{
+			segment.Position += moveVector;
+		}
 	}
 
 	private PhysicsMaterial CreatePhysicsMaterial()
@@ -83,9 +98,9 @@ public partial class Rope : Node2D
 		};
 	}
 
-	private RopeSegment[] CreateSegments(Vector2 startPoint, Vector2 endPoint)
+	private RopeSegment[] CreateRope()
 	{
-		Vector2 startToEndVect = endPoint - startPoint;
+		Vector2 startToEndVect = HeadPosition - TailPosition;
 		Vector2 direction = startToEndVect.Normalized();
 		float rotation = direction.Angle();
 
@@ -100,7 +115,7 @@ public partial class Rope : Node2D
         {
             int index = amount - 1;
             float currentSegmentLength = Mathf.Min(segmentLength, length);
-            Vector2 newSegmentPos = (length - currentSegmentLength * 0.5f) * direction + startPoint;
+            Vector2 newSegmentPos = (length - currentSegmentLength * 0.5f) * direction + TailPosition;
             
             ropeSegments[index] = CreateSegment(index, currentSegmentLength, ToLocal(newSegmentPos), rotation);
 
@@ -122,6 +137,7 @@ public partial class Rope : Node2D
 			CollisionMask = mask,
 			Mass = segmentMass,
 			PhysicsMaterialOverride = _ropeSegmentPhysicsMaterial,
+			Freeze = Freeze,
 			Position = position,
 			Rotation = rotation
 		};
@@ -176,14 +192,14 @@ public partial class Rope : Node2D
 	{
         Vector2[] points = new Vector2[_pinJoints.Length + 2];
 
-		points[0] = GetStartPosition();
+		points[0] = TailPosition;
 
 		for (int i = 0; i < _pinJoints.Length; i++)
         {
             points[i + 1] = ToLocal(_pinJoints[i].GlobalPosition);
         }
 		
-        points[^1] = GetEndPosition();
+        points[^1] = HeadPosition;
 
 		_line2D.Points = points;
 	}
