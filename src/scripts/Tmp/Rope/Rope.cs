@@ -38,6 +38,11 @@ public partial class Rope : Node2D
 		get => _isFrozen;
 		set
 		{
+			if (_isFrozen == value)
+			{
+				return;
+			}
+
 			_isFrozen = value;
 			foreach (RopeSegment segment in _segments)
 			{
@@ -84,9 +89,11 @@ public partial class Rope : Node2D
 	{
 		Vector2 moveVector = position - HeadPosition;
 
+		Debugger.Instance.DrawVector(HeadPosition, moveVector, 5f, Colors.Red);
+
 		foreach (RopeSegment segment in _segments)
 		{
-			segment.Position += moveVector;
+			segment.GlobalPosition += moveVector;
 		}
 	}
 

@@ -62,6 +62,11 @@ public partial class Debugger : Node
         _visualizer.DrawCircle(position, radius, color, duration);
     }
 
+    public void DrawVector(Vector2 position, Vector2 direction, float width = 2.5f, Color? color = null, float duration = -1f)
+    {
+        _visualizer.DrawVector(position, direction, width, color, duration);
+    }
+
     public void StartDebugSimulation()
     {
         if (_debugSimulationActive)

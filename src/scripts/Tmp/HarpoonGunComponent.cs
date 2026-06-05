@@ -76,11 +76,13 @@ public partial class HarpoonGunComponent : Node2D
             }
             else if (_harpoon.Active)
             {
-                //_rope.Resize();
+                _rope.Freeze = true;
+                _rope.MoveHeadTo(_harpoonStartMaker.GlobalPosition);
                 Debugger.Instance.StartDebugSimulation();
             }
             else
             {
+                _rope.Freeze = false;
                 Debugger.Instance.StopDebugSimulation();
             }
         }
@@ -132,14 +134,14 @@ public partial class HarpoonGunComponent : Node2D
 
         GetTree().CurrentScene.AddChild(harpoon);
         
-        harpoon.GlobalPosition = _harpoonStartMaker.GlobalPosition - harpoon.ropeAttachMarker.Position.Rotated(Rotation);
+        harpoon.GlobalPosition = _harpoonStartMaker.GlobalPosition - harpoon.ropeAttachMarker.Position.Rotated(Rotation)*2;
 
         return harpoon;
     }
 
     private Rope CreateRope()
     {
-        Rope rope = new Rope
+        Rope rope = new()
         {
             Name = "HarpoonRope",
             TailPosition = _harpoonStartMaker.GlobalPosition,

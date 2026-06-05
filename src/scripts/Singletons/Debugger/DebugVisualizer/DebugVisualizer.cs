@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public partial class DebugVisualizer : Node2D
 {
-    private List<DebugCircleVisual> _pointVisuals = [];
+    private List<DebugVisual> _visuals = [];
 
     public override void _Ready()
     {
@@ -30,33 +30,46 @@ public partial class DebugVisualizer : Node2D
             duration
         );
 
-        _pointVisuals.Add(circleVisual);
+        _visuals.Add(circleVisual);
+    }
+
+    public void DrawVector(Vector2 position, Vector2 direction, float width = 2.5f, Color? color = null, float duration = -1f)
+    {
+        DebugVectorVisual vectorVisual = new(
+            position,
+            direction,
+            width,
+            color,
+            duration
+        );
+
+        _visuals.Add(vectorVisual);
     }
 
     private void DrawVisuals()
     {
-        foreach (DebugCircleVisual pointVisual in _pointVisuals)
+        foreach (DebugVisual visual in _visuals)
         {
-            pointVisual.Draw(this);
+            visual.Draw(this);
         }
     }
 
     private void UpdateLifetimes(float delta)
     {
-        for (int i = _pointVisuals.Count - 1; i >= 0; i--)
+        for (int i = _visuals.Count - 1; i >= 0; i--)
         {
-            DebugCircleVisual pointVisual = _pointVisuals[i];
+            DebugVisual visual = _visuals[i];
 
-            if (pointVisual.Duration < 0f)
+            if (visual.Duration < 0f)
             {
-                pointVisual.Duration = 0f;
+                visual.Duration = 0f;
                 continue;
             }
 
-            pointVisual.ElapsedTime += delta;
-            if (pointVisual.ElapsedTime > pointVisual.Duration)
+            visual.ElapsedTime += delta;
+            if (visual.ElapsedTime > visual.Duration)
             {
-                _pointVisuals.RemoveAt(i);
+                _visuals.RemoveAt(i);
             }
         }
     }

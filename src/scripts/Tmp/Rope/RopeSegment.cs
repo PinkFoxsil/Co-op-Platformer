@@ -23,8 +23,8 @@ public partial class RopeSegment : RigidBody2D
         }
     }
 
-    public Vector2 TailPosition => Position + GetLengthOffset(0f);
-    public Vector2 HeadPosition => Position + GetLengthOffset(1f);
+    public Vector2 TailPosition => ToGlobal(GetLengthOffset(0f));
+    public Vector2 HeadPosition => ToGlobal(GetLengthOffset(1f));
 
     private Vector2 _targetPosition;
     private bool _forceSetPosition = false;
@@ -52,7 +52,7 @@ public partial class RopeSegment : RigidBody2D
 
     public Vector2 GetLengthOffset(float scale)
     {
-        return new(Length * scale - Length * 0.5f, 0);
+        return new(Length * scale - _halfLength, 0);
     }
 
     private void UpdateCapsuleHeight()
