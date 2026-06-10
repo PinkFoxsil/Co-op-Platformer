@@ -19,6 +19,6 @@ public partial class Harpoon : Projectile
         Rotation = Velocity.Angle();
         Active = false;
 
-        EmitSignal(SignalName.OnHit);
+        EmitSignal(Projectile.SignalName.OnHit);
     }
 }

@@ -1,13 +1,12 @@
 using Godot;
 
-public partial class AnchoredRope : Rope
+public partial class AnchoredRope : RopeNode
 {
     [ExportCategory("Anchors")]
     [Export] public CollisionObject2D tailAnchor;
     [Export] public CollisionObject2D headAnchor;
 
     private PinJoint2D _tailPinJoint;
-    private PinJoint2D _headPinJoint;
 
     public override void _Ready()
     {
@@ -16,12 +15,24 @@ public partial class AnchoredRope : Rope
 
         base._Ready();
 
-        _tailPinJoint = CreatePinJoint(Vector2.Zero, tailAnchor, TailSegment);
-        _headPinJoint = CreatePinJoint(HeadSegment.GetLengthOffset(1f), HeadSegment, headAnchor);
+        ConnectTailAnchorTo(rope.TailSegment);
+        rope.HeadSegment.ConnectTo(headAnchor, softness, bias);
     }
 
-    public override void _Process(double delta)
+    private void ConnectTailAnchorTo(CollisionObject2D other)
     {
-        base._Process(delta);
+        _tailPinJoint = new()
+		{
+			Name = "StartPinJoint",
+			Position = Vector2.Zero,
+			Softness = softness,
+			Bias = bias,
+			NodeA = tailAnchor.GetPath(),
+			NodeB = other.GetPath()
+		};
+
+        tailAnchor.AddChild(_tailPinJoint);
+
+        return;
     }
 }

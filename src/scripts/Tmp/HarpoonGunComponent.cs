@@ -21,7 +21,7 @@ public partial class HarpoonGunComponent : Node2D
     private PackedScene _harpoonPackedScene;
     private Harpoon _harpoon;
 
-    private Rope _rope;
+    private RopeNode _ropeNode;
 
     public override void _Ready()
     {
@@ -87,10 +87,10 @@ public partial class HarpoonGunComponent : Node2D
             _harpoon = null;
         }
 
-        if (_rope != null)
+        if (_ropeNode != null)
         {
-            _rope.QueueFree();
-            _rope = null;
+            _ropeNode.QueueFree();
+            _ropeNode = null;
         }
     }
 
@@ -112,15 +112,15 @@ public partial class HarpoonGunComponent : Node2D
 
         Debugger.Instance.StartDebugSimulation();
         _harpoon = CreateHarpoon(GetMouseVector().Normalized() * 2000f);
-        _rope = CreateRope();
+        _ropeNode = CreateRope();
 
-        _rope.Freeze = true;
-        _harpoon.OnMove += UpdateRope;
+        _ropeNode.rope.Freeze = true;
+        _harpoon.OnMove += ExtendRope;
         _harpoon.OnHit += () =>
         {
-            UpdateRope();
-            _harpoon.OnMove -= UpdateRope;
-            _rope.Freeze = false;
+            ExtendRope();
+            _harpoon.OnMove -= ExtendRope;
+            _ropeNode.rope.Freeze = false;
 
             Debugger.Instance.StopDebugSimulation();
 
@@ -141,9 +141,21 @@ public partial class HarpoonGunComponent : Node2D
         return harpoon;
     }
 
-    private Rope CreateRope()
+    private void ExtendRope()
     {
-        Rope rope = new()
+        if (_ropeNode.rope.segments[0] == null)
+		{
+			_ropeNode = CreateRope();
+		}
+        else
+        {
+            _ropeNode.ExtendTo(_harpoon.ropeAttachMarker.GlobalPosition);
+        }
+    }
+
+    private RopeNode CreateRope()
+    {
+        RopeNode rope = new()
         {
             Name = "HarpoonRope",
             TailPosition = _harpoonStartMaker.GlobalPosition,
@@ -152,11 +164,6 @@ public partial class HarpoonGunComponent : Node2D
         GetTree().CurrentScene.AddChild(rope);
 
         return rope;
-    }
-
-    private void UpdateRope()
-    {
-        _rope.MoveHeadTo(_harpoon.ropeAttachMarker.GlobalPosition);
     }
 
     private Vector2 GetMouseVector()
