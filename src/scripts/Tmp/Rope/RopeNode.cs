@@ -43,14 +43,13 @@ public partial class RopeNode : Node2D
 
 	public void ExtendTo(Vector2 position)
 	{
-		Vector2 oldTailPos = TailPosition;
+		Vector2 oldTailPos = rope.TailPosition;
 
 		rope.MoveHeadTo(position);
 		rope.ExtendTailSegmentTo(position);
 
-		Rope newSegments = CreateRope(oldTailPos, TailPosition);
-
-		//newSegments.JoinTo(rope);
+		Rope extendedRope = CreateRope(oldTailPos, rope.TailPosition);
+		rope = extendedRope.JoinTo(rope);
 	}
 
 	private Line2D CreateLine2D()
