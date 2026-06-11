@@ -18,15 +18,8 @@ public partial class Rope : Node2D
 
 	public Line2D line2D;
 
-	private Vector2 _tailPosition;
-	public Vector2 TailPosition {
-		get => TailSegment != null ? TailSegment.TailPosition : _tailPosition;
-	}
-
-	private Vector2 _headPosition;
-	public Vector2 HeadPosition {
-		get => HeadSegment != null ? HeadSegment.HeadPosition : _headPosition;
-	}
+	public Vector2 TailPosition => TailSegment.TailPosition;
+	public Vector2 HeadPosition => HeadSegment.HeadPosition;
 
 	public RopeSegment TailSegment => segments?[0];
 	public RopeSegment HeadSegment => segments?[^1];
@@ -37,20 +30,6 @@ public partial class Rope : Node2D
 	{
 		get => _isFrozen;
 		set => SetFreeze(value);
-	}
-
-	private Node2D _parent;
-	public Node2D Parent
-	{
-		get => _parent;
-		set
-		{
-			_parent = value;
-			foreach (RopeSegment segment in segments)
-			{
-				value.AddChild(segment);
-			}
-		}
 	}
 
 	public RopeSegment[] segments;
