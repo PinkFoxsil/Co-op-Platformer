@@ -14,6 +14,7 @@ specular_texture = ExtResource("4_2xtbv")
 size = Vector2(12, 6)
 
 [node name="Harpoon" type="Area2D" unique_id=2060184770]
+top_level = true
 z_index = -1
 z_as_relative = false
 collision_layer = 0

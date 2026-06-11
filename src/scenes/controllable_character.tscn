@@ -13,13 +13,10 @@
 [ext_resource type="Script" uid="uid://o14svaawisot" path="res://src/scripts/Entities/Shared/ActionOrchestrator.cs" id="9_4mk40"]
 [ext_resource type="Script" uid="uid://dlnfh7qogbfn6" path="res://src/scripts/Entities/Shared/CharacterMotor.cs" id="10_n4nwn"]
 [ext_resource type="Script" uid="uid://ds5rxnmvt778n" path="res://src/scripts/Entities/Player/Shared/Input/PlayerInput.cs" id="11_n4nwn"]
-[ext_resource type="Script" uid="uid://ds6ciyts6im8k" path="res://src/scripts/Tmp/HarpoonGunComponent.cs" id="14_e2bc7"]
+[ext_resource type="PackedScene" uid="uid://cmjs8a1ie7ytu" path="res://src/scenes/harpoon_gun_component.tscn" id="14_e2bc7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ut82q"]
 size = Vector2(32, 64)
-
-[sub_resource type="Gradient" id="Gradient_wp886"]
-colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fsmad"]
 size = Vector2(120, 80)
@@ -47,19 +44,6 @@ script = ExtResource("10_n4nwn")
 
 [node name="PlayerInput" type="Node" parent="." unique_id=500706715]
 script = ExtResource("11_n4nwn")
-
-[node name="HarpoonGunComponent" type="Node2D" parent="." unique_id=1905196813]
-position = Vector2(0, -8)
-script = ExtResource("14_e2bc7")
-
-[node name="TrajectoryLine" type="Line2D" parent="HarpoonGunComponent" unique_id=1505533557]
-position = Vector2(39, 0)
-points = PackedVector2Array(0, 0, 100, 0)
-width = 2.0
-gradient = SubResource("Gradient_wp886")
-
-[node name="HarpoonStartMarker" type="Marker2D" parent="HarpoonGunComponent" unique_id=891584306]
-position = Vector2(39, 0)
 
 [node name="ActionOrchestrator" type="Node" parent="." unique_id=1383185923]
 script = ExtResource("9_4mk40")
@@ -117,3 +101,6 @@ monitorable = false
 position = Vector2(0, 16)
 shape = SubResource("RectangleShape2D_xjkdw")
 disabled = true
+
+[node name="HarpoonGunComponent" parent="." unique_id=519406176 instance=ExtResource("14_e2bc7")]
+position = Vector2(0, -15)

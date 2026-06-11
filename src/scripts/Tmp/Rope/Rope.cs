@@ -36,6 +36,17 @@ public partial class Rope
 	}
 
 	private Node2D _parent;
+	public Node2D Parent
+	{
+		set
+		{
+			_parent = value;
+			foreach (RopeSegment segment in segments)
+			{
+				value.AddChild(segment);
+			}
+		}
+	}
 
 	public RopeSegment[] segments;
 
@@ -68,6 +79,7 @@ public partial class Rope
 		_pinJointBias = pinJointBias;
 
         segments = CreateSegments(tailPosition, headPosition);
+
 		ConnectSegments(segments);
 	}
 

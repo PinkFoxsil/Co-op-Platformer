@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class AnchoredRope : RopeNode
+public partial class AnchoredRopeController : RopeController
 {
     [ExportCategory("Anchors")]
     [Export] public CollisionObject2D tailAnchor;
@@ -10,11 +10,9 @@ public partial class AnchoredRope : RopeNode
 
     public override void _Ready()
     {
-        TailPosition = tailAnchor.GlobalPosition;
-        HeadPosition = headAnchor.GlobalPosition;
-
         base._Ready();
 
+        SetRope(tailAnchor.GlobalPosition, headAnchor.GlobalPosition);
         ConnectTailAnchorTo(rope.TailSegment);
         rope.HeadSegment.ConnectTo(headAnchor, softness, bias);
     }

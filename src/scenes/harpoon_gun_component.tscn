@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cmjs8a1ie7ytu"]
+
+[ext_resource type="Script" uid="uid://ds6ciyts6im8k" path="res://src/scripts/Tmp/HarpoonGunComponent.cs" id="1_ghrgg"]
+[ext_resource type="PackedScene" uid="uid://51vfix24nuwt" path="res://src/scenes/harpoon.tscn" id="2_8j0ph"]
+[ext_resource type="PackedScene" uid="uid://dtei8j7c0lhl6" path="res://src/scenes/rope_controller.tscn" id="3_twvtl"]
+
+[sub_resource type="Gradient" id="Gradient_ghrgg"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[node name="HarpoonGunComponent" type="Node2D" unique_id=519406176]
+script = ExtResource("1_ghrgg")
+
+[node name="Harpoon" parent="." unique_id=2060184770 instance=ExtResource("2_8j0ph")]
+
+[node name="RopeController" parent="." unique_id=1433633605 instance=ExtResource("3_twvtl")]
+
+[node name="TrajectoryLine" type="Line2D" parent="." unique_id=726137865]
+points = PackedVector2Array(0, 0, 100, 0)
+width = 2.0
+gradient = SubResource("Gradient_ghrgg")

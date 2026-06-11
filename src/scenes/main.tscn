@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://dd3565bcxw6ar" path="res://src/scenes/controllable_character.tscn" id="1_kkvs4"]
 [ext_resource type="Texture2D" uid="uid://cg6a5ke7luu3a" path="res://src/images/Square.png" id="2_rr2wm"]
-[ext_resource type="Script" uid="uid://c3xp64asdwu04" path="res://src/scripts/Tmp/Rope/AnchoredRope.cs" id="3_32aa5"]
+[ext_resource type="Script" uid="uid://ctauy54w3f0e8" path="res://src/scripts/Tmp/Rope/AnchoredRopeController.cs" id="3_32aa5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rr2wm"]
 texture = ExtResource("2_rr2wm")
@@ -44,23 +44,23 @@ tile_set = SubResource("TileSet_32aa5")
 
 [node name="Rope" type="Node2D" parent="." unique_id=624890075 node_paths=PackedStringArray("tailAnchor", "headAnchor")]
 script = ExtResource("3_32aa5")
-tailAnchor = NodePath("StartStaticBody")
-headAnchor = NodePath("EndStaticBody")
+tailAnchor = NodePath("TailStaticBody")
+headAnchor = NodePath("HeadStaticBody")
 
-[node name="EndStaticBody" type="StaticBody2D" parent="Rope" unique_id=91043596]
+[node name="HeadStaticBody" type="StaticBody2D" parent="Rope" unique_id=91043596]
 position = Vector2(512, 259)
 collision_layer = 0
 collision_mask = 8
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Rope/EndStaticBody" unique_id=1846291876]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Rope/HeadStaticBody" unique_id=1846291876]
 shape = SubResource("CircleShape2D_5dlwx")
 
-[node name="StartStaticBody" type="StaticBody2D" parent="Rope" unique_id=1315497194]
+[node name="TailStaticBody" type="StaticBody2D" parent="Rope" unique_id=1315497194]
 position = Vector2(428, 258)
 collision_layer = 0
 collision_mask = 8
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Rope/StartStaticBody" unique_id=2030610273]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Rope/TailStaticBody" unique_id=2030610273]
 shape = SubResource("CircleShape2D_o81g6")
 
 [node name="DirectionalLight2D" type="DirectionalLight2D" parent="." unique_id=1608435185]

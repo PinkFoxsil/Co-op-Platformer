@@ -12,6 +12,18 @@ public partial class Harpoon : Projectile
         ropeAttachMarker = GetNode<Marker2D>("RopeAttachMarker");
     }
 
+    public void Enable()
+    {
+        ProcessMode = ProcessModeEnum.Inherit;
+        Show();
+    }
+
+    public void Disable()
+    {
+        ProcessMode = ProcessModeEnum.Disabled;
+        Hide();
+    }
+
     public override void Hit(float dt, ShapeCastCollision collision)
     {
         shapeCast.Hide();

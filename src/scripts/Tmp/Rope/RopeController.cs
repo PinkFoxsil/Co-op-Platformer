@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class RopeNode : Node2D
+public partial class RopeController : Node2D
 {
 	[ExportCategory("Rope Segment")]
 	[Export] public float segmentLength = 20f;
@@ -16,24 +16,19 @@ public partial class RopeNode : Node2D
 	[Export] public float softness = 0.01f;
 	[Export] public float bias = 0.99f;
 
-	public Vector2 TailPosition;
-	public Vector2 HeadPosition;
-
 	public Rope rope;
 	public Line2D line2D;
+
+	public int SegmentAmount => rope.segments.Length;
 
 	private PhysicsMaterial _physicsMaterial;
 
 	public override void _Ready()
 	{
-		Name = "Rope";
-
 		line2D = CreateLine2D();
 		AddChild(line2D);
 
 		_physicsMaterial = CreatePhysicsMaterial();
-
-        rope = CreateRope(TailPosition, HeadPosition);
 	}
 
 	public override void _Process(double dt)
@@ -52,6 +47,50 @@ public partial class RopeNode : Node2D
 		rope = extendedRope.JoinTo(rope);
 	}
 
+	public void SetRope(Vector2 tailPosition, Vector2 headPosition)
+	{
+		rope = CreateRope(tailPosition, headPosition);
+	}
+
+	public Rope CreateRope(Vector2 tailPosition, Vector2 headPosition)
+	{
+        return new(
+            tailPosition,
+            headPosition,
+			this,
+            segmentLength,
+            width,
+            segmentMass,
+            _physicsMaterial,
+            layer,
+            mask,
+            softness,
+            bias
+        );
+	}
+
+	public void Clear()
+	{
+		foreach (RopeSegment segment in rope.segments)
+		{
+			segment.QueueFree();
+		}
+
+		rope = null;
+	}
+
+	public void Enable()
+	{
+		ProcessMode = ProcessModeEnum.Inherit;
+		Show();
+	}
+
+	public void Disable()
+	{
+		ProcessMode = ProcessModeEnum.Disabled;
+		Hide();
+	}
+
 	private Line2D CreateLine2D()
 	{
 		return new()
@@ -67,23 +106,6 @@ public partial class RopeNode : Node2D
 		{
 			Friction = friction
 		};
-	}
-
-	private Rope CreateRope(Vector2 tailPosition, Vector2 headPosition)
-	{
-        return new(
-            tailPosition,
-            headPosition,
-			this,
-            segmentLength,
-            width,
-            segmentMass,
-            _physicsMaterial,
-            layer,
-            mask,
-            softness,
-            bias
-        );
 	}
 
 	private void UpdateVisual()
