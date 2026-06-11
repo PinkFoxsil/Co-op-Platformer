@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://dd3565bcxw6ar" path="res://src/scenes/controllable_character.tscn" id="1_kkvs4"]
 [ext_resource type="Texture2D" uid="uid://cg6a5ke7luu3a" path="res://src/images/Square.png" id="2_rr2wm"]
-[ext_resource type="Script" uid="uid://ctauy54w3f0e8" path="res://src/scripts/Tmp/Rope/AnchoredRopeController.cs" id="3_32aa5"]
+[ext_resource type="Script" uid="uid://ctauy54w3f0e8" path="res://src/scripts/Tmp/Rope/AnchoredRope.cs" id="3_32aa5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rr2wm"]
 texture = ExtResource("2_rr2wm")
@@ -62,6 +62,8 @@ collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Rope/TailStaticBody" unique_id=2030610273]
 shape = SubResource("CircleShape2D_o81g6")
+
+[node name="Line2D" type="Line2D" parent="Rope" unique_id=342697665]
 
 [node name="DirectionalLight2D" type="DirectionalLight2D" parent="." unique_id=1608435185]
 color = Color(1, 0.958, 0.88, 1)

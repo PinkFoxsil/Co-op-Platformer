@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://dtei8j7c0lhl6"]
+
+[ext_resource type="Script" uid="uid://jrv0erq7dyr5" path="res://src/scripts/Tmp/Rope/Rope.cs" id="1_vxyu0"]
+
+[node name="Rope" type="Node2D" unique_id=1433633605]
+top_level = true
+script = ExtResource("1_vxyu0")
+
+[node name="Line2D" type="Line2D" parent="." unique_id=1932899832]

@@ -20,7 +20,7 @@ public partial class HarpoonGunComponent : Node2D
     public HarpoonGunState State { get; private set; }
 
     private Harpoon _harpoon;
-    private RopeController _ropeController;
+    private Rope _rope;
     private Line2D _trajectoryLine;
 
     public override void _Ready()
@@ -28,18 +28,18 @@ public partial class HarpoonGunComponent : Node2D
         State = HarpoonGunState.Stashed;
 
         _harpoon = GetNode<Harpoon>("Harpoon");
-        _ropeController = GetNode<RopeController>("RopeController");
+        _rope = GetNode<Rope>("Rope");
         _trajectoryLine = GetNode<Line2D>("TrajectoryLine");
 
         _trajectoryLine.Hide();
         _harpoon.Disable();
-        _ropeController.Disable();
+        _rope.Disable();
 
         _harpoon.OnHit += () =>
         {
             ExtendRope();
             _harpoon.OnMove -= ExtendRope;
-            _ropeController.rope.Freeze = false;
+            _rope.Freeze = false;
 
             Debugger.Instance.StopDebugSimulation();
         };
@@ -92,8 +92,8 @@ public partial class HarpoonGunComponent : Node2D
 
         _trajectoryLine.Hide();
         _harpoon.Disable();
-        _ropeController.Clear();
-        _ropeController.Disable();
+        _rope.ClearSegments();
+        _rope.Disable();
     }
 
     private void Aim()
@@ -117,10 +117,10 @@ public partial class HarpoonGunComponent : Node2D
         _harpoon.Enable();
         FireHarpoon(GetMouseUnitVector() * harpoonFiringForce);
 
-        _ropeController.Enable();
-        _ropeController.SetRope(GetStartPosition(), _harpoon.ropeAttachMarker.GlobalPosition);
+        _rope.Enable();
+        _rope.Init(GetStartPosition(), _harpoon.ropeAttachMarker.GlobalPosition);
 
-        _ropeController.rope.Freeze = true;
+        _rope.Freeze = true;
         _harpoon.OnMove += ExtendRope;
     }
 
@@ -139,13 +139,13 @@ public partial class HarpoonGunComponent : Node2D
 
     private void ExtendRope()
     {
-        if (_ropeController.SegmentAmount == 0)
+        if (_rope.segments.Length == 0)
         {
-            _ropeController.SetRope(GetStartPosition(), _harpoon.ropeAttachMarker.GlobalPosition);
+            _rope.Init(GetStartPosition(), _harpoon.ropeAttachMarker.GlobalPosition);
             return;
         }
 
-        _ropeController.ExtendTo(_harpoon.ropeAttachMarker.GlobalPosition);
+        _rope.ExtendTo(_harpoon.ropeAttachMarker.GlobalPosition);
     }
 
     // This can be moved to either a helper module or input component

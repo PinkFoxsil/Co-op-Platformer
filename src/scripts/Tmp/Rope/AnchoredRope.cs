@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class AnchoredRopeController : RopeController
+public partial class AnchoredRope : Rope
 {
     [ExportCategory("Anchors")]
     [Export] public CollisionObject2D tailAnchor;
@@ -12,9 +12,9 @@ public partial class AnchoredRopeController : RopeController
     {
         base._Ready();
 
-        SetRope(tailAnchor.GlobalPosition, headAnchor.GlobalPosition);
-        ConnectTailAnchorTo(rope.TailSegment);
-        rope.HeadSegment.ConnectTo(headAnchor, softness, bias);
+        Init(tailAnchor.GlobalPosition, headAnchor.GlobalPosition);
+        ConnectTailAnchorTo(TailSegment);
+        HeadSegment.ConnectTo(headAnchor, pinJointSoftness, pinJointBias);
     }
 
     private void ConnectTailAnchorTo(CollisionObject2D other)
@@ -23,8 +23,8 @@ public partial class AnchoredRopeController : RopeController
 		{
 			Name = "StartPinJoint",
 			Position = Vector2.Zero,
-			Softness = softness,
-			Bias = bias,
+			Softness = pinJointSoftness,
+			Bias = pinJointBias,
 			NodeA = tailAnchor.GetPath(),
 			NodeB = other.GetPath()
 		};

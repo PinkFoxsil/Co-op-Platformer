@@ -1,18 +1,22 @@
 using Godot;
 
-public partial class Rope
+public partial class Rope : Node2D
 {
-	private float _segmentLength;
-	private float _segmentWidth;
-	private float _segmentMass;
+	[ExportCategory("Rope Segment")]
+	[Export] public float segmentLength = 20f;
+	[Export] public float segmentMass = 25f;
+	[Export] public float friction = 0.1f;
+	[Export] public float width = 2f;
 
-	private PhysicsMaterial _physicsMaterial;
+	[ExportGroup("Collision")]
+	[Export(PropertyHint.Layers2DPhysics)] public uint layer;
+	[Export(PropertyHint.Layers2DPhysics)] public uint mask;
 
-	private uint _collisionLayer;
-	private uint _collisionMask;
+	[ExportCategory("Pin Joint")]
+	[Export] public float pinJointSoftness = 0.01f;
+	[Export] public float pinJointBias = 0.99f;
 
-	private float _pinJointSoftness;
-	private float _pinJointBias;
+	public Line2D line2D;
 
 	private Vector2 _tailPosition;
 	public Vector2 TailPosition {
@@ -38,6 +42,7 @@ public partial class Rope
 	private Node2D _parent;
 	public Node2D Parent
 	{
+		get => _parent;
 		set
 		{
 			_parent = value;
@@ -50,37 +55,17 @@ public partial class Rope
 
 	public RopeSegment[] segments;
 
-	public Rope(
-		Vector2 tailPosition,
-		Vector2 headPosition,
-		Node2D parent,
-		float segmentLength,
-		float segmentWidth,
-		float segmentMass,
-		PhysicsMaterial physicsMaterial,
-		uint collisionLayer,
-		uint collisionMask,
-		float pinJointSoftness,
-		float pinJointBias
-		)
+	private PhysicsMaterial _physicsMaterial;
+
+	public override void _Ready()
 	{
-		_parent = parent;
+		line2D = GetNode<Line2D>("Line2D");
+		_physicsMaterial = CreatePhysicsMaterial();
+	}
 
-		_segmentLength = segmentLength;
-		_segmentWidth = segmentWidth;
-		_segmentMass = segmentMass;
-
-		_physicsMaterial = physicsMaterial;
-
-		_collisionLayer = collisionLayer;
-		_collisionMask = collisionMask;
-
-		_pinJointSoftness = pinJointSoftness;
-		_pinJointBias = pinJointBias;
-
-        segments = CreateSegments(tailPosition, headPosition);
-
-		ConnectSegments(segments);
+	public void Init(Vector2 from, Vector2 to)
+	{
+		segments = CreateConnectedSegments(from, to);
 	}
 
 	public void MoveHeadTo(Vector2 position)
@@ -99,34 +84,122 @@ public partial class Rope
 		}
 	}
 
-	public Rope JoinTo(Rope other)
+	public void ExtendTo(Vector2 position)
 	{
-		if (segments.Length == 0)
+		Vector2 oldTailPos = TailPosition;
+
+		MoveHeadTo(position);
+		ExtendTailSegmentTo(position);
+
+		RopeSegment[] extendedSegments = CreateConnectedSegments(oldTailPos, TailPosition);
+		segments = JoinSegmentChains(extendedSegments, segments);
+	}
+
+	public void ClearSegments()
+	{
+		foreach (RopeSegment segment in segments)
 		{
-			GD.PushWarning("Rope was joined to an empty Rope.");
-			return other;
+			segment.QueueFree();
 		}
 
-		if (other.segments.Length == 0)
-		{
-			GD.PushWarning("Rope was joined to an empty Rope.");
-			return this;
-		}
+		segments = [];
+	}
 
-		int index = segments.Length;
-		foreach (RopeSegment segment in other.segments)
+	public void Enable()
+	{
+		ProcessMode = ProcessModeEnum.Inherit;
+		Show();
+	}
+
+	public void Disable()
+	{
+		ProcessMode = ProcessModeEnum.Disabled;
+		Hide();
+	}
+
+	private RopeSegment[] CreateConnectedSegments(Vector2 from, Vector2 to)
+	{
+		RopeSegment[] rope = CreateSegments(from, to);
+		ConnectSegments(rope);
+
+		return rope;
+	}
+
+	private PhysicsMaterial CreatePhysicsMaterial()
+	{
+		return new()
+		{
+			Friction = friction
+		};
+	}
+
+	private RopeSegment[] CreateSegments(Vector2 from, Vector2 to)
+	{
+		Vector2 startToEndVect = to - from;
+		Vector2 direction = startToEndVect.Normalized();
+		float rotation = direction.Angle();
+
+        float length = startToEndVect.Length();
+
+        float lastSegmentLength = length % segmentLength;
+        int amount = (int) (length / segmentLength) + (lastSegmentLength > Mathf.Epsilon ? 1 : 0);
+
+        RopeSegment[] ropeSegments = new RopeSegment[amount];
+
+		int index = amount - 1;
+        while (length > Mathf.Epsilon)
+        {
+            float currentSegmentLength = Mathf.Min(segmentLength, length);
+            Vector2 newSegmentPos = (length - currentSegmentLength * 0.5f) * direction + from;
+            
+            ropeSegments[index] = CreateSegment(index, currentSegmentLength, newSegmentPos, rotation);
+
+            length -= currentSegmentLength;
+            index--;
+        }
+
+		return ropeSegments;
+	}
+
+	private RopeSegment CreateSegment(int index, float length, Vector2 position, float rotation)
+	{
+		RopeSegment segment = new()
+		{
+			Name = GetRopeSegmentName(index),
+			Length = length,
+			Width = width,
+			CollisionLayer = layer,
+			CollisionMask = mask,
+			Mass = segmentMass,
+			PhysicsMaterialOverride = _physicsMaterial,
+			Freeze = Freeze,
+			Position = position,
+			Rotation = rotation
+		};
+
+		AddChild(segment);
+
+		return segment;
+	}
+
+	private RopeSegment[] JoinSegmentChains(RopeSegment[] a, RopeSegment[] b)
+	{
+		int index = a.Length;
+		foreach (RopeSegment segment in b)
 		{
 			segment.Name = GetRopeSegmentName(index);
 			index++;
 		}
 
-		segments[^1].ConnectTo(other.segments[0], _pinJointSoftness, _pinJointBias);
-		segments = [.. segments, .. other.segments];
-
-		return this;
+		if (a.Length != 0 && b.Length != 0)
+		{
+			a[^1].ConnectTo(b[0], pinJointSoftness, pinJointBias);
+		}
+		
+		return [.. a, .. b];
 	}
 
-	public void ExtendTailSegmentTo(Vector2 position)
+	private void ExtendTailSegmentTo(Vector2 position)
 	{
 		if (TailSegment == null)
 		{
@@ -135,7 +208,7 @@ public partial class Rope
 		}
 
 		Vector2 tailHeadToPosVect = position - TailSegment.HeadPosition;
-		float length = Mathf.Min(_segmentLength, tailHeadToPosVect.Length());
+		float length = Mathf.Min(segmentLength, tailHeadToPosVect.Length());
 
 		NodePath originalNodeB = TailSegment.PinJoint.NodeB;
 		TailSegment.PinJoint.NodeB = null;
@@ -147,6 +220,22 @@ public partial class Rope
 
 		TailSegment.PinJoint.Position = TailSegment.GetLengthOffset(1f);
 		TailSegment.PinJoint.NodeB = originalNodeB;
+	}
+
+	private static string GetRopeSegmentName(int index)
+	{
+		return $"RopeSegment_{index}";
+	}
+
+	private void ConnectSegments(RopeSegment[] segments)
+	{
+		for (int i = 1; i < segments.Length; i++)
+		{
+			RopeSegment currentSegment = segments[i - 1];
+			RopeSegment nextSegment = segments[i];
+
+			currentSegment.ConnectTo(nextSegment, pinJointSoftness, pinJointBias);
+		}
 	}
 
 	private void SetFreeze(bool value)
@@ -164,68 +253,16 @@ public partial class Rope
 		}
 	}
 
-	private RopeSegment[] CreateSegments(Vector2 from, Vector2 to)
+	private void UpdateVisual()
 	{
-		Vector2 startToEndVect = to - from;
-		Vector2 direction = startToEndVect.Normalized();
-		float rotation = direction.Angle();
+        Vector2[] points = new Vector2[segments.Length + 1];
 
-        float length = startToEndVect.Length();
-
-        float lastSegmentLength = length % _segmentLength;
-        int amount = (int) (length / _segmentLength) + (lastSegmentLength > Mathf.Epsilon ? 1 : 0);
-
-        RopeSegment[] ropeSegments = new RopeSegment[amount];
-
-		int index = amount - 1;
-        while (length > Mathf.Epsilon)
+		points[0] = TailPosition;
+		for (int i = 1; i <= segments.Length; i++)
         {
-            float currentSegmentLength = Mathf.Min(_segmentLength, length);
-            Vector2 newSegmentPos = (length - currentSegmentLength * 0.5f) * direction + from;
-            
-            ropeSegments[index] = CreateSegment(index, currentSegmentLength, newSegmentPos, rotation);
-
-            length -= currentSegmentLength;
-            index--;
+            points[i] = ToLocal(segments[i - 1].HeadPosition);
         }
 
-		return ropeSegments;
-	}
-
-	private void ConnectSegments(RopeSegment[] segments)
-	{
-		for (int i = 1; i < segments.Length; i++)
-		{
-			RopeSegment currentSegment = segments[i - 1];
-			RopeSegment nextSegment = segments[i];
-
-			currentSegment.ConnectTo(nextSegment, _pinJointSoftness, _pinJointBias);
-		}
-	}
-
-	private RopeSegment CreateSegment(int index, float length, Vector2 position, float rotation)
-	{
-		RopeSegment segment = new()
-		{
-			Name = GetRopeSegmentName(index),
-			Length = length,
-			Width = _segmentWidth,
-			CollisionLayer = _collisionLayer,
-			CollisionMask = _collisionMask,
-			Mass = _segmentMass,
-			PhysicsMaterialOverride = _physicsMaterial,
-			Freeze = Freeze,
-			Position = position,
-			Rotation = rotation
-		};
-
-		_parent.AddChild(segment);
-
-		return segment;
-	}
-
-	private static string GetRopeSegmentName(int index)
-	{
-		return $"RopeSegment_{index}";
+		line2D.Points = points;
 	}
 }
