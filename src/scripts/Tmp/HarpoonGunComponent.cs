@@ -27,6 +27,8 @@ public partial class HarpoonGunComponent : Node2D
     {
         State = HarpoonGunState.Stashed;
 
+        Show();
+
         _harpoon = GetNode<Harpoon>("Harpoon");
         _rope = GetNode<Rope>("Rope");
         _trajectoryLine = GetNode<Line2D>("TrajectoryLine");

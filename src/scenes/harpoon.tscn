@@ -10,16 +10,16 @@ diffuse_texture = ExtResource("2_ontq3")
 normal_texture = ExtResource("3_ha633")
 specular_texture = ExtResource("4_2xtbv")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ontq3"]
-size = Vector2(12, 6)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ontq3"]
+radius = 5.0
+height = 92.0
 
-[node name="Harpoon" type="Area2D" unique_id=2060184770]
+[node name="Harpoon" type="RigidBody2D" unique_id=1279296010]
 top_level = true
 z_index = -1
 z_as_relative = false
 collision_layer = 0
 collision_mask = 10
-monitorable = false
 script = ExtResource("1_5080w")
 gravityScale = 1.0
 
@@ -29,7 +29,8 @@ scale = Vector2(2, 2)
 texture = SubResource("CanvasTexture_pa7di")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1769103883]
-shape = SubResource("RectangleShape2D_ontq3")
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_ontq3")
 
 [node name="RopeAttachMarker" type="Marker2D" parent="." unique_id=1986304423]
 position = Vector2(-41, 0)

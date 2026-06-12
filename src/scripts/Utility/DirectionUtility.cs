@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public enum CardinalDirection
 {
@@ -64,7 +63,6 @@ public static class DirectionUtility
             CompassDirection.DOWN_RIGHT => DOWN_RIGHT,
             _ => CENTER,
         };
-
     }
         
     public static CardinalDirection GetCardinalDirection(Vector2 origin, Vector2 destination)
