@@ -20,8 +20,10 @@ z_index = -1
 z_as_relative = false
 collision_layer = 0
 collision_mask = 10
+continuous_cd = 1
+contact_monitor = true
+max_contacts_reported = 5
 script = ExtResource("1_5080w")
-gravityScale = 1.0
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=782364233]
 position = Vector2(0, 1)

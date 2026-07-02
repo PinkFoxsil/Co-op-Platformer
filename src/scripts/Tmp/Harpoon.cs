@@ -2,6 +2,8 @@ using Godot;
 
 public partial class Harpoon : RigidBody2D
 {
+    [Signal] public delegate void OnMoveEventHandler(Transform2D newTransform);
+
     public Marker2D ropeAttachMarker;
 
     public override void _Ready()
@@ -11,6 +13,8 @@ public partial class Harpoon : RigidBody2D
 
     public override void _IntegrateForces(PhysicsDirectBodyState2D state)
     {
+        EmitSignal(SignalName.OnMove, state.Transform);
+
         Collision[] collisions = CollisionUtility.GetCollisions(state);
         Collision? closestCollision = CollisionUtility.GetClosestCollision(collisions, Position);
 
@@ -19,13 +23,13 @@ public partial class Harpoon : RigidBody2D
             return;
         }
 
-        
+        Land();
     }
 
     public void Fire(Vector2 velocity)
     {
         LinearVelocity = velocity;
-        Rotation = velocity.Angle();
+        GlobalRotation = velocity.Angle();
     }
 
     public void Enable()
@@ -38,5 +42,10 @@ public partial class Harpoon : RigidBody2D
     {
         ProcessMode = ProcessModeEnum.Disabled;
         Hide();
+    }
+
+    private void Land()
+    {
+        ProcessMode = ProcessModeEnum.Disabled;
     }
 }

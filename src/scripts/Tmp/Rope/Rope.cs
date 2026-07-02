@@ -228,7 +228,7 @@ public partial class Rope : Node2D
 		
 		foreach (RopeSegment segment in segments)
 		{
-			segment.Freeze = value;
+			segment.SetDeferred("Freeze", value);
 		}
 	}
 

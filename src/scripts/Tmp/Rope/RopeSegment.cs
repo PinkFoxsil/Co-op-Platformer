@@ -43,12 +43,12 @@ public partial class RopeSegment : RigidBody2D
     private float _diameter;
     private float _halfLength;
 
-    public RopeSegment()
+    public override void _Ready()
     {
         _capsuleShape = CreateCapsuleShape();
         _collisionShape = CreateCollisionShape();
         
-        AddChild(_collisionShape);
+        CallDeferred(Node.MethodName.AddChild, _collisionShape);
     }
 
     public Vector2 GetLengthOffset(float scale)

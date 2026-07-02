@@ -11,6 +11,7 @@ colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
 script = ExtResource("1_ghrgg")
 
 [node name="Harpoon" parent="." unique_id=2060184770 instance=ExtResource("2_8j0ph")]
+collision_layer = 16
 
 [node name="TrajectoryLine" type="Line2D" parent="." unique_id=726137865]
 points = PackedVector2Array(0, 0, 100, 0)
@@ -18,3 +19,4 @@ width = 2.0
 gradient = SubResource("Gradient_ghrgg")
 
 [node name="Rope" parent="." unique_id=1433633605 instance=ExtResource("3_twvtl")]
+layer = 4

@@ -76,6 +76,7 @@ Attack2={
 2d_physics/layer_2="Enemy"
 2d_physics/layer_3="Decoration"
 2d_physics/layer_4="World"
+2d_physics/layer_5="Projectile"
 
 [physics]
 
