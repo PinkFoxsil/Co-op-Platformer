@@ -46,6 +46,8 @@ tile_set = SubResource("TileSet_32aa5")
 script = ExtResource("3_32aa5")
 tailAnchor = NodePath("TailStaticBody")
 headAnchor = NodePath("HeadStaticBody")
+layer = 16
+mask = 8
 
 [node name="HeadStaticBody" type="StaticBody2D" parent="Rope" unique_id=91043596]
 position = Vector2(512, 259)

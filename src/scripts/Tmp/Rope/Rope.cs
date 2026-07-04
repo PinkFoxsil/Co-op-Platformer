@@ -63,14 +63,12 @@ public partial class Rope : Node2D
 		}
 	}
 
-	public void ExtendTo(Vector2 position)
+	public void ExtendTo(Vector2 from, Vector2 to)
 	{
-		Vector2 oldTailPos = TailPosition;
+		MoveHeadTo(to);
+		ExtendTailSegmentTo(from);
 
-		MoveHeadTo(position);
-		ExtendTailSegmentTo(position);
-
-		RopeSegment[] extendedSegments = CreateConnectedSegments(oldTailPos, TailPosition);
+		RopeSegment[] extendedSegments = CreateConnectedSegments(from, TailPosition);
 		segments = JoinSegmentChains(extendedSegments, segments);
 	}
 

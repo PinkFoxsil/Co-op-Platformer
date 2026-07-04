@@ -3,6 +3,7 @@ using Godot;
 public partial class Harpoon : RigidBody2D
 {
     [Signal] public delegate void OnMoveEventHandler(Transform2D newTransform);
+    [Signal] public delegate void OnLandEventHandler();
 
     public Marker2D ropeAttachMarker;
 
@@ -35,6 +36,7 @@ public partial class Harpoon : RigidBody2D
     public void Enable()
     {
         ProcessMode = ProcessModeEnum.Inherit;
+        Freeze = false;
         Show();
     }
 
@@ -46,6 +48,7 @@ public partial class Harpoon : RigidBody2D
 
     private void Land()
     {
-        ProcessMode = ProcessModeEnum.Disabled;
+        SetDeferred("freeze", true);
+        EmitSignal(SignalName.OnLand);
     }
 }
