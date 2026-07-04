@@ -115,8 +115,8 @@ public partial class HarpoonGunComponent : Node2D
         Debugger.Instance.StartDebugSimulation(); // TODO: remove or comment out
 
         _harpoon.Enable();
-        _harpoon.GlobalPosition = GetStartPosition() - _harpoon.ropeAttachMarker.Position.Rotated(GetMouseUnitVector().Angle())*2; // TODO: remove * 2
-        _harpoon.Fire(GetMouseUnitVector() * harpoonFiringForce);
+        _harpoon.GlobalPosition = GetStartPosition() - _harpoon.ropeAttachMarker.Position.Rotated(MouseUtility.GetMouseUnitVector(this).Angle())*2; // TODO: remove * 2
+        _harpoon.Fire(MouseUtility.GetMouseUnitVector(this) * harpoonFiringForce);
 
         _rope.Enable();
         _rope.Init(GetStartPosition(), _harpoon.ropeAttachMarker.GlobalPosition);
@@ -126,7 +126,7 @@ public partial class HarpoonGunComponent : Node2D
 
     private Vector2 GetStartPosition()
     {
-        return GlobalPosition + GetMouseUnitVector() * nozzleDistance;
+        return GlobalPosition + MouseUtility.GetMouseUnitVector(this) * nozzleDistance;
     }
 
     private void OnHarpoonLanded()
@@ -149,23 +149,12 @@ public partial class HarpoonGunComponent : Node2D
     private void UpdateTrajectoryLine()
     {
         Vector2 p1 = ToLocal(GetStartPosition());
-        Vector2 p2 = p1 + GetMouseUnitVector() * trajectoryLength;
+        Vector2 p2 = p1 + MouseUtility.GetMouseUnitVector(this) * trajectoryLength;
 
         _trajectoryLine.ClearPoints();
         _trajectoryLine.AddPoint(p1);
         _trajectoryLine.AddPoint(p2);
     }
 
-    // This can be moved to either a helper module or input component
-    private Vector2 GetMouseUnitVector()
-    {
-        return GetMouseVector().Normalized();
-    }
-
-    // This can be moved to either a helper module or input component
-    private Vector2 GetMouseVector()
-    {
-        Vector2 mousePosition = GetGlobalMousePosition();
-        return mousePosition - GlobalPosition;
-    }
+    
 }
