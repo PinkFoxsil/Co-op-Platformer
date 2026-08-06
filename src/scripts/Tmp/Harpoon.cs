@@ -6,10 +6,21 @@ public partial class Harpoon : RigidBody2D
     [Signal] public delegate void OnLandEventHandler();
 
     public Marker2D ropeAttachMarker;
+    public bool landed = false;
 
     public override void _Ready()
     {
         ropeAttachMarker = GetNode<Marker2D>("RopeAttachMarker");
+    }
+
+    public override void _PhysicsProcess(double delta)
+    {
+        int contactCount = GetCollidingBodies().Count;
+
+        if (contactCount > 0)
+        {
+            
+        }
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState2D state)
@@ -48,7 +59,8 @@ public partial class Harpoon : RigidBody2D
 
     private void Land()
     {
-        SetDeferred("freeze", true);
+        landed = true;
+        SetDeferred(RigidBody2D.PropertyName.Freeze, true);
         EmitSignal(SignalName.OnLand);
     }
 }

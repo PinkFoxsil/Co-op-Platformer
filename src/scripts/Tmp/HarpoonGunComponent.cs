@@ -130,7 +130,6 @@ public partial class HarpoonGunComponent : Node2D
 
     private void ExtendRope(Transform2D newTransform)
     {
-        GD.Print(_harpoon.ropeAttachMarker.GlobalPosition);
         if (_rope.segments.Length == 0)
         {
             _rope.Init(GetStartPosition(), newTransform * _harpoon.ropeAttachMarker.Position);
