@@ -2,44 +2,35 @@ using Godot;
 
 public partial class Harpoon : RigidBody2D
 {
-    [Signal] public delegate void OnMoveEventHandler();
-    [Signal] public delegate void OnLandEventHandler();
-
-    public Marker2D ropeAttachMarker;
-
-    private Transform2D _lastTransform;
-
-    public override void _Ready()
-    {
-        ropeAttachMarker = GetNode<Marker2D>("RopeAttachMarker");
-    }
+    private Transform2D? _newTransform;
+    private Vector2? _newLinearVelocity;
 
     public override void _IntegrateForces(PhysicsDirectBodyState2D state)
     {
-        Collision[] collisions = CollisionUtility.GetStateCollisions(state);
-        Collision? closestCollision = CollisionUtility.GetClosestCollision(collisions, Position);
-
-        if (closestCollision == null)
+        if (_newTransform != null)
         {
-            OnProjectileMove();
-            return;
+            state.Transform = (Transform2D) _newTransform;
+            _newTransform = null;
+            
         }
-        
-        OnProjectileLand();
-        return;
+
+        if (_newLinearVelocity != null)
+        {
+            state.LinearVelocity = (Vector2) _newLinearVelocity;
+            state.AngularVelocity = 0f;
+            _newLinearVelocity = null;
+        }
     }
 
-    public void Fire(Vector2 velocity)
+    public void SetPhysicsStateTransform(Transform2D transform)
     {
-        LinearVelocity = velocity;
-        GlobalRotation = velocity.Angle();
+        GlobalTransform = transform;
+        _newTransform = transform;
     }
 
-    public void Enable()
+    public void SetPhysicsStateLinearVelocity(Vector2 linearVelocity)
     {
-        ProcessMode = ProcessModeEnum.Inherit;
-        Freeze = false;
-        Show();
+        _newLinearVelocity = linearVelocity;
     }
 
     public void Disable()
@@ -48,16 +39,10 @@ public partial class Harpoon : RigidBody2D
         Hide();
     }
 
-    private void OnProjectileMove()
+    public void Enable()
     {
-        _lastTransform = Transform;
-        EmitSignal(SignalName.OnMove);
-    }
-
-    private void OnProjectileLand()
-    {
-        Transform = _lastTransform;
-        SetDeferred(RigidBody2D.PropertyName.Freeze, true);
-        EmitSignal(SignalName.OnLand);
+        ProcessMode = ProcessModeEnum.Inherit;
+        Show();
+        Sleeping = false;
     }
 }
