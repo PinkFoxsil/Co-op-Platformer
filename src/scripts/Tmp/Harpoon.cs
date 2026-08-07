@@ -2,40 +2,31 @@ using Godot;
 
 public partial class Harpoon : RigidBody2D
 {
-    [Signal] public delegate void OnMoveEventHandler(Transform2D newTransform);
+    [Signal] public delegate void OnMoveEventHandler();
     [Signal] public delegate void OnLandEventHandler();
 
     public Marker2D ropeAttachMarker;
-    public bool landed = false;
+
+    private Transform2D _lastTransform;
 
     public override void _Ready()
     {
         ropeAttachMarker = GetNode<Marker2D>("RopeAttachMarker");
     }
 
-    public override void _PhysicsProcess(double delta)
-    {
-        int contactCount = GetCollidingBodies().Count;
-
-        if (contactCount > 0)
-        {
-            
-        }
-    }
-
     public override void _IntegrateForces(PhysicsDirectBodyState2D state)
     {
-        EmitSignal(SignalName.OnMove, state.Transform);
-
-        Collision[] collisions = CollisionUtility.GetCollisions(state);
+        Collision[] collisions = CollisionUtility.GetStateCollisions(state);
         Collision? closestCollision = CollisionUtility.GetClosestCollision(collisions, Position);
 
         if (closestCollision == null)
         {
+            OnProjectileMove();
             return;
         }
-
-        Land();
+        
+        OnProjectileLand();
+        return;
     }
 
     public void Fire(Vector2 velocity)
@@ -57,9 +48,15 @@ public partial class Harpoon : RigidBody2D
         Hide();
     }
 
-    private void Land()
+    private void OnProjectileMove()
     {
-        landed = true;
+        _lastTransform = Transform;
+        EmitSignal(SignalName.OnMove);
+    }
+
+    private void OnProjectileLand()
+    {
+        Transform = _lastTransform;
         SetDeferred(RigidBody2D.PropertyName.Freeze, true);
         EmitSignal(SignalName.OnLand);
     }

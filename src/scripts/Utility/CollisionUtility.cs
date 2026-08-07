@@ -25,7 +25,7 @@ public static class CollisionUtility
         return closestCollision;
     }
 
-    public static Collision[] GetCollisions(PhysicsDirectBodyState2D state)
+    public static Collision[] GetStateCollisions(PhysicsDirectBodyState2D state)
     {
         int contactCount = state.GetContactCount();
 
@@ -43,7 +43,7 @@ public static class CollisionUtility
         return collisions;
     }
 
-    public static Collision[] GetCollisions(ShapeCast2D shapeCast)
+    public static Collision[] GetShapeCastCollisions(ShapeCast2D shapeCast)
     {
         int contactCount = shapeCast.GetCollisionCount();
         

@@ -128,11 +128,11 @@ public partial class HarpoonGunComponent : Node2D
         Debugger.Instance.StopDebugSimulation();
     }
 
-    private void ExtendRope(Transform2D newTransform)
+    private void ExtendRope()
     {
         if (_rope.segments.Length == 0)
         {
-            _rope.Init(GetStartPosition(), newTransform * _harpoon.ropeAttachMarker.Position);
+            _rope.Init(GetStartPosition(), _harpoon.Transform * _harpoon.ropeAttachMarker.Position);
             return;
         }
 
