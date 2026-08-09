@@ -20,6 +20,7 @@ z_index = -1
 z_as_relative = false
 collision_layer = 0
 collision_mask = 10
+mass = 2.4
 continuous_cd = 1
 contact_monitor = true
 max_contacts_reported = 5

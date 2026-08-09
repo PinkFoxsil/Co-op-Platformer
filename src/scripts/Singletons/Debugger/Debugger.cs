@@ -19,6 +19,8 @@ public partial class Debugger : Node
         CurrentScene.AddChild(_visualizer);
 
         ProcessMode = ProcessModeEnum.Always;
+        ProcessPriority = 10;
+        ProcessPhysicsPriority = 10;
 
         Instance = this;
     }

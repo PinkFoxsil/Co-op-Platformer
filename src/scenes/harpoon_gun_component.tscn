@@ -16,10 +16,13 @@ width = 2.0
 gradient = SubResource("Gradient_ghrgg")
 
 [node name="Rope" parent="." unique_id=1433633605 instance=ExtResource("3_twvtl")]
+position = Vector2(1, 0)
 layer = 4
 
 [node name="Harpoon" parent="." unique_id=1279296010 instance=ExtResource("2_8j0ph")]
 
-[node name="RopeAttachMarker" type="Marker2D" parent="Harpoon" unique_id=328360859]
+[node name="RopeAttachment" type="PinJoint2D" parent="Harpoon" unique_id=1529743198]
 position = Vector2(-41, 0)
-gizmo_extents = 5.0
+node_b = NodePath("..")
+bias = 0.9
+softness = 0.01

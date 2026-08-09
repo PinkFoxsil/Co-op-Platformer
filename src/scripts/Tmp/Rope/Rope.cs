@@ -21,8 +21,8 @@ public partial class Rope : Node2D
 	public Vector2 TailPosition => TailSegment.TailPosition;
 	public Vector2 HeadPosition => HeadSegment.HeadPosition;
 
-	public RopeSegment TailSegment => segments?[0];
-	public RopeSegment HeadSegment => segments?[^1];
+	public RopeSegment TailSegment => segments.Length > 0 ? segments[0] : null;
+	public RopeSegment HeadSegment => segments.Length > 0 ? segments[^1] : null;
 
 	// Setting Position/GlobalPosition won't work unless the rope is Frozen
 	private bool _isFrozen = false;
@@ -32,7 +32,18 @@ public partial class Rope : Node2D
 		set => SetFreeze(value);
 	}
 
-	public RopeSegment[] segments;
+	public RopeSegment[] segments = [];
+
+	public float TotalLength {
+		get {
+			float length = 0f;
+			foreach (RopeSegment segment in segments)
+			{
+				length += segment.Length;
+			}
+			return length;
+		}
+	}
 
 	private PhysicsMaterial _physicsMaterial;
 
@@ -47,29 +58,12 @@ public partial class Rope : Node2D
 		segments = CreateConnectedSegments(from, to);
 	}
 
-	public void MoveHeadTo(Vector2 position)
+	public void ExtendTailTo(Vector2 position)
 	{
-		if (HeadSegment == null)
-		{
-			GD.PushWarning("Rope was instructed to move, but there's nothing to move.");
-			return;
-		}
+		ExtendTailSegmentTo(position);
 
-		Vector2 moveVector = position - HeadPosition;
-
-		foreach (RopeSegment segment in segments)
-		{
-			segment.GlobalPosition += moveVector;
-		}
-	}
-
-	public void ExtendTo(Vector2 from, Vector2 to)
-	{
-		MoveHeadTo(to);
-		ExtendTailSegmentTo(from);
-
-		RopeSegment[] extendedSegments = CreateConnectedSegments(from, TailPosition);
-		segments = JoinSegmentChains(extendedSegments, segments);
+		//RopeSegment[] extendedSegments = CreateConnectedSegments(position, TailPosition);
+		//segments = JoinSegmentChains(extendedSegments, segments);
 	}
 
 	public void ClearSegments()
@@ -184,19 +178,18 @@ public partial class Rope : Node2D
 			return;
 		}
 
-		Vector2 tailHeadToPosVect = position - TailSegment.HeadPosition;
-		float length = Mathf.Min(segmentLength, tailHeadToPosVect.Length());
+		Vector2 posToTailHeadVect = TailSegment.HeadPosition - position;
+		float length = Mathf.Min(segmentLength, posToTailHeadVect.Length());
 
-		NodePath originalNodeB = TailSegment.PinJoint.NodeB;
-		TailSegment.PinJoint.NodeB = null;
-
-		Vector2 newPos = TailSegment.HeadPosition - tailHeadToPosVect.Normalized() * length * 0.5f;
+		Vector2 newPos = TailSegment.HeadPosition - posToTailHeadVect.Normalized() * length * 0.5f;
 		TailSegment.Length = length;
-		TailSegment.GlobalPosition = newPos;
-		TailSegment.Rotation = tailHeadToPosVect.Angle();
+		TailSegment.GlobalTransform = new(posToTailHeadVect.Angle(), newPos);
 
-		TailSegment.PinJoint.Position = TailSegment.GetLengthOffset(1f);
-		TailSegment.PinJoint.NodeB = originalNodeB;
+		if (TailSegment.PinJoint != null)
+		{
+			TailSegment.PinJoint.Position = TailSegment.GetLengthOffset(1f);
+			TailSegment.UpdatePinJointAnchorOffset();
+		}
 	}
 
 	private static string GetRopeSegmentName(int index)

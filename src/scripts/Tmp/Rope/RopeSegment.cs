@@ -42,6 +42,7 @@ public partial class RopeSegment : RigidBody2D
 
     private float _diameter;
     private float _halfLength;
+    private Transform2D? _newTransform;
 
     public override void _Ready()
     {
@@ -51,9 +52,24 @@ public partial class RopeSegment : RigidBody2D
         CallDeferred(Node.MethodName.AddChild, _collisionShape);
     }
 
+    public override void _IntegrateForces(PhysicsDirectBodyState2D state)
+    {
+        if (_newTransform != null)
+        {
+            state.Transform = (Transform2D)_newTransform;
+            _newTransform = null;
+        }
+    }
+
     public Vector2 GetLengthOffset(float scale)
     {
         return new(Length * scale - _halfLength, 0);
+    }
+
+    public void SetPhysicsStateTransform(Transform2D transform)
+    {
+        GlobalTransform = transform;
+        _newTransform = transform;
     }
 
     public void ConnectTo(CollisionObject2D other, float softness, float bias)
@@ -71,6 +87,13 @@ public partial class RopeSegment : RigidBody2D
         AddChild(PinJoint);
 
         return;
+    }
+
+    // Resets the pin joints collision so the offset from repositioning it is correct
+    public void UpdatePinJointAnchorOffset()
+    {
+        PinJoint.DisableCollision = !PinJoint.DisableCollision;
+		PinJoint.DisableCollision = !PinJoint.DisableCollision;
     }
 
     private void UpdateCapsuleHeight()

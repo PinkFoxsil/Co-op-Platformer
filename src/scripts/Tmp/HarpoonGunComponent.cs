@@ -21,7 +21,7 @@ public partial class HarpoonGunComponent : Node2D
 
     private Harpoon _harpoon;
     private Transform2D _harpoonTransform;
-    private Marker2D _harpoonRopeAttachMarker;
+    private PinJoint2D _ropeAttachJoint;
     private Rope _rope;
     private Line2D _trajectoryLine;
 
@@ -34,7 +34,7 @@ public partial class HarpoonGunComponent : Node2D
         Show();
 
         _harpoon = GetNode<Harpoon>("Harpoon");
-        _harpoonRopeAttachMarker = _harpoon.GetNode<Marker2D>("RopeAttachMarker");
+        _ropeAttachJoint = _harpoon.GetNode<PinJoint2D>("RopeAttachment");
         _rope = GetNode<Rope>("Rope");
         _trajectoryLine = GetNode<Line2D>("TrajectoryLine");
 
@@ -83,8 +83,7 @@ public partial class HarpoonGunComponent : Node2D
             {
                 //Reel();
             }
-
-            if (!_harpoon.Freeze)
+            else if (!_harpoon.Freeze)
             {
                 OnHarpoonMove();
             }
@@ -94,11 +93,12 @@ public partial class HarpoonGunComponent : Node2D
     private void Stash()
     {
         State = HarpoonGunState.Stashed;
+        _ropeAttachJoint.NodeA = null;
 
         _trajectoryLine.Hide();
         _harpoon.Disable();
-        //_rope.ClearSegments();
-        //_rope.Disable();
+        _rope.ClearSegments();
+        _rope.Disable();
     }
 
     private void Aim()
@@ -112,14 +112,11 @@ public partial class HarpoonGunComponent : Node2D
         State = HarpoonGunState.Shot;
         _trajectoryLine.Hide();
 
-        //Debugger.Instance.StartDebugSimulation(); // TODO: remove or comment out
+        Debugger.Instance.StartDebugSimulation(); // TODO: remove or comment out
 
         FireHarpoon();
 
-        //_rope.Enable();
-        //_rope.Init(GetStartPosition(), _harpoonRopeAttachMarker.GlobalPosition);
-
-        //_rope.Freeze = true;
+        _rope.Enable();
     }
 
     private Vector2 GetStartPosition()
@@ -132,17 +129,15 @@ public partial class HarpoonGunComponent : Node2D
         _harpoon.Enable();
         
         Vector2 harpoonVelocity = MouseUtility.GetMouseUnitVector(this) * harpoonFiringForce;
-        Vector2 position = GetStartPosition() - _harpoonRopeAttachMarker.Position.Rotated(MouseUtility.GetMouseUnitVector(this).Angle());
+        Vector2 position = GetStartPosition() - _ropeAttachJoint.Position.Rotated(MouseUtility.GetMouseUnitVector(this).Angle());
         _harpoon.SetPhysicsStateTransform(new Transform2D(harpoonVelocity.Angle(), position));
         _harpoon.SetPhysicsStateLinearVelocity(harpoonVelocity);
     }
 
     private void OnHarpoonHit(Node body)
     {
-        GD.Print("Hit");
-        Debugger.Instance.DrawCircle(_harpoon.Position, 2f, Colors.Red, 1);
         //_rope.Freeze = false;
-        //Debugger.Instance.StopDebugSimulation();
+        Debugger.Instance.StopDebugSimulation();
     }
 
     private void OnHarpoonMove()
@@ -152,13 +147,22 @@ public partial class HarpoonGunComponent : Node2D
 
     private void ExtendRope()
     {
-        //if (_rope.segments.Length == 0)
+        if (_rope.segments.Length == 0)
         {
-            //_rope.Init(GetStartPosition(), _harpoon.Transform * _harpoonRopeAttachMarker.Position);
+            CreateRope();
             return;
         }
 
-        //_rope.ExtendTo(GetStartPosition(), _harpoonRopeAttachMarker.GlobalPosition);
+        _rope.ExtendTailTo(GetStartPosition());
+    }
+
+    private void CreateRope()
+    {
+        _rope.Init(GetStartPosition(), _ropeAttachJoint.GlobalPosition);
+        if (_rope.HeadSegment != null)
+        {
+            _ropeAttachJoint.NodeA = _rope.HeadSegment.GetPath();
+        }
     }
 
     private void UpdateTrajectoryLine()
