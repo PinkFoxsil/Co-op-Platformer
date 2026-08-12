@@ -178,16 +178,22 @@ public partial class Rope : Node2D
 			return;
 		}
 
-		Vector2 posToTailHeadVect = TailSegment.HeadPosition - position;
-		float length = Mathf.Min(segmentLength, posToTailHeadVect.Length());
+		Vector2 originPosition = segments[1] == null ? TailSegment.HeadPosition : segments[1].TailPosition;
 
-		Vector2 newPos = TailSegment.HeadPosition - posToTailHeadVect.Normalized() * length * 0.5f;
+		Vector2 posToOriginVect = originPosition - position;
+		float length = Mathf.Min(segmentLength, posToOriginVect.Length());
+
+		Vector2 newPos = originPosition - posToOriginVect.Normalized() * length * 0.5f;
 		TailSegment.Length = length;
-		TailSegment.GlobalTransform = new(posToTailHeadVect.Angle(), newPos);
+		TailSegment.SetPhysicsStateTransform(new(posToOriginVect.Angle(), newPos));
+
+		Debugger.Instance.DrawCircle(TailSegment.HeadPosition);
+		Debugger.Instance.DrawCircle(TailSegment.TailPosition);
+		Debugger.Instance.DrawVector(newPos, posToOriginVect);
 
 		if (TailSegment.PinJoint != null)
 		{
-			TailSegment.PinJoint.Position = TailSegment.GetLengthOffset(1f);
+			TailSegment.PinJoint.Position = originPosition;
 			TailSegment.UpdatePinJointAnchorOffset();
 		}
 	}

@@ -18,6 +18,7 @@ gradient = SubResource("Gradient_ghrgg")
 [node name="Rope" parent="." unique_id=1433633605 instance=ExtResource("3_twvtl")]
 position = Vector2(1, 0)
 layer = 4
+mask = 8
 
 [node name="Harpoon" parent="." unique_id=1279296010 instance=ExtResource("2_8j0ph")]
 
