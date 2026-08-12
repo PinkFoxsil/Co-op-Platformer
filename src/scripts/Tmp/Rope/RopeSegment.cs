@@ -36,12 +36,25 @@ public partial class RopeSegment : RigidBody2D
     private float _diameter;
     private float _halfLength;
 
+    private Transform2D? _stateTransform;
+
     public override void _Ready()
     {
         _capsuleShape = CreateCapsuleShape();
         _collisionShape = CreateCollisionShape();
         
         CallDeferred(Node.MethodName.AddChild, _collisionShape);
+    }
+
+    public override void _IntegrateForces(PhysicsDirectBodyState2D state)
+    {
+        base._IntegrateForces(state);
+
+        if (_stateTransform != null)
+        {
+            state.Transform = (Transform2D) _stateTransform;
+            _stateTransform = null;
+        }
     }
 
     public Vector2 GetLengthOffset(float scale)
@@ -52,6 +65,7 @@ public partial class RopeSegment : RigidBody2D
     public void SetPhysicsStateTransform(Transform2D transform)
     {
         GlobalTransform = transform;
+        //_stateTransform = transform;
     }
 
     public void ConnectTo(CollisionObject2D other, float softness, float bias)

@@ -22,8 +22,5 @@ mask = 8
 
 [node name="Harpoon" parent="." unique_id=1279296010 instance=ExtResource("2_8j0ph")]
 
-[node name="RopeAttachment" type="PinJoint2D" parent="Harpoon" unique_id=1529743198]
+[node name="RopeAttachMarker" type="Marker2D" parent="Harpoon" unique_id=455602087]
 position = Vector2(-41, 0)
-node_b = NodePath("..")
-bias = 0.9
-softness = 0.01
